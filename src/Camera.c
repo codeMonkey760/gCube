@@ -177,11 +177,7 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
             camDirs[i][d] = 0.0f;
         }
         // reset the largest component to one or neg one
-        if (neg == false) {
-            camDirs[i][axisId] = 1.0f;
-        } else {
-            camDirs[i][axisId] = -1.0f;
-        }
+        camDirs[i][axisId] = (neg) ? -1.0f : 1.0f;
     }
     
     // rebuild a view matrix using the clamped directional vectors
