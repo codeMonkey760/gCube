@@ -2,17 +2,17 @@
 #define _C_RUBE_CAMERA_H_
 
 typedef struct {
-	float projMtx[16];
-	float viewMtx[16];
+    float projMtx[16];
+    float viewMtx[16];
 
-	float pitchSens;
-	float yawSens;
-	float pitch;
-	float yaw;
-	float orbitalRadius;
-	bool tracking;
-	int lastPos[2];
-	float camPosW[3];
+    float pitchSens;
+    float yawSens;
+    float zoomSens;
+    float pitch;
+    float yaw;
+    float orbitalRadius;
+    bool tracking;
+    float camPosW[3];
 } Camera;
 
 void InitCamera (Camera *cam);

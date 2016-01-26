@@ -17,31 +17,52 @@ void finalize (void);
 
 GLFWwindow *window = NULL;
 Camera camera;
+int lastMousePos[2] = {0};
 
 static void error_callback(int error, const char *desc) {
-	fprintf(stderr, "ERROR! error: %d, %s",error,desc);
+    fprintf(stderr, "ERROR! error: %d, %s",error,desc);
 }
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-	if (action == GLFW_PRESS) {
-		fprintf(stdout, "Key press: %d\n", key);
-		if (key == GLFW_KEY_Q) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-	}
+    if (action == GLFW_PRESS) {
+        fprintf(stdout, "Key press: %d\n", key);
+        if (key == GLFW_KEY_Q) {
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+    }
 }
 
-static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {
-	if (action == GLFW_PRESS) {
-		fprintf(stdout, "Mouse press: %d\n", button);
-	}
+static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {  
+    if (button == 1) {
+        camera.tracking = action == GLFW_PRESS;
+        if (camera.tracking == false) {
+            lastMousePos[0] = -1;
+            lastMousePos[0] = -1;
+        }
+    }
+}
+
+static void mouse_scroll_callback (GLFWwindow *window, double x, double y) {
+    static double lastYOffset = 0.0;
+    float deltaZoom = y - ((float) lastYOffset);
+    Zoom(&camera,deltaZoom);
 }
 
 static void mouse_position_callback (GLFWwindow *window, double x, double y) {
-    int pos[2] = {0};
-    pos[0] = (int) x;
-    pos[1] = (int) y;
-    OnMouseMove(&camera,pos);
+    int deltaPos[2] = {0};
+    if (camera.tracking == false) return;
+    
+    if (lastMousePos[0] != -1) {
+        deltaPos[0] = ((int) x) - lastMousePos[0];
+    }
+    lastMousePos[0] = ((int) x);
+    
+    if (lastMousePos[1] != -1) {
+        deltaPos[1] = ((int) y) - lastMousePos[1];
+    }
+    lastMousePos[1] = ((int) y);
+    
+    OnMouseMove(&camera,deltaPos);
 }
 
 void init (void) {
@@ -51,132 +72,134 @@ void init (void) {
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window,mouse_button_callback);
     glfwSetCursorPosCallback(window,mouse_position_callback);
+    glfwSetScrollCallback(window,mouse_scroll_callback);
     glfwSwapInterval(1);
     glClearColor(0.2f,0.2f,0.8f,1.0f);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
     fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
 
     InitCamera(&camera);
-    RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
+    //RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
+    RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.001f, 20.0f);
 
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
 
 void initWindow (void) {
-	const GLFWvidmode *vidmode = NULL;
-	int screenW, screenH;
-	int w = 640, h = 480;
+    const GLFWvidmode *vidmode = NULL;
+    int screenW, screenH;
+    int w = 640, h = 480;
 
-	vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	screenW = vidmode->width;
-	screenH = vidmode->height;
+    vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    screenW = vidmode->width;
+    screenH = vidmode->height;
 
-	window = glfwCreateWindow(w,h,"GLFW Test", NULL, NULL);
-	if (window == NULL) {
-		return;
-	}
+    window = glfwCreateWindow(w,h,"GLFW Test", NULL, NULL);
+    if (window == NULL) {
+        return;
+    }
 
-	glfwSetWindowPos(window, (screenW / 2) - (w / 2), (screenH / 2) - (h / 2));
+    glfwSetWindowPos(window, (screenW / 2) - (w / 2), (screenH / 2) - (h / 2));
 
-	glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
-	glewExperimental = GL_TRUE;
-	GLenum glewErr = glewInit();
-	if (glewErr != GLEW_OK) {
-		fprintf(stderr,"GLEW did not initialize: %s\n",glewGetErrorString(glewErr));
-	}
+    glewExperimental = GL_TRUE;
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK) {
+        fprintf(stderr,"GLEW did not initialize: %s\n",glewGetErrorString(glewErr));
+    }
 }
 
 void render (void) {
-	float cubeColor[] = {0.75f, 0.25f, 0.1f};
-        float vpMtx[16] = {0.0f};
-        
-        Mat4Mult(vpMtx,camera.viewMtx,camera.projMtx);
+    float cubeColor[] = {0.75f, 0.25f, 0.1f};
+    float vpMtx[16] = {0.0f};
 
-	glViewport(0,0,640,480);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Mat4Mult(vpMtx,camera.viewMtx,camera.projMtx);
 
-	glUseProgram(shader);
+    glViewport(0,0,640,480);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUniform3fv(gDiffuseColor,1,cubeColor);
-        glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,vpMtx);
+    glUseProgram(shader);
 
-	glEnableVertexAttribArray(inPosL);
-	glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
+    glUniform3fv(gDiffuseColor,1,cubeColor);
+    glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,vpMtx);
 
-	glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,0,NULL);
+    glEnableVertexAttribArray(inPosL);
+    glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
 
-	glDrawArrays(GL_TRIANGLES, 0, VBO_SIZE_IN_INDICES);
+    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,0,NULL);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDisableVertexAttribArray(0);
+    glDrawArrays(GL_TRIANGLES, 0, VBO_SIZE_IN_INDICES);
 
-	glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisableVertexAttribArray(0);
+
+    glUseProgram(0);
 }
 
 void update (void) {
-	static double prevTimeStamp = 0.0f;
-	double nextTimeStamp = 0.0f;
-	float deltaTime = 0.0f;
+    static double prevTimeStamp = 0.0f;
+    double nextTimeStamp = 0.0f;
+    float deltaTime = 0.0f;
 
-	nextTimeStamp = glfwGetTime();
-	deltaTime = (float) (nextTimeStamp - prevTimeStamp);
-	prevTimeStamp = nextTimeStamp;
+    nextTimeStamp = glfwGetTime();
+    deltaTime = (float) (nextTimeStamp - prevTimeStamp);
+    prevTimeStamp = nextTimeStamp;
 
-	timer(deltaTime);
-        UpdateCamera(&camera, deltaTime);
+    timer(deltaTime);
+    UpdateCamera(&camera, deltaTime);
 }
 
 void timer (float dt) {
-	static float elapsed = 0.0f;
-	static int frames = 0;
+    static float elapsed = 0.0f;
+    static int frames = 0;
 
-	elapsed += dt;
-	frames++;
-	if (elapsed >= 1.0f) {
-		elapsed -= 1.0f;
-		fprintf(stdout,"Frames: %d\n",frames);
-		frames = 0;
-	}
+    elapsed += dt;
+    frames++;
+    if (elapsed >= 1.0f) {
+        elapsed -= 1.0f;
+        //fprintf(stdout,"Frames: %d\n",frames);
+        frames = 0;
+    }
 }
 
 void finalize (void) {
-	fprintf(stdout,"Program end\n");
-	DestroyCubeVBO();
-	DestroyShader();
-	glfwTerminate();
+    fprintf(stdout,"Program end\n");
+    DestroyCubeVBO();
+    DestroyShader();
+    glfwTerminate();
 }
 
 int main (int argc, char **argv) {
-	glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback(error_callback);
 
-	if (glfwInit() == false) {
-		return EXIT_FAILURE;
-	}
+    if (glfwInit() == false) {
+        return EXIT_FAILURE;
+    }
 
-	initWindow();
-	if (window == NULL) {
-		finalize();
-		return EXIT_FAILURE;
-	}
+    initWindow();
+    if (window == NULL) {
+        finalize();
+        return EXIT_FAILURE;
+    }
 
-	init();
-	if (InitShader() == GL_FALSE) {
-		finalize();
-		return EXIT_FAILURE;
-	}
-	InitCubeVBO();
+    init();
+    if (InitShader() == GL_FALSE) {
+        finalize();
+        return EXIT_FAILURE;
+    }
+    InitCubeVBO();
 
-	while (glfwWindowShouldClose(window) == false) {
-		update();
-		render();
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+    while (glfwWindowShouldClose(window) == false) {
+        update();
+        render();
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
-	finalize();
-	return EXIT_SUCCESS;
+    finalize();
+    return EXIT_SUCCESS;
 }

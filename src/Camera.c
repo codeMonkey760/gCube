@@ -10,11 +10,12 @@
 void InitCamera (Camera *cam) {
     if (cam == NULL) return;
 
-    memset(cam,1,sizeof(Camera));
+    memset(cam,0,sizeof(Camera));
     Mat4Identity(cam->viewMtx);
     Mat4Identity(cam->projMtx);
-    cam->pitchSens = 1.0f;
-    cam->yawSens = 1.0f;
+    cam->pitchSens = -0.25f;
+    cam->yawSens = -0.25f;
+    cam->zoomSens = 1.0f;
     cam->orbitalRadius = 1.0f;
     cam->camPosW[2] = 1.0f;
 }
@@ -27,20 +28,15 @@ void OnMouseUp (Camera *cam, int pos[2], int button) {
     if (cam == NULL) return;
 
     cam->tracking = false;
-    cam->lastPos[0] = -1;
-    cam->lastPos[1] = -1;
 }
 
 void OnMouseDown (Camera *cam, int pos[2], int button) {
     if (cam == NULL) return;
 
     cam->tracking = true;
-    cam->lastPos[0] = pos[0];
-    cam->lastPos[1] = pos[1];
 }
 
-void OnMouseMove (Camera *cam, int pos[2]) {
-    int deltaMousePos[2] = {0};
+void OnMouseMove (Camera *cam, int deltaMousePos[2]) {
     float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};
     float rightW[4]  = {1.0f,0.0f,0.0f,0.0f};
     float upW[4]     = {0.0f,1.0f,0.0f,0.0f};
@@ -49,12 +45,9 @@ void OnMouseMove (Camera *cam, int pos[2]) {
     float rotY[16]   = {0.0f};
     float rotXY[16]  = {0.0f};
 
-    if (cam == NULL || cam->tracking == false) return;
-
-    if (cam->lastPos[0] != -1 && cam->lastPos[1] != -1) {
-            deltaMousePos[0] = pos[0] - cam->lastPos[0];
-            deltaMousePos[1] = pos[1] - cam->lastPos[1];
-    }
+    if (cam == NULL) return;
+    
+    //printf("x:%d y:%d dx:%d dy:%d\n",pos[0],pos[1],deltaMousePos[0],deltaMousePos[1]);
 
     cam->yaw += ((float) deltaMousePos[0]) * cam->yawSens;
     while (cam->yaw >= 360.0f) {
@@ -71,9 +64,6 @@ void OnMouseMove (Camera *cam, int pos[2]) {
     if (cam->pitch < - 88.0f) {
             cam->pitch = -88.0f;
     }
-
-    cam->lastPos[0] = pos[0];
-    cam->lastPos[1] = pos[1];
 
     camPosW[2] = -1.0f * cam->orbitalRadius;
     Mat4Identity(rotX);
@@ -124,6 +114,8 @@ void RebuildOrthographicMatrix (Camera *cam, float left, float right, float bott
 
 void Zoom (Camera *cam, float amount) {
     if (cam == NULL) return;
+    
+    amount *= cam->zoomSens;
     
     cam->orbitalRadius -= amount;
 }
