@@ -15,7 +15,7 @@ void InitCamera (Camera *cam) {
     Mat4Identity(cam->projMtx);
     cam->pitchSens = -0.25f;
     cam->yawSens = -0.25f;
-    cam->zoomSens = 1.0f;
+    cam->zoomSens = 0.1f;
     cam->orbitalRadius = 1.0f;
     cam->camPosW[2] = 1.0f;
 }
@@ -37,18 +37,8 @@ void OnMouseDown (Camera *cam, int pos[2], int button) {
 }
 
 void OnMouseMove (Camera *cam, int deltaMousePos[2]) {
-    float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};
-    float rightW[4]  = {1.0f,0.0f,0.0f,0.0f};
-    float upW[4]     = {0.0f,1.0f,0.0f,0.0f};
-    float lookW[4]   = {0.0f,0.0f,1.0f,0.0f};
-    float rotX[16]   = {0.0f};
-    float rotY[16]   = {0.0f};
-    float rotXY[16]  = {0.0f};
-
-    if (cam == NULL) return;
+    if (cam == NULL || deltaMousePos == NULL) return;
     
-    //printf("x:%d y:%d dx:%d dy:%d\n",pos[0],pos[1],deltaMousePos[0],deltaMousePos[1]);
-
     cam->yaw += ((float) deltaMousePos[0]) * cam->yawSens;
     while (cam->yaw >= 360.0f) {
             cam->yaw -= 360.0f;
@@ -65,28 +55,7 @@ void OnMouseMove (Camera *cam, int deltaMousePos[2]) {
             cam->pitch = -88.0f;
     }
 
-    camPosW[2] = -1.0f * cam->orbitalRadius;
-    Mat4Identity(rotX);
-    Mat4Identity(rotY);
-    Mat4Identity(rotXY);
-    Mat4RotationX(rotX,-1.0f * cam->pitch);
-    Mat4RotationY(rotY,-1.0f * cam->yaw);
-    Mat4Mult(rotXY,rotX,rotY);
-
-    Mat4Vec4Mult(rotXY,camPosW,camPosW);
-    Mat4Vec4Mult(rotXY,rightW,rightW);
-    Mat4Vec4Mult(rotXY,upW,upW);
-    Mat4Vec4Mult(rotXY,lookW,lookW);
-
-    Mat4Identity(cam->viewMtx);
-    Vec3Copy(&(cam->viewMtx[0]),rightW);
-    Vec3Copy(&(cam->viewMtx[4]),upW);
-    Vec3Copy(&(cam->viewMtx[8]),lookW);
-    cam->viewMtx[12] = -1.0f * Vec3Dot(rightW,camPosW);
-    cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
-    cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
-
-    Vec3Copy(cam->camPosW,camPosW);
+    _RefreshViewMtx(cam);
 }
 
 void RebuildPerspectiveMatrix (Camera *cam, float fovxInDegrees, float aspectRatio, float nearZ, float farZ) {
@@ -118,6 +87,10 @@ void Zoom (Camera *cam, float amount) {
     amount *= cam->zoomSens;
     
     cam->orbitalRadius -= amount;
+    if (cam->orbitalRadius < 1.0f) cam->orbitalRadius = 1.0f;
+    if (cam->orbitalRadius > 10.0f) cam->orbitalRadius = 10.0f;
+    
+    _RefreshViewMtx(cam);
 }
 
 void CopyProjMtx (Camera *cam, float target[16]) {
@@ -179,4 +152,39 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
             target[i*4+d] = camDirs[i][d];
         }
     }
+}
+
+void _RefreshViewMtx (Camera *cam) {
+    float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};
+    float rightW[4]  = {1.0f,0.0f,0.0f,0.0f};
+    float upW[4]     = {0.0f,1.0f,0.0f,0.0f};
+    float lookW[4]   = {0.0f,0.0f,1.0f,0.0f};
+    float rotX[16]   = {0.0f};
+    float rotY[16]   = {0.0f};
+    float rotXY[16]  = {0.0f};
+
+    if (cam == NULL) return;
+    
+    camPosW[2] = -1.0f * cam->orbitalRadius;
+    Mat4Identity(rotX);
+    Mat4Identity(rotY);
+    Mat4Identity(rotXY);
+    Mat4RotationX(rotX,-1.0f * cam->pitch);
+    Mat4RotationY(rotY,-1.0f * cam->yaw);
+    Mat4Mult(rotXY,rotX,rotY);
+
+    Mat4Vec4Mult(rotXY,camPosW,camPosW);
+    Mat4Vec4Mult(rotXY,rightW,rightW);
+    Mat4Vec4Mult(rotXY,upW,upW);
+    Mat4Vec4Mult(rotXY,lookW,lookW);
+
+    Mat4Identity(cam->viewMtx);
+    Vec3Copy(&(cam->viewMtx[0]),rightW);
+    Vec3Copy(&(cam->viewMtx[4]),upW);
+    Vec3Copy(&(cam->viewMtx[8]),lookW);
+    cam->viewMtx[12] = -1.0f * Vec3Dot(rightW,camPosW);
+    cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
+    cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
+
+    Vec3Copy(cam->camPosW,camPosW);
 }

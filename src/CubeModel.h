@@ -6,13 +6,13 @@ void DestroyCubeVBO (void);
 int GetCubeVBO (void);
 
 static const GLfloat cube[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.5f,  0.5f, 0.0f,
+	-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
 
-	 0.5f,  0.5f, 0.0f,
-	-0.5f,  0.5f, 0.0f,
-	-0.5f, -0.5f, 0.0f
+	 0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f
 };
 
 #define VBO_SIZE_IN_FLOATS 18

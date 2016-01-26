@@ -7,13 +7,19 @@
 
 #include "Shader.h"
 
-int shader = 0;
-int vs = 0;
-int fs = 0;
+int shader = INVALID_SHADER_ID;
+int vs = INVALID_SHADER_ID;
+int fs = INVALID_SHADER_ID;
 
-int inPosL = 0;
-int gDiffuseColor = 0;
-int gWVPMtx = 0;
+int inPosL = INVALID_SHADER_ID;
+int inNormL = INVALID_SHADER_ID;
+int inTexC = INVALID_SHADER_ID;
+
+int gWMtx = INVALID_SHADER_ID;
+int gWITMtx = INVALID_SHADER_ID;
+int gWVPMtx = INVALID_SHADER_ID;
+int gDiffuseColor = INVALID_SHADER_ID;
+int gCamPos = INVALID_SHADER_ID;
 
 char *vsSrcName = "src/VS.shader";
 char *fsSrcName = "src/FS.shader";
@@ -57,13 +63,28 @@ int InitShader (void) {
     }
 
     inPosL = glGetAttribLocation(shader,"posL");
-    gDiffuseColor = glGetUniformLocation(shader, "gDiffuseColor");
+    inNormL = glGetAttribLocation(shader, "normL");
+    inTexC = glGetAttribLocation(shader, "intexC");
+    
+    gWMtx = glGetAttribLocation(shader, "gWMtx");
+    gWITMtx = glGetAttribLocation(shader, "gWITMtx");
     gWVPMtx = glGetUniformLocation(shader,"gWVPMtx");
+    gDiffuseColor = glGetUniformLocation(shader, "gDiffuseColor");
+    gCamPos = glGetAttribLocation(shader, "gCamPos");
 
     glDetachShader(shader,vs);
     glDetachShader(shader,fs);
 
-    if (inPosL == -1 || gDiffuseColor == -1 || gWVPMtx == -1) {
+    if (
+        inPosL == INVALID_SHADER_ID ||
+        inNormL == INVALID_SHADER_ID ||
+        inTexC == INVALID_SHADER_ID ||
+        gWMtx == INVALID_SHADER_ID ||
+        gWITMtx == INVALID_SHADER_ID ||
+        gWVPMtx == INVALID_SHADER_ID ||
+        gDiffuseColor == INVALID_SHADER_ID || 
+        gCamPos == INVALID_SHADER_ID
+    ) {
             fprintf(stderr, "Bad uniform or attribute location!\n");
             return GL_FALSE;
     }

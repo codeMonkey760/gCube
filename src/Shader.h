@@ -9,8 +9,16 @@ extern char *vsSrcName;
 extern char *fsSrcName;
 
 extern int inPosL;
-extern int gDiffuseColor;
+extern int inNormL;
+extern int inTexC;
+
+extern int gWMtx;
+extern int gWITMtx;
 extern int gWVPMtx;
+extern int gDiffuseColor;
+extern int gCamPos;
+
+#define INVALID_SHADER_ID -1
 
 int InitShader (void);
 void DestroyShader (void);

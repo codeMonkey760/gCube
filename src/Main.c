@@ -17,7 +17,7 @@ void finalize (void);
 
 GLFWwindow *window = NULL;
 Camera camera;
-int lastMousePos[2] = {0};
+int lastMousePos[2] = {-1};
 
 static void error_callback(int error, const char *desc) {
     fprintf(stderr, "ERROR! error: %d, %s",error,desc);
@@ -52,14 +52,15 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     int deltaPos[2] = {0};
     if (camera.tracking == false) return;
     
-    if (lastMousePos[0] != -1) {
+    if (lastMousePos[0] == -1 || lastMousePos[1] == -1) {
+        lastMousePos[0] = ((int) x);
+        lastMousePos[1] = ((int) y);
+        return;
+    } else {
         deltaPos[0] = ((int) x) - lastMousePos[0];
-    }
-    lastMousePos[0] = ((int) x);
-    
-    if (lastMousePos[1] != -1) {
         deltaPos[1] = ((int) y) - lastMousePos[1];
     }
+    lastMousePos[0] = ((int) x);
     lastMousePos[1] = ((int) y);
     
     OnMouseMove(&camera,deltaPos);
@@ -82,8 +83,8 @@ void init (void) {
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
 
     InitCamera(&camera);
-    //RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
-    RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.001f, 20.0f);
+    RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
+    //RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.001f, 20.0f);
 
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
@@ -115,27 +116,42 @@ void initWindow (void) {
 
 void render (void) {
     float cubeColor[] = {0.75f, 0.25f, 0.1f};
-    float vpMtx[16] = {0.0f};
+    float wvpMtx[16] = {0.0f};
+    float wMtx[16] = {0.0f};
+    float witMtx[16] = {0.0f};
+    
+    Mat4Identity(wMtx);
+    Mat4Identity(witMtx);
+    Mat4Identity(wvpMtx);
 
-    Mat4Mult(vpMtx,camera.viewMtx,camera.projMtx);
+    Mat4Mult(wvpMtx,camera.viewMtx,camera.projMtx);
 
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(shader);
 
+    glUniform3fv(gCamPos, 1, camera.camPosW);
     glUniform3fv(gDiffuseColor,1,cubeColor);
-    glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,vpMtx);
+    glUniformMatrix4fv(gWMtx, 1, GL_FALSE,wMtx);
+    glUniformMatrix4fv(gWITMtx, 1, GL_FALSE, witMtx);
+    glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,wvpMtx);
 
     glEnableVertexAttribArray(inPosL);
+    glEnableVertexAttribArray(inNormL);
+    glEnableVertexAttribArray(inTexC);
     glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
 
-    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,0,NULL);
+    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,28,0);
+    glVertexAttribPointer(inNormL,3,GL_FLOAT,GL_FALSE,28,12);
+    glVertexAttribPointer(inTexC,2,GL_FLOAT, GL_FALSE,28,24);
 
     glDrawArrays(GL_TRIANGLES, 0, VBO_SIZE_IN_INDICES);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(inPosL);
+    glDisableVertexAttribArray(inNormL);
+    glDisableVertexAttribArray(inTexC);
 
     glUseProgram(0);
 }
