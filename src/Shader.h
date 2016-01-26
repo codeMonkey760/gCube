@@ -10,6 +10,7 @@ extern char *fsSrcName;
 
 extern int inPosL;
 extern int gDiffuseColor;
+extern int gWVPMtx;
 
 int InitShader (void);
 void DestroyShader (void);

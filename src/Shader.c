@@ -13,6 +13,7 @@ int fs = 0;
 
 int inPosL = 0;
 int gDiffuseColor = 0;
+int gWVPMtx = 0;
 
 char *vsSrcName = "src/VS.shader";
 char *fsSrcName = "src/FS.shader";
@@ -57,11 +58,12 @@ int InitShader (void) {
 
 	inPosL = glGetAttribLocation(shader,"posL");
 	gDiffuseColor = glGetUniformLocation(shader, "gDiffuseColor");
+        gWVPMtx = glGetUniformLocation(shader,"gWVPMtx");
 
 	glDetachShader(shader,vs);
 	glDetachShader(shader,fs);
 
-	if (inPosL == -1 || gDiffuseColor == -1) {
+	if (inPosL == -1 || gDiffuseColor == -1 || gWVPMtx == -1) {
 		fprintf(stderr, "Bad uniform or attribute location!\n");
 		return GL_FALSE;
 	}

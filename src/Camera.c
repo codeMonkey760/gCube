@@ -19,7 +19,7 @@ void InitCamera (Camera *cam) {
     cam->camPosW[2] = 1.0f;
 }
 
-void Update (Camera *cam) {
+void UpdateCamera (Camera *cam, float dt) {
     ;
 }
 

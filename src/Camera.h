@@ -16,7 +16,7 @@ typedef struct {
 } Camera;
 
 void InitCamera (Camera *cam);
-void Update (Camera *cam);
+void UpdateCamera (Camera *cam, float dt);
 void OnMouseUp (Camera *cam, int pos[2], int button);
 void OnMouseDown (Camera *cam, int pos[2], int button);
 void OnMouseMove (Camera *cam, int pos[2]);

@@ -7,6 +7,7 @@
 
 #include "Shader.h"
 #include "CubeModel.h"
+#include "Camera.h"
 
 void init (void);
 void render (void);
@@ -15,6 +16,7 @@ void timer (float dt);
 void finalize (void);
 
 GLFWwindow *window = NULL;
+Camera camera;
 
 static void error_callback(int error, const char *desc) {
 	fprintf(stderr, "ERROR! error: %d, %s",error,desc);
@@ -35,18 +37,32 @@ static void mouse_button_callback (GLFWwindow *window, int button, int action, i
 	}
 }
 
-void init (void) {
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetMouseButtonCallback(window,mouse_button_callback);
-	glfwSwapInterval(1);
-	glClearColor(0.2f,0.2f,0.8f,1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
-	fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
-	fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
+static void mouse_position_callback (GLFWwindow *window, double x, double y) {
+    int pos[2] = {0};
+    pos[0] = (int) x;
+    pos[1] = (int) y;
+    OnMouseMove(&camera,pos);
+}
 
-	fprintf(stdout,"Program start\nPress Q to quit\n");
+void init (void) {
+    int pos[2] = {45,0};
+    int fSize = 2.0f;
+
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window,mouse_button_callback);
+    glfwSetCursorPosCallback(window,mouse_position_callback);
+    glfwSwapInterval(1);
+    glClearColor(0.2f,0.2f,0.8f,1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
+    fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
+    fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
+
+    InitCamera(&camera);
+    RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
+
+    fprintf(stdout,"Program start\nPress Q to quit\n");
 }
 
 void initWindow (void) {
@@ -76,6 +92,9 @@ void initWindow (void) {
 
 void render (void) {
 	float cubeColor[] = {0.75f, 0.25f, 0.1f};
+        float vpMtx[16] = {0.0f};
+        
+        Mat4Mult(vpMtx,camera.viewMtx,camera.projMtx);
 
 	glViewport(0,0,640,480);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -83,6 +102,7 @@ void render (void) {
 	glUseProgram(shader);
 
 	glUniform3fv(gDiffuseColor,1,cubeColor);
+        glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,vpMtx);
 
 	glEnableVertexAttribArray(inPosL);
 	glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
@@ -107,6 +127,7 @@ void update (void) {
 	prevTimeStamp = nextTimeStamp;
 
 	timer(deltaTime);
+        UpdateCamera(&camera, deltaTime);
 }
 
 void timer (float dt) {
