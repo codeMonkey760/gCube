@@ -21,8 +21,8 @@ int gWVPMtx = INVALID_SHADER_ID;
 int gDiffuseColor = INVALID_SHADER_ID;
 int gCamPos = INVALID_SHADER_ID;
 
-char *vsSrcName = "src/VS.shader";
-char *fsSrcName = "src/FS.shader";
+char *vsSrcName = "src/Resources/VS.shader";
+char *fsSrcName = "src/Resources/FS.shader";
 
 int InitShader (void) {
     int	linked = GL_FALSE,
