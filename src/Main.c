@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #include "Shader.h"
-#include "CubeModel.h"
+#include "QuadModel.h"
 #include "Camera.h"
 
 void init (void);

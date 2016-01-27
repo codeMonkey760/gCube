@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "CubeModel.h"
+#include "QuadModel.h"
 
 static GLuint vbo = -1;
 
