@@ -18,6 +18,8 @@ void InitCamera (Camera *cam) {
     cam->zoomSens = 0.1f;
     cam->orbitalRadius = 1.0f;
     cam->camPosW[2] = 1.0f;
+    
+    _RefreshViewMtx(cam);
 }
 
 void UpdateCamera (Camera *cam, float dt) {

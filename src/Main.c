@@ -142,9 +142,9 @@ void render (void) {
     glEnableVertexAttribArray(inTexC);
     glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
 
-    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,28,0);
-    glVertexAttribPointer(inNormL,3,GL_FLOAT,GL_FALSE,28,12);
-    glVertexAttribPointer(inTexC,2,GL_FLOAT, GL_FALSE,28,24);
+    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,32,0);
+    glVertexAttribPointer(inNormL,3,GL_FLOAT,GL_FALSE,32,12);
+    glVertexAttribPointer(inTexC,2,GL_FLOAT, GL_FALSE,32,24);
 
     glDrawArrays(GL_TRIANGLES, 0, VBO_SIZE_IN_INDICES);
 

@@ -66,11 +66,11 @@ int InitShader (void) {
     inNormL = glGetAttribLocation(shader, "normL");
     inTexC = glGetAttribLocation(shader, "intexC");
     
-    gWMtx = glGetAttribLocation(shader, "gWMtx");
-    gWITMtx = glGetAttribLocation(shader, "gWITMtx");
+    gWMtx = glGetUniformLocation(shader, "gWMtx");
+    gWITMtx = glGetUniformLocation(shader, "gWITMtx");
     gWVPMtx = glGetUniformLocation(shader,"gWVPMtx");
     gDiffuseColor = glGetUniformLocation(shader, "gDiffuseColor");
-    gCamPos = glGetAttribLocation(shader, "gCamPos");
+    gCamPos = glGetUniformLocation(shader, "gCamPos");
 
     glDetachShader(shader,vs);
     glDetachShader(shader,fs);
