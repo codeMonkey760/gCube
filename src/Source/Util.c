@@ -124,6 +124,23 @@ void Mat4RotationAxis (float a[], float v[], float theta) {
     a[10] = z * z * nc + c;
 }
 
+// Check this out when I get a chance
+void Mat4Transpose (float m[16]) {
+    int i,j;
+    if (m == NULL) return;
+    
+    for (i = 0; i < 4; ++i) {
+        for (j = 0; j < 4; ++j) {
+            ;
+        }
+    }
+}
+
+// this too
+void Mat4Inverse (float m[16]) {
+    ;
+}
+
 void Mat4Mult (float c[], float a[], float b[]) {
     float temp[16] = {0.0f};
 
@@ -192,4 +209,15 @@ float Vec3Dot (float a[], float b[]) {
     if (a == NULL || b == NULL) return 0.0f;
     
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[3]);
+}
+
+void Vec3Normalize (float v[3]) {
+    float len;
+    
+    if (v == NULL) return;
+    
+    len = sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+    v[0] /= len;
+    v[1] /= len;
+    v[2] /= len;
 }
