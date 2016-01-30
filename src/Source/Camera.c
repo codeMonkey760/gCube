@@ -15,9 +15,8 @@ void InitCamera (Camera *cam) {
     Mat4Identity(cam->projMtx);
     cam->pitchSens = -0.25f;
     cam->yawSens = -0.25f;
-    cam->zoomSens = 0.1f;
-    cam->orbitalRadius = 1.0f;
-    cam->camPosW[2] = 1.0f;
+    cam->zoomSens = 1.0f;
+    cam->orbitalRadius = 10.0f;
     
     _RefreshViewMtx(cam);
 }
@@ -173,7 +172,9 @@ void _RefreshViewMtx (Camera *cam) {
     Mat4Identity(rotXY);
     Mat4RotationX(rotX,-1.0f * cam->pitch);
     Mat4RotationY(rotY,-1.0f * cam->yaw);
-    Mat4Mult(rotXY,rotX,rotY);
+    //Mat4Mult(rotXY,rotX,rotY);
+    // Try this .. see if it helps
+    Mat4Mult(rotXY, rotY,rotX);
 
     Mat4Vec4Mult(rotXY,camPosW,camPosW);
     Mat4Vec4Mult(rotXY,rightW,rightW);

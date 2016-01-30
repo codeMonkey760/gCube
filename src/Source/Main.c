@@ -83,8 +83,8 @@ void init (void) {
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
 
     InitCamera(&camera);
-    RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
-    //RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.001f, 20.0f);
+    //RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
+    RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.01f, 100.0f);
 
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }

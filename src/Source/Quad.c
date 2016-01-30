@@ -39,7 +39,12 @@ void DrawQuadArray (Quad *array, int numQuads, Camera *cam) {
         vpMtx[16] =  {0.0f}
     ;
     
-    if (array == NULL || numQuads < 1 || shader == INVALID_SHADER_ID || cam == NULL) return;
+    if (
+        array == NULL || 
+        numQuads < 1 || 
+        shader == INVALID_SHADER_ID || 
+        cam == NULL
+    ) return;
     
     Mat4Mult(vpMtx,cam->viewMtx,cam->projMtx);
     

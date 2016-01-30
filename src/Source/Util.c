@@ -362,7 +362,7 @@ void Vec3Copy (float dst[], float src[]) {
 float Vec3Dot (float a[], float b[]) {
     if (a == NULL || b == NULL) return 0.0f;
     
-    return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[3]);
+    return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
 
 void Vec3Normalize (float v[3]) {
