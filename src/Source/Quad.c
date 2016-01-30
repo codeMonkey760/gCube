@@ -7,10 +7,10 @@
 #include <string.h>
 #include <math.h>
 
+#include "Camera.h"
 #include "Util.h"
 #include "Quad.h"
 #include "Shader.h"
-#include "Camera.h"
 #include "QuadModel.h"
 
 void InitQuadArray (Quad *array, int numQuads) {
@@ -22,10 +22,6 @@ void InitQuadArray (Quad *array, int numQuads) {
     
     for (i = 0; i < numQuads; ++i) {
         curQuad = &array[i];
-        
-        curQuad->rightW[0] = 1.0f;
-        curQuad->upW[1] = 1.0f;
-        curQuad->lookW[2] = 1.0f;
         
         curQuad->scale[0] = 1.0f;
         curQuad->scale[1] = 1.0f;
@@ -89,9 +85,52 @@ void BuildMatricies (Quad *singleQuad, float wMtx[16], float witMtx[16]){
     Quad *q = singleQuad;
     if (singleQuad == NULL || wMtx == NULL || witMtx == NULL) return;
     
-    Vec3Normalize(q->rightW);
-    Vec3Normalize(q->upW);
-    Vec3Normalize(q->lookW);
+    float w,x,y,z;
+    w = q->rotation[3];
+    z = q->rotation[2];
+    y = q->rotation[1];
+    x = q->rotation[0];
     
+    float tMtx[16] = {0.0f};
+    float rMtx[16] = {0.0f};
+    float sMtx[16] = {0.0f};
     
+    float n = (w * w) + (x*x) + (y*y) + (z*z);
+    float s = (n==0.0f) ? 0.0f : 2.0f / n;
+    float wx = s * w * x;
+    float wy = s * w * y;
+    float wz = s * w * z;
+    float xx = s * x * x;
+    float xy = s * x * y;
+    float xz = s * w * z;
+    float yy = s * y * y;
+    float yz = s * y * z;
+    float zz = s * z * z;
+    
+    Mat4Identity(tMtx);
+    Mat4Identity(rMtx);
+    Mat4Identity(sMtx);
+    
+    rMtx[0] = 1.0f - (yy + zz);
+    rMtx[1] = xy - wz;
+    rMtx[2] = xz + wy;
+    rMtx[4] = xy + wz;
+    rMtx[5] = 1.0f - (xx + zz);
+    rMtx[6] = yz - wx;
+    rMtx[8] = xz - wy;
+    rMtx[9] = yz + wx;
+    rMtx[10] = 1.0f - (xx + yy);
+    
+    tMtx[12] = q->posW[0];
+    tMtx[13] = q->posW[1];
+    tMtx[14] = q->posW[2];
+    
+    sMtx[0] = q->scale[0];
+    sMtx[5] = q->scale[1];
+    sMtx[10] = q->scale[2];
+    
+    Mat4Mult(wMtx,sMtx,rMtx);
+    Mat4Mult(wMtx,wMtx,tMtx);
+    
+    Mat4Inverse(witMtx,wMtx);
 }

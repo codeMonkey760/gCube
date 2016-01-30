@@ -6,11 +6,9 @@
  * for that .... :(
  */
 typedef struct {
+    // rotation internally represented as quaternion
     float posW[3];
-    float rightW[3];
-    float upW[3];
-    float lookW[3];
-    
+    float rotation[4];
     float scale[3];
     float color[3];
 } Quad;
