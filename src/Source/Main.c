@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "QuadModel.h"
 #include "Camera.h"
+#include "Quad.h"
 
 void init (void);
 void render (void);
@@ -18,6 +19,8 @@ void finalize (void);
 GLFWwindow *window = NULL;
 Camera camera;
 int lastMousePos[2] = {-1};
+#define NUM_QUADS 5
+Quad quads[NUM_QUADS];
 
 static void error_callback(int error, const char *desc) {
     fprintf(stderr, "ERROR! error: %d, %s",error,desc);
@@ -89,6 +92,26 @@ void init (void) {
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
 
+void initQuads (void) {
+    InitQuadArray(quads,NUM_QUADS);
+    
+    quads[0].color[0] = 1.0f;
+    
+    quads[1].posW[0] = -5.0f;
+    quads[1].color[1] = 1.0f;
+    
+    quads[2].posW[0] = 5.0f;
+    quads[2].color[2] = 1.0f;
+    
+    quads[3].posW[1] = 5.0f;
+    quads[3].color[0] = 1.0f;
+    quads[3].color[2] = 1.0f;
+    
+    quads[4].posW[1] = -5.0f;
+    quads[4].color[0] = 1.0f;
+    quads[4].color[1] = 1.0f;
+}
+
 void initWindow (void) {
     const GLFWvidmode *vidmode = NULL;
     int screenW, screenH;
@@ -115,45 +138,10 @@ void initWindow (void) {
 }
 
 void render (void) {
-    float cubeColor[] = {0.75f, 0.25f, 0.1f};
-    float wvpMtx[16] = {0.0f};
-    float wMtx[16] = {0.0f};
-    float witMtx[16] = {0.0f};
-    
-    Mat4Identity(wMtx);
-    Mat4Identity(witMtx);
-    Mat4Identity(wvpMtx);
-
-    Mat4Mult(wvpMtx,camera.viewMtx,camera.projMtx);
-
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shader);
-
-    glUniform3fv(gCamPos, 1, camera.camPosW);
-    glUniform3fv(gDiffuseColor,1,cubeColor);
-    glUniformMatrix4fv(gWMtx, 1, GL_FALSE,wMtx);
-    glUniformMatrix4fv(gWITMtx, 1, GL_FALSE, witMtx);
-    glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,wvpMtx);
-
-    glEnableVertexAttribArray(inPosL);
-    glEnableVertexAttribArray(inNormL);
-    glEnableVertexAttribArray(inTexC);
-    glBindBuffer(GL_ARRAY_BUFFER,GetCubeVBO());
-
-    glVertexAttribPointer(inPosL,3,GL_FLOAT,GL_FALSE,32,0);
-    glVertexAttribPointer(inNormL,3,GL_FLOAT,GL_FALSE,32,12);
-    glVertexAttribPointer(inTexC,2,GL_FLOAT, GL_FALSE,32,24);
-
-    glDrawArrays(GL_TRIANGLES, 0, VBO_SIZE_IN_INDICES);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDisableVertexAttribArray(inPosL);
-    glDisableVertexAttribArray(inNormL);
-    glDisableVertexAttribArray(inTexC);
-
-    glUseProgram(0);
+    DrawQuadArray(quads,NUM_QUADS,&camera);
 }
 
 void update (void) {
@@ -208,6 +196,7 @@ int main (int argc, char **argv) {
         return EXIT_FAILURE;
     }
     InitCubeVBO();
+    initQuads();
 
     while (glfwWindowShouldClose(window) == false) {
         update();

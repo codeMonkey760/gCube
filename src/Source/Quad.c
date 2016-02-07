@@ -23,9 +23,16 @@ void InitQuadArray (Quad *array, int numQuads) {
     for (i = 0; i < numQuads; ++i) {
         curQuad = &array[i];
         
+        // init to 100% scale
         curQuad->scale[0] = 1.0f;
         curQuad->scale[1] = 1.0f;
         curQuad->scale[2] = 1.0f;
+        
+        // init to opaque black
+        curQuad->color[3] = 1.0f;
+        
+        // identity quaternion
+        curQuad->rotation[3] = 1.0f;
     }
 }
 
