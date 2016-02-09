@@ -60,15 +60,18 @@ void OnMouseMove (Camera *cam, int deltaMousePos[2]) {
 }
 
 void RebuildPerspectiveMatrix (Camera *cam, float fovxInDegrees, float aspectRatio, float nearZ, float farZ) {
-    float fovxInRadians = degreesToRadians(fovxInDegrees);
-    float h = atan(fovxInRadians / 2.0f);
-    float w = h / aspectRatio;
+    fovxInDegrees = fovxInDegrees * (1.0f / aspectRatio);
+    float fovyInRadians = degreesToRadians(fovxInDegrees);
+    
+    float w = 1.0f / (aspectRatio * tan(fovyInRadians / 2.0f));
+    float h = 1.0f / (tan(fovyInRadians / 2.0f));
     
     if (cam == NULL) return;
     Mat4Identity(cam->projMtx);
     cam->projMtx[0] = w;
     cam->projMtx[5] = h;
     cam->projMtx[10] = (farZ) / (farZ - nearZ);
+    cam->projMtx[11] = 1.0f;
     cam->projMtx[14] = (-1.0f * nearZ * farZ) / (farZ - nearZ);
 }
 
@@ -157,12 +160,14 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
 
 void _RefreshViewMtx (Camera *cam) {
     float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};
+    float negCamPosW[4] = {0.0f,0.0f,0.0f,1.0f};
     float rightW[4]  = {1.0f,0.0f,0.0f,0.0f};
     float upW[4]     = {0.0f,1.0f,0.0f,0.0f};
     float lookW[4]   = {0.0f,0.0f,1.0f,0.0f};
     float rotX[16]   = {0.0f};
     float rotY[16]   = {0.0f};
     float rotXY[16]  = {0.0f};
+    int i;
 
     if (cam == NULL) return;
     
@@ -182,12 +187,30 @@ void _RefreshViewMtx (Camera *cam) {
     Mat4Vec4Mult(rotXY,lookW,lookW);
 
     Mat4Identity(cam->viewMtx);
-    Vec3Copy(&(cam->viewMtx[0]),rightW);
-    Vec3Copy(&(cam->viewMtx[4]),upW);
-    Vec3Copy(&(cam->viewMtx[8]),lookW);
-    cam->viewMtx[12] = -1.0f * Vec3Dot(rightW,camPosW);
-    cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
-    cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
+    cam->viewMtx[0]  = rightW[0];
+    cam->viewMtx[1]  = upW[0];
+    cam->viewMtx[2]  = lookW[0];
+    
+    cam->viewMtx[4]  = rightW[1];
+    cam->viewMtx[5]  = upW[1];
+    cam->viewMtx[6]  = lookW[1];
+    
+    cam->viewMtx[8]  = rightW[2];
+    cam->viewMtx[9]  = upW[2];
+    cam->viewMtx[10] = lookW[2];
+    
+    //cam->viewMtx[12] = -1.0f * Vec3Dot(rightW,camPosW);
+    //cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
+    //cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
+    
+    Vec3Copy(negCamPosW,camPosW);
+    for (i = 0; i < 3; ++i) {
+        negCamPosW[i] *= -1.0f;
+    }
+    
+    cam->viewMtx[12] = Vec3Dot(negCamPosW,rightW);
+    cam->viewMtx[13] = Vec3Dot(negCamPosW,upW);
+    cam->viewMtx[14] = Vec3Dot(negCamPosW,lookW);
 
     Vec3Copy(cam->camPosW,camPosW);
 }

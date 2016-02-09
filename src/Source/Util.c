@@ -30,9 +30,12 @@ void Mat4Translation (float a[], float v[]) {
     if (a == NULL || v == NULL) return;
 
     Mat4Identity(a);
-    a[3] = v[0];
-    a[7] = v[1];
-    a[11] = v[2];
+    //a[3] = v[0];
+    //a[7] = v[1];
+    //a[11] = v[2];
+    a[12] = v[0];
+    a[13] = v[1];
+    a[14] = v[2];
 }
 
 void Mat4Scaling (float a[], float v[]) {

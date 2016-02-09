@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "Shader.h"
 #include "QuadModel.h"
@@ -87,7 +88,7 @@ void init (void) {
 
     InitCamera(&camera);
     //RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
-    RebuildPerspectiveMatrix(&camera, 45.0f, (640/480), 0.01f, 100.0f);
+    RebuildPerspectiveMatrix(&camera, 100.0f, (640.0f/480.0f), 0.01f, 100.0f);
 
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
@@ -110,6 +111,19 @@ void initQuads (void) {
     quads[4].posW[1] = -5.0f;
     quads[4].color[0] = 1.0f;
     quads[4].color[1] = 1.0f;
+}
+
+void updateQuads (float dt) {
+    static float theta = 0.0f;
+    const static float rate = M_PI / 4.0f;
+    
+    theta += (dt * rate);
+    while (theta >= 360.0f)
+        theta -= 360.0f;
+    while (theta < 0.0f)
+        theta += 360.0f;
+    
+    quads[0].posW[0] = sin(theta) * 5.0f;
 }
 
 void initWindow (void) {
@@ -141,7 +155,7 @@ void render (void) {
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawQuadArray(quads,NUM_QUADS,&camera);
+    DrawQuadArray(quads,1,&camera);
 }
 
 void update (void) {
@@ -155,6 +169,7 @@ void update (void) {
 
     timer(deltaTime);
     UpdateCamera(&camera, deltaTime);
+    updateQuads(deltaTime);
 }
 
 void timer (float dt) {

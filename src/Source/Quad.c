@@ -66,6 +66,7 @@ void DrawQuadArray (Quad *array, int numQuads, Camera *cam) {
         curQuad = &array[i];
         BuildMatricies(curQuad,wMtx,witMtx);
         Mat4Mult(wvpMtx,wMtx,vpMtx);
+        //Mat4Mult(wvpMtx,vpMtx,wMtx);
         
         glUniform3fv(gCamPos, 1, cam->camPosW);
         glUniform3fv(gDiffuseColor,1,curQuad->color);
