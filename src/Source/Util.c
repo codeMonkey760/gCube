@@ -126,6 +126,39 @@ void Mat4RotationAxis (float a[], float v[], float theta) {
     a[10] = z * z * nc + c;
 }
 
+void Mat4RotationQuaternion (float m[], float q[]) {
+    if (m == NULL || q == NULL) return;
+    
+    float x = q[0];
+    float y = q[1];
+    float z = q[2];
+    float w = q[3];
+    
+    float n = (x * x) + (y * y) + (z * z) + (w * w);
+    float s = (n == 0.0f) ? 0.0f : 2.0f / n;
+    float wx = s * w * x;
+    float wy = s * w * y;
+    float wz = s * w * z;
+    float xx = s * x * x;
+    float xy = s * x * y;
+    float xz = s * x * z;
+    float yy = s * y * y;
+    float yz = s * y * z;
+    float zz = s * z * z;
+    
+    Mat4Identity(m);
+    
+    m[0]  = 1.0f - (yy + zz);
+    m[1]  = xy - wz;
+    m[2]  = xz + wy;
+    m[4]  = xy + wz;
+    m[5]  = 1.0f - (xx + zz);
+    m[6]  = yz - wx;
+    m[8]  = xz - wy;
+    m[9]  = yz + wx;
+    m[10] = 1.0f - (xx + yy);
+}
+
 // Check this out when I get a chance
 void Mat4Transpose (float dst[16], float src[16]) {
     int i,j;

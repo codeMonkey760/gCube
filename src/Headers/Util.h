@@ -11,6 +11,7 @@ void Mat4RotationX(float a[], float theta);
 void Mat4RotationY(float a[], float theta);
 void Mat4RotationZ(float a[], float theta);
 void Mat4RotationAxis(float a[], float v[], float theta);
+void Mat4RotationQuaternion (float m[], float q[]);
 void Mat4Transpose(float dst[16], float src[16]);
 bool Mat4Inverse (float dst[16], float src[16]);
 void Mat4Vec4Mult(float m[], float v[], float r[]);
