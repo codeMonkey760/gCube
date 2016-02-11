@@ -213,4 +213,12 @@ void _RefreshViewMtx (Camera *cam) {
     cam->viewMtx[14] = Vec3Dot(negCamPosW,lookW);
 
     Vec3Copy(cam->camPosW,camPosW);
+    
+    // Test Code
+    //cam->camPosW[0] = 0.0f;
+    //cam->camPosW[1] = 0.0f;
+    //cam->camPosW[2] = 0.0f;
+    //Mat4Identity(cam->viewMtx);
+    //cam->viewMtx[12] = 0.0f;
+    //cam->viewMtx[14] = 0.0f;
 }

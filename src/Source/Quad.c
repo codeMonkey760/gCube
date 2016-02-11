@@ -54,6 +54,7 @@ void DrawQuadArray (Quad *array, int numQuads, Camera *cam) {
     ) return;
     
     Mat4Mult(vpMtx,cam->viewMtx,cam->projMtx);
+    //Mat4Mult(vpMtx, cam->projMtx, cam->viewMtx);
     
     glUseProgram(shader);
     
@@ -70,9 +71,12 @@ void DrawQuadArray (Quad *array, int numQuads, Camera *cam) {
         
         glUniform3fv(gCamPos, 1, cam->camPosW);
         glUniform3fv(gDiffuseColor,1,curQuad->color);
-        glUniformMatrix4fv(gWMtx, 1, GL_FALSE,wMtx);
-        glUniformMatrix4fv(gWITMtx, 1, GL_FALSE, witMtx);
-        glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,wvpMtx);
+        //glUniformMatrix4fv(gWMtx, 1, GL_FALSE,wMtx);
+        //glUniformMatrix4fv(gWITMtx, 1, GL_FALSE, witMtx);
+        //glUniformMatrix4fv(gWVPMtx,1,GL_FALSE,wvpMtx);
+        glUniformMatrix4fv(gWMtx, 1, GL_TRUE,wMtx);
+        glUniformMatrix4fv(gWITMtx, 1, GL_TRUE, witMtx);
+        glUniformMatrix4fv(gWVPMtx,1,GL_TRUE,wvpMtx);
         
         glEnableVertexAttribArray(inPosL);
         glEnableVertexAttribArray(inNormL);

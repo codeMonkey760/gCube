@@ -104,10 +104,15 @@ void initQuads (void) {
     quads[2].posW[0] = 5.0f;
     quads[2].color[2] = 1.0f;
     
+    
+    // had to hard code this initialization ... :(
+    // InitQuadArray might not be working properly
+    quads[3].posW[0] = 0.0f;
     quads[3].posW[1] = 5.0f;
     quads[3].color[0] = 1.0f;
     quads[3].color[2] = 1.0f;
     
+    quads[4].posW[0] = 0.0f;
     quads[4].posW[1] = -5.0f;
     quads[4].color[0] = 1.0f;
     quads[4].color[1] = 1.0f;
@@ -124,6 +129,7 @@ void updateQuads (float dt) {
         theta += 360.0f;
     
     quads[0].posW[0] = sin(theta) * 5.0f;
+    quads[0].posW[1] = cos(theta) * 5.0f;
 }
 
 void initWindow (void) {
@@ -155,7 +161,7 @@ void render (void) {
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawQuadArray(quads,1,&camera);
+    DrawQuadArray(quads,5,&camera);
 }
 
 void update (void) {
