@@ -1,0 +1,4 @@
+#ifndef _C_RUBE_CUBELETMODEL_H
+#define _C_RUBE_CUBELETMODEL_H
+
+#endif
