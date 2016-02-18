@@ -411,3 +411,54 @@ void Vec3Normalize (float v[3]) {
     v[1] /= len;
     v[2] /= len;
 }
+
+// found this at:
+// http://stackoverflow.com/questions/4436764/rotating-a-quaternion-on-1-axis
+void QuaternionFromAxisAngle(float x, float y, float z, float a, float out[4]) {
+    if (out == NULL) return;
+    
+    float fac = sin (a / 2.0f);
+    
+    out[0] = x * fac;
+    out[1] = y * fac;
+    out[2] = z * fac;
+    
+    out[3] = cos(a / 2.0f);
+    
+    QuaternionNormalize(out);
+}
+
+void QuaternionNormalize(float out[4]) {
+    if (out == NULL) return;
+    
+    float len = (out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]) + (out[3] * out[3]);
+    len = sqrt(len);
+    
+    out[0] /= len;
+    out[1] /= len;
+    out[2] /= len;
+    out[3] /= len;
+}
+
+/*
+ * http://www.cprogramming.com/tutorial/3d/quaternions.html
+ Let Q1 and Q2 be two quaternions, which are defined, respectively, as (w1, x1, y1, z1) and (w2, x2, y2, z2).
+(Q1 * Q2).x = (w1x2 + x1w2 + y1z2 - z1y2)
+(Q1 * Q2).y = (w1y2 - x1z2 + y1w2 + z1x2)
+(Q1 * Q2).z = (w1z2 + x1y2 - y1x2 + z1w2)
+(Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
+*/
+
+void QuaternionMult(float m[4], float n[4], float out[4]) {
+    if (m == NULL || n == NULL || out == NULL) return;
+    
+    float temp[4] = {0.0f};
+    temp[0] = (m[3] * n[0]) + (m[0] * n[3]) + (m[1] * n[2]) - (m[2] * n[1]);
+    temp[1] = (m[3] * n[1]) - (m[0] * n[2]) + (m[1] * n[3]) + (m[2] * n[0]);
+    temp[2] = (m[3] * n[2]) + (m[0] * n[1]) - (m[1] * n[0]) + (m[2] * n[3]);
+    temp[3] = (m[3] * n[3]) - (m[0] * n[0]) - (m[1] * n[1]) - (m[2] * n[2]);
+    
+    for (int i = 0; i < 4; ++i) {
+        out[i] = temp[i];
+    }
+}

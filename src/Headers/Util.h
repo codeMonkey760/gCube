@@ -24,5 +24,8 @@ float Vec3Dot(float a[], float b[]);
 
 void Vec3Normalize (float v[3]);
 void PixelsToPercent (float x, float y, float width, float height, float *px, float *py);
+void QuaternionFromAxisAngle (float x, float y, float z, float a, float out[4]);
+void QuaternionNormalize(float out[4]);
+void QuaternionMult(float m[4], float n[4], float out[4]);
 
 #endif
