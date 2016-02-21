@@ -41,7 +41,7 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         witMtx[16] = {0.0f},
         wvpMtx[16] = {0.0f},
         vpMtx[16] = {0.0f},
-        dColor = {1.0f,1.0f,1.0f,1.0f}
+        dColor[4] = {1.0f,1.0f,1.0f,1.0f}
     ;
     
     if (
@@ -69,7 +69,7 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         glEnableVertexAttribArray(inPosL);
         glEnableVertexAttribArray(inNormL);
         glEnableVertexAttribArray(inTexC);
-        glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO());
+        glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO(0));
         
         glVertexAttribPointer(inPosL, 3, GL_FLOAT, GL_FALSE, 32, 0);
         glVertexAttribPointer(inNormL, 3, GL_FLOAT, GL_FALSE, 32, 12);

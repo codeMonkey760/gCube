@@ -6,25 +6,25 @@
 
 #include "CubeletModel.h"
 
-#define FIXED_CUBELET_BINARY_SIZE 0
+#define FIXED_CUBELET_BINARY_SIZE 7153
 
-extern char * _binary_cubelet_bin_start;
-extern char * _binary_cubelet_bin_end;
+extern char * _binary_CubeletRes_bin_start;
+extern char * _binary_CubeletRes_bin_end;
 unsigned int cubeletBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
 
 void InitCubeletVBOs (void) {
     if (
-        _binary_cubelet_bin_start == NULL ||
-        _binary_cubelet_bin_end   == NULL ||
-        _binary_cubelet_bin_end - _binary_cubelet_bin_start != FIXED_CUBELET_BINARY_SIZE
+        _binary_CubeletRes_bin_start == NULL ||
+        _binary_CubeletRes_bin_end   == NULL ||
+        _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start != FIXED_CUBELET_BINARY_SIZE
     ) {
         fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
         exit(1);
     }
     
-    char *curPos = _binary_cubelet_bin_start;
+    char *curPos = _binary_CubeletRes_bin_start;
     int i = 0;
     
     if (_CheckBlobHeader(&curPos) != true) {
@@ -40,8 +40,9 @@ void InitCubeletVBOs (void) {
 }
 
 void DestroyCubeletVBOs (void) {
+    int i;
     glDeleteBuffers(7,vbos);
-    for (int i = 0; i < 7; ++i) {
+    for (i = 0; i < 7; ++i) {
         vbos[i] = -1;
     }
 }
@@ -66,4 +67,20 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
     (*curPos) += length;
     
     return;
+}
+
+bool _CheckBlobHeader (char **curPos) {
+    if (curPos == NULL || (*curPos) == NULL) return false;
+    
+    if (
+        (*curPos)[0] == 'S' &&
+        (*curPos)[1] == 'P' &&
+        (*curPos)[2] ==  0  &&
+        (*curPos)[3] ==  1  &&
+        (*curPos)[4] == 'o' &&
+        (*curPos)[5] == 'b' &&
+        (*curPos)[6] == 'j'
+    ) return true;
+    
+    return false;
 }

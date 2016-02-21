@@ -450,6 +450,7 @@ void QuaternionNormalize(float out[4]) {
 */
 
 void QuaternionMult(float m[4], float n[4], float out[4]) {
+    int i;
     if (m == NULL || n == NULL || out == NULL) return;
     
     float temp[4] = {0.0f};
@@ -458,7 +459,7 @@ void QuaternionMult(float m[4], float n[4], float out[4]) {
     temp[2] = (m[3] * n[2]) + (m[0] * n[1]) - (m[1] * n[0]) + (m[2] * n[3]);
     temp[3] = (m[3] * n[3]) - (m[0] * n[0]) - (m[1] * n[1]) - (m[2] * n[2]);
     
-    for (int i = 0; i < 4; ++i) {
+    for (i = 0; i < 4; ++i) {
         out[i] = temp[i];
     }
 }

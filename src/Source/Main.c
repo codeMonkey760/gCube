@@ -7,9 +7,9 @@
 #include <math.h>
 
 #include "Shader.h"
-#include "QuadModel.h"
+#include "CubeletModel.h"
 #include "Camera.h"
-#include "Quad.h"
+#include "Cubelet.h"
 
 void init (void);
 void render (void);
@@ -20,8 +20,8 @@ void finalize (void);
 GLFWwindow *window = NULL;
 Camera camera;
 int lastMousePos[2] = {-1};
-#define NUM_QUADS 5
-Quad quads[NUM_QUADS];
+#define NUM_CUBELETS 5
+Cubelet cubelets[NUM_CUBELETS];
 
 static void error_callback(int error, const char *desc) {
     fprintf(stderr, "ERROR! error: %d, %s",error,desc);
@@ -93,32 +93,23 @@ void init (void) {
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
 
-void initQuads (void) {
-    InitQuadArray(quads,NUM_QUADS);
+void initCubelets (void) {
+    InitCubeletArray(cubelets,NUM_CUBELETS);
     
-    quads[0].color[0] = 1.0f;
+    cubelets[1].posW[0] = -5.0f;
     
-    quads[1].posW[0] = -5.0f;
-    quads[1].color[1] = 1.0f;
-    
-    quads[2].posW[0] = 5.0f;
-    quads[2].color[2] = 1.0f;
-    
+    cubelets[2].posW[0] = 5.0f;
     
     // had to hard code this initialization ... :(
     // InitQuadArray might not be working properly
-    quads[3].posW[0] = 0.0f;
-    quads[3].posW[1] = 5.0f;
-    quads[3].color[0] = 1.0f;
-    quads[3].color[2] = 1.0f;
+    cubelets[3].posW[0] = 0.0f;
+    cubelets[3].posW[1] = 5.0f;
     
-    quads[4].posW[0] = 0.0f;
-    quads[4].posW[1] = -5.0f;
-    quads[4].color[0] = 1.0f;
-    quads[4].color[1] = 1.0f;
+    cubelets[4].posW[0] = 0.0f;
+    cubelets[4].posW[1] = -5.0f;
 }
 
-void updateQuads (float dt) {
+void updateCubelets (float dt) {
     static float theta = 0.0f;
     const static float rate = M_PI / 4.0f;
     
@@ -128,8 +119,8 @@ void updateQuads (float dt) {
     while (theta < 0.0f)
         theta += 360.0f;
     
-    quads[0].posW[0] = sin(theta) * 5.0f;
-    quads[0].posW[1] = cos(theta) * 5.0f;
+    cubelets[0].posW[0] = sin(theta) * 5.0f;
+    cubelets[0].posW[1] = cos(theta) * 5.0f;
 }
 
 void initWindow (void) {
@@ -161,7 +152,7 @@ void render (void) {
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawQuadArray(quads,5,&camera);
+    DrawCubeletArray(cubelets,5,&camera);
 }
 
 void update (void) {
@@ -175,7 +166,7 @@ void update (void) {
 
     timer(deltaTime);
     UpdateCamera(&camera, deltaTime);
-    updateQuads(deltaTime);
+    updateCubelets(deltaTime);
 }
 
 void timer (float dt) {
@@ -193,7 +184,7 @@ void timer (float dt) {
 
 void finalize (void) {
     fprintf(stdout,"Program end\n");
-    DestroyCubeVBO();
+    DestroyCubeletVBOs();
     DestroyShader();
     glfwTerminate();
 }
@@ -216,8 +207,8 @@ int main (int argc, char **argv) {
         finalize();
         return EXIT_FAILURE;
     }
-    InitCubeVBO();
-    initQuads();
+    InitCubeletVBOs();
+    initCubelets();
 
     while (glfwWindowShouldClose(window) == false) {
         update();
