@@ -32,23 +32,38 @@ void InitCubeletVBOs (void) {
         exit(1);
     }
     
+    glGenBuffers(7,vbos);
+    
     for (i = 0 ; i < 7; ++i) {
-        vbos[i] = _InitVBOFromBlob(&curPos);
+        _InitVBOFromBlob(vbos[i], &curPos);
     }
 }
 
 void DestroyCubeletVBOs (void) {
-    ;
+    glDeleteBuffers(7,vbos);
+    for (int i = 0; i < 7; ++i) {
+        vbos[i] = -1;
+    }
 }
 
 int GetCubeletVBO (int index) {
-    return -1;
+    if (index < 0 || index > 6) return -1;
+    
+    return vbos[index];
 }
 
-int _InitVBOFromBlob (char **curPos) {
-    if (curPos == NULL || (*curPos) == NULL) return -1;
+void _InitVBOFromBlob (int vbo, char **curPos) {
+    if (curPos == NULL || (*curPos) == NULL || vbo == -1)  return;
+
+    int length = (float) *(*curPos);
+    (*curPos) += 4;
+    length = length * 4;
     
+    glBindBuffer(GL_ARRAY_BUFFER,vbo);
+    glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER,0);
     
+    (*curPos) += length;
     
-    return -1;
+    return;
 }

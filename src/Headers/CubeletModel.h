@@ -4,7 +4,7 @@
 void InitCubeletVBOs (void);
 void DestroyCubeletVBOs (void);
 int GetCubeletVBO (int index);
-int _InitVBOFromBlob (char **curPos);
+void _InitVBOFromBlob (int vbo, char **curPos);
 bool _CheckBlobHeader (char **curPos);
 
 #endif
