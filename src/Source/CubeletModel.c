@@ -8,21 +8,21 @@
 
 #define FIXED_CUBELET_BINARY_SIZE 7153
 
-extern char * _binary_CubeletRes_bin_start;
-extern char * _binary_CubeletRes_bin_end;
+extern char _binary_CubeletRes_bin_start[];
+extern char _binary_CubeletRes_bin_end[];
 unsigned int cubeletBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
 
 void InitCubeletVBOs (void) {
-    if (
-        _binary_CubeletRes_bin_start == NULL ||
-        _binary_CubeletRes_bin_end   == NULL ||
-        _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start != FIXED_CUBELET_BINARY_SIZE
-    ) {
-        fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
-        exit(1);
-    }
+    //if (
+       // _binary_CubeletRes_bin_start == NULL ||
+       // _binary_CubeletRes_bin_end   == NULL ||
+        //_binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start != FIXED_CUBELET_BINARY_SIZE
+    //) {
+        //fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
+        //exit(1);
+    //}
     
     char *curPos = _binary_CubeletRes_bin_start;
     int i = 0;
@@ -56,7 +56,7 @@ int GetCubeletVBO (int index) {
 void _InitVBOFromBlob (int vbo, char **curPos) {
     if (curPos == NULL || (*curPos) == NULL || vbo == -1)  return;
 
-    int length = (float) *(*curPos);
+    int length = *( (int*) (*curPos));
     (*curPos) += 4;
     length = length * 4;
     
@@ -70,17 +70,25 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
 }
 
 bool _CheckBlobHeader (char **curPos) {
+    int length = -1;
     if (curPos == NULL || (*curPos) == NULL) return false;
     
     if (
-        (*curPos)[0] == 'S' &&
-        (*curPos)[1] == 'P' &&
-        (*curPos)[2] ==  0  &&
-        (*curPos)[3] ==  1  &&
-        (*curPos)[4] == 'o' &&
-        (*curPos)[5] == 'b' &&
-        (*curPos)[6] == 'j'
-    ) return true;
+        (*curPos)[0] != 'S' ||
+        (*curPos)[1] != 'P' ||
+        (*curPos)[2] !=  0  ||
+        (*curPos)[3] !=  1  ||
+        (*curPos)[4] != 'o' ||
+        (*curPos)[5] != 'b' ||
+        (*curPos)[6] != 'j'
+    ) return false;
     
-    return false;
+    (*curPos) += 7;
+    
+    length = (int) *(*curPos);
+    if (length != 7) return false;
+    
+    (*curPos) += 4;
+    
+    return true;
 }
