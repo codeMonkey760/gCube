@@ -15,14 +15,15 @@ unsigned int cubeletBlobSize = 0;
 static GLuint vbos[7] = {-1};
 
 void InitCubeletVBOs (void) {
-    //if (
-       // _binary_CubeletRes_bin_start == NULL ||
-       // _binary_CubeletRes_bin_end   == NULL ||
-        //_binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start != FIXED_CUBELET_BINARY_SIZE
-    //) {
-        //fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
-        //exit(1);
-    //}
+    cubeletBlobSize = _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start;
+    if (
+        _binary_CubeletRes_bin_start == NULL ||
+        _binary_CubeletRes_bin_end   == NULL ||
+        cubeletBlobSize != FIXED_CUBELET_BINARY_SIZE
+    ) {
+        fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
+        exit(1);
+    }
     
     char *curPos = _binary_CubeletRes_bin_start;
     int i = 0;
