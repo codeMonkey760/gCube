@@ -75,6 +75,10 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         glVertexAttribPointer(inNormL, 3, GL_FLOAT, GL_FALSE, 32, 12);
         glVertexAttribPointer(inTexC, 2, GL_FLOAT, GL_FALSE, 32, 24);
         
+        //can't figure why nothing is drawing ...
+        //... hmm, missing a draw call maybe, lmao ;)
+        glDrawArrays(GL_TRIANGLES, 0, 720);
+        
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDisableVertexAttribArray(inPosL);
         glDisableVertexAttribArray(inNormL);

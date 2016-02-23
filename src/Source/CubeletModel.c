@@ -59,7 +59,7 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
 
     int length = *( (int*) (*curPos));
     (*curPos) += 4;
-    length = length * 4;
+    length = length / 2;
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
@@ -86,7 +86,7 @@ bool _CheckBlobHeader (char **curPos) {
     
     (*curPos) += 7;
     
-    length = (int) *(*curPos);
+    length = *((int*) (*curPos));
     if (length != 7) return false;
     
     (*curPos) += 4;
