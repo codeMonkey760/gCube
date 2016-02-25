@@ -9,7 +9,11 @@ uniform vec3 gCamPos;
 
 void main (void) {
     vec3 toCam = normalize(posW - gCamPos);
-    float diffuse = max(dot(toCam,normW),0.0f);
+    vec3 normW2 = normalize(normW);
+    //float diffuse = max(dot(toCam,normW2),0.0f);
+    float diffuse = min(dot(toCam,normW2), 0.0f);
+    diffuse *= -1.0f;
 
-    gl_FragColor = vec4(gDiffuseColor * diffuse,1.0f);
+    gl_FragColor = vec4((gDiffuseColor * diffuse),1.0f);
+    //gl_FragColor = vec4((gDiffuseColor * (1.0f - (diffuse * .01f))),1.0f);
 }

@@ -77,7 +77,7 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         
         //can't figure why nothing is drawing ...
         //... hmm, missing a draw call maybe, lmao ;)
-        glDrawArrays(GL_TRIANGLES, 0, 720);
+        glDrawArrays(GL_TRIANGLES, 0, 180);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDisableVertexAttribArray(inPosL);

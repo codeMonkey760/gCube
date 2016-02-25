@@ -81,7 +81,8 @@ void init (void) {
     glfwSwapInterval(1);
     glClearColor(0.2f,0.2f,0.8f,1.0f);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glEnable(GL_CULL_FACE);
     fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
     fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));

@@ -55,11 +55,37 @@ int GetCubeletVBO (int index) {
 }
 
 void _InitVBOFromBlob (int vbo, char **curPos) {
+    int i;
+    float *fCurPos = NULL;
     if (curPos == NULL || (*curPos) == NULL || vbo == -1)  return;
 
     int length = *( (int*) (*curPos));
     (*curPos) += 4;
     length = length / 2;
+    
+    /*
+     * Test Code ....
+     * I thought there might be corruption
+     * so I printed this structure 
+    fCurPos = (float*) (*curPos);
+    printf("Block length: %d\n", length);
+    for (i = 0; i < length / 4; i = i + 8) {
+        printf(
+            "pos: %.2f %.2f %.2f norm: %.2f %.2f %.2f tex: %.2f %.2f\n",
+            fCurPos[i+0],
+            fCurPos[i+1],
+            fCurPos[i+2],
+
+            fCurPos[i+3],
+            fCurPos[i+4],
+            fCurPos[i+5],
+
+            fCurPos[i+6],
+            fCurPos[i+7]
+        );
+    }
+    printf("\n");
+    */
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
