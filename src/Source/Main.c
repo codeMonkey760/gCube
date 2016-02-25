@@ -11,11 +11,23 @@
 #include "Camera.h"
 #include "Cubelet.h"
 
+// glfw call backs
+static void error_callback(int error, const char *desc);
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods);
+static void mouse_scroll_callback (GLFWwindow *window, double x, double y);
+static void mouse_position_callback (GLFWwindow *window, double x, double y);
+
+
 void init (void);
+void initCubelets (void);
+void updateCubelets (float dt);
+void initWindow (void);
 void render (void);
 void update (void);
 void timer (float dt);
 void finalize (void);
+int main (int argc, char **argv);
 
 GLFWwindow *window = NULL;
 Camera camera;
@@ -23,10 +35,16 @@ int lastMousePos[2] = {-1};
 #define NUM_CUBELETS 5
 Cubelet cubelets[NUM_CUBELETS];
 
+/*
+ error call back ... called by glfw when an error occurs
+ */
 static void error_callback(int error, const char *desc) {
     fprintf(stderr, "ERROR! error: %d, %s",error,desc);
 }
 
+/*
+ keyboard call back ... called by glfw when something happens on the keyboard
+ */
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (action == GLFW_PRESS) {
         fprintf(stdout, "Key press: %d\n", key);
@@ -36,6 +54,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     }
 }
 
+/*
+ mouse button call back ... called by glfw when something happens with the mouse buttons
+ */
 static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {  
     if (button == 1) {
         camera.tracking = action == GLFW_PRESS;
@@ -46,12 +67,18 @@ static void mouse_button_callback (GLFWwindow *window, int button, int action, i
     }
 }
 
+/*
+ * mouse scroll call back ... called by glfw when something happens with the mouse scroll wheel
+ */
 static void mouse_scroll_callback (GLFWwindow *window, double x, double y) {
     static double lastYOffset = 0.0;
     float deltaZoom = y - ((float) lastYOffset);
     Zoom(&camera,deltaZoom);
 }
 
+/*
+ mouse position callback ... called by glfw when the mouse moves
+ */
 static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     int deltaPos[2] = {0};
     if (camera.tracking == false) return;
@@ -69,6 +96,10 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     
     OnMouseMove(&camera,deltaPos);
 }
+
+/*
+ Performs general program specific initialization
+ */
 
 void init (void) {
     int pos[2] = {45,0};
@@ -94,6 +125,9 @@ void init (void) {
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
 
+/*
+ Initializes the data structure containing engine objects
+ */
 void initCubelets (void) {
     InitCubeletArray(cubelets,NUM_CUBELETS);
     
@@ -110,6 +144,9 @@ void initCubelets (void) {
     cubelets[4].posW[1] = -5.0f;
 }
 
+/*
+ * Updates engine objects with respect to time
+ */
 void updateCubelets (float dt) {
     static float theta = 0.0f;
     const static float rate = M_PI / 4.0f;
@@ -124,6 +161,9 @@ void updateCubelets (float dt) {
     cubelets[0].posW[1] = cos(theta) * 5.0f;
 }
 
+/*
+ Performs initialization specific to the glfw window
+ */
 void initWindow (void) {
     const GLFWvidmode *vidmode = NULL;
     int screenW, screenH;
@@ -149,6 +189,9 @@ void initWindow (void) {
     }
 }
 
+/*
+ Renders frames
+ */
 void render (void) {
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -156,6 +199,9 @@ void render (void) {
     DrawCubeletArray(cubelets,5,&camera);
 }
 
+/*
+ Perform general engine wide update with respect to time
+ */
 void update (void) {
     static double prevTimeStamp = 0.0f;
     double nextTimeStamp = 0.0f;
@@ -170,6 +216,9 @@ void update (void) {
     updateCubelets(deltaTime);
 }
 
+/*
+ updates the engine's built in timer
+ */
 void timer (float dt) {
     static float elapsed = 0.0f;
     static int frames = 0;
@@ -183,6 +232,9 @@ void timer (float dt) {
     }
 }
 
+/*
+ Performs general engine wide cleanup during program destruction
+ */
 void finalize (void) {
     fprintf(stdout,"Program end\n");
     DestroyCubeletVBOs();
@@ -190,6 +242,9 @@ void finalize (void) {
     glfwTerminate();
 }
 
+/*
+ Main
+ */
 int main (int argc, char **argv) {
     glfwSetErrorCallback(error_callback);
 
