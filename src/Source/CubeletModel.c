@@ -7,10 +7,15 @@
 #include "CubeletModel.h"
 
 #define FIXED_CUBELET_BINARY_SIZE 7153
+#define FIXED_IMAGES_BINARY_SIZE 110714
 
 extern char _binary_CubeletRes_bin_start[];
 extern char _binary_CubeletRes_bin_end[];
 unsigned int cubeletBlobSize = 0;
+
+extern char _binary_images_bin_start[];
+extern char _binary_images_bin_end[];
+unsigned int imagesBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
 
@@ -118,4 +123,47 @@ bool _CheckBlobHeader (char **curPos) {
     (*curPos) += 4;
     
     return true;
+}
+
+void InitTextures (void) {
+    imagesBlobSize = _binary_images_bin_end - _binary_images_bin_start;
+    if (
+        _binary_images_bin_start == NULL ||
+        _binary_images_bin_end == NULL ||
+        imagesBlobSize != FIXED_IMAGES_BINARY_SIZE
+    ) {
+        fprintf(stderr, "A serious linking error has occured. Please ensure images.o was properly linked.");
+        exit(1);
+    }
+    
+    char *curPos = _binary_images_bin_start;
+    if (_CheckTextureHeader(&curPos) != true) {
+        fprintf(stderr, "Texture blob header does not match. Please ensure that images.o was linked correctly.");
+        exit(1);
+    }
+}
+
+void DestroyTextures (void) {
+    ;
+}
+
+bool _CheckTextureHeader (char **curPos) {
+    int length = -1;
+    if (curPos == NULL || (*curPos) == NULL) return false;
+    
+    if (
+        (*curPos)[0] != 'S' ||
+        (*curPos)[1] != 'P' ||
+        (*curPos)[2] != 0   ||
+        (*curPos)[3] != 1   ||
+        (*curPos)[4] != 'i'   ||
+        (*curPos)[5] != 'm'   ||
+        (*curPos)[6] != 'g'
+                
+    ) return false;
+    
+    (*curPos) += 7;
+    length = *( (int*) (*curPos));
+    
+    return length == 5;
 }

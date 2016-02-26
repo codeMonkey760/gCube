@@ -18,7 +18,6 @@ static void mouse_button_callback (GLFWwindow *window, int button, int action, i
 static void mouse_scroll_callback (GLFWwindow *window, double x, double y);
 static void mouse_position_callback (GLFWwindow *window, double x, double y);
 
-
 void init (void);
 void initCubelets (void);
 void updateCubelets (float dt);
@@ -239,6 +238,7 @@ void finalize (void) {
     fprintf(stdout,"Program end\n");
     DestroyCubeletVBOs();
     DestroyShader();
+    DestroyTextures();
     glfwTerminate();
 }
 
@@ -265,6 +265,7 @@ int main (int argc, char **argv) {
     }
     InitCubeletVBOs();
     initCubelets();
+    InitTextures();
 
     while (glfwWindowShouldClose(window) == false) {
         update();

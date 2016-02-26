@@ -14,6 +14,8 @@ void main (void) {
     float diffuse = min(dot(toCam,normW2), 0.0f);
     diffuse *= -1.0f;
 
+    diffuse = (diffuse * 0.7f) + 0.3f;
+
     gl_FragColor = vec4((gDiffuseColor * diffuse),1.0f);
     //gl_FragColor = vec4((gDiffuseColor * (1.0f - (diffuse * .01f))),1.0f);
 }
