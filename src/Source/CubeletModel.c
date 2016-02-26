@@ -18,6 +18,8 @@ extern char _binary_images_bin_end[];
 unsigned int imagesBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
+static GLuint textures[5] = {-1};
+static char textureNames[5][64] = {0};
 
 void InitCubeletVBOs (void) {
     cubeletBlobSize = _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start;
@@ -61,36 +63,11 @@ int GetCubeletVBO (int index) {
 
 void _InitVBOFromBlob (int vbo, char **curPos) {
     int i;
-    float *fCurPos = NULL;
     if (curPos == NULL || (*curPos) == NULL || vbo == -1)  return;
 
     int length = *( (int*) (*curPos));
     (*curPos) += 4;
     length = length / 2;
-    
-    /*
-     * Test Code ....
-     * I thought there might be corruption
-     * so I printed this structure 
-    fCurPos = (float*) (*curPos);
-    printf("Block length: %d\n", length);
-    for (i = 0; i < length / 4; i = i + 8) {
-        printf(
-            "pos: %.2f %.2f %.2f norm: %.2f %.2f %.2f tex: %.2f %.2f\n",
-            fCurPos[i+0],
-            fCurPos[i+1],
-            fCurPos[i+2],
-
-            fCurPos[i+3],
-            fCurPos[i+4],
-            fCurPos[i+5],
-
-            fCurPos[i+6],
-            fCurPos[i+7]
-        );
-    }
-    printf("\n");
-    */
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
@@ -126,6 +103,7 @@ bool _CheckBlobHeader (char **curPos) {
 }
 
 void InitTextures (void) {
+    int i;
     imagesBlobSize = _binary_images_bin_end - _binary_images_bin_start;
     if (
         _binary_images_bin_start == NULL ||
@@ -141,10 +119,19 @@ void InitTextures (void) {
         fprintf(stderr, "Texture blob header does not match. Please ensure that images.o was linked correctly.");
         exit(1);
     }
+    
+    glGenTextures(5,textures);
+    for (i = 0; i < 5; ++i) {
+        _InitTextureFromBlob(i,textures[i],&curPos);
+    }
 }
 
 void DestroyTextures (void) {
-    ;
+    int i;
+    glDeleteTextures(5, textures);
+    for (i = 0; i < 5; ++i) {
+        textures[i] = -1;
+    }
 }
 
 bool _CheckTextureHeader (char **curPos) {
@@ -164,6 +151,75 @@ bool _CheckTextureHeader (char **curPos) {
     
     (*curPos) += 7;
     length = *( (int*) (*curPos));
+    (*curPos) += 4;
     
     return length == 5;
+}
+
+void _InitTextureFromBlob (int index, int buffer, char **curPos) {
+    if (buffer == -1 || curPos == NULL || (*curPos) == NULL) return;
+    
+    char imgName[64] = {0};
+    int width = -1;
+    int height = -1;
+    unsigned int bands = 0x00000000;
+    int stride = 0;
+    int i = 0;
+    int sizeInBytes = 0;
+    GLenum type = -1;
+    
+    strcpy(imgName, (*curPos));
+    (*curPos) += strlen(imgName) + 1;
+    width = *( (int*) (*curPos));
+    (*curPos) += 4;
+    height = *((int*) (*curPos));
+    (*curPos) += 4;
+    bands = *((int*) (*curPos));
+    (*curPos) += 4;
+    
+    if (bands == 0x00010101) {
+        type = GL_RGB;
+        stride = 3;
+    } else if (bands == 0x01010101) {
+        type = GL_RGBA;
+        stride = 4;
+    } else {
+        fprintf(stderr, "WARNING! Unsupported image type detected! Please ensure that images.bin was linked correctly!\n");
+        exit(1);
+    }
+    
+    
+    sizeInBytes = width * height * stride;
+    glBindTexture(GL_TEXTURE_2D, buffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    
+    // investigate this ... never seen it before ... new feature?
+    //glGenerateMipmap(GL_TEXTURE_2D);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, type, width, height, 0, GL_UNSIGNED_BYTE, type, (*curPos));
+    
+    (*curPos) += sizeInBytes;
+    
+    strcpy(textureNames[index],imgName);
+}
+
+int GetTextureByIndex(int index) {
+    if (index < 0 || index > 5) return -1;
+    
+    return textures[index];
+}
+
+int GetTextureByName(char *name) {
+    int index = -1;
+    int i;
+    
+    for (i = 0; i < 5; ++i) {
+        if (strcmp(name,textureNames[i]) == 0) {
+            return GetTextureByIndex(i);
+        }
+    }
 }

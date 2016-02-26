@@ -10,6 +10,8 @@ bool _CheckBlobHeader (char **curPos);
 void InitTextures (void);
 void DestroyTextures (void);
 bool _CheckTextureHeader (char **curPos);
-void _InitTextureFromBlob (char **curPos);
+void _InitTextureFromBlob (int index, int buffer, char **curPos);
+int GetTextureByIndex(int index);
+int GetTextureByName (char *name);
 
 #endif

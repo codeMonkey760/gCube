@@ -266,6 +266,14 @@ int main (int argc, char **argv) {
     InitCubeletVBOs();
     initCubelets();
     InitTextures();
+    
+    /* TEST CODE */
+    printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));
+    printf("blender.png was mapped to: %d\n",GetTextureByName("blender.png"));
+    printf("rot.png was mapped to: %d\n",GetTextureByName("rot.png"));
+    printf("invert.png was mapped to: %d\n",GetTextureByName("invert.png"));
+    printf("Frame.png was mapped to: %d\n",GetTextureByName("Frame.png"));
+    /* END TEST CODE */
 
     while (glfwWindowShouldClose(window) == false) {
         update();
