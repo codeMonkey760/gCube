@@ -74,6 +74,7 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
     (*curPos) += 4;
     length = length / 2;
     
+    /*
     printf("Length of current block: %d bytes %d floats %d verts\n", length, length / 4, length / 32);
     curPosF = (float*) (*curPos);
     for (i = 0; i < length / 4; i+=8) {
@@ -85,6 +86,7 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
         );
     }
     printf("\n");
+    */
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);

@@ -10,6 +10,7 @@
 #include "CubeletModel.h"
 #include "Camera.h"
 #include "Cubelet.h"
+#include "Cube.h"
 
 // glfw call backs
 static void error_callback(int error, const char *desc);
@@ -31,8 +32,7 @@ int main (int argc, char **argv);
 GLFWwindow *window = NULL;
 Camera camera;
 int lastMousePos[2] = {-1};
-#define NUM_CUBELETS 5
-Cubelet cubelets[NUM_CUBELETS];
+Cube cube;
 
 /*
  error call back ... called by glfw when an error occurs
@@ -125,51 +125,6 @@ void init (void) {
 }
 
 /*
- Initializes the data structure containing engine objects
- */
-void initCubelets (void) {
-    int i;
-    InitCubeletArray(cubelets,NUM_CUBELETS);
-    
-    for (i = 0; i < 6; ++i) {
-        cubelets[0].stickers[i] = true;
-    }
-    
-    cubelets[1].posW[0] = -5.0f;
-    cubelets[1].stickers[STICKER_NEG_X] = true;
-    
-    cubelets[2].posW[0] = 5.0f;
-    cubelets[2].stickers[STICKER_POS_X] = true;
-    
-    // had to hard code this initialization ... :(
-    // InitQuadArray might not be working properly
-    cubelets[3].posW[0] = 0.0f;
-    cubelets[3].posW[1] = 5.0f;
-    cubelets[3].stickers[STICKER_POS_Y] = true;
-    
-    cubelets[4].posW[0] = 0.0f;
-    cubelets[4].posW[1] = -5.0f;
-    cubelets[4].stickers[STICKER_NEG_Y] = true;
-}
-
-/*
- * Updates engine objects with respect to time
- */
-void updateCubelets (float dt) {
-    static float theta = 0.0f;
-    const static float rate = M_PI / 4.0f;
-    
-    theta += (dt * rate);
-    while (theta >= 360.0f)
-        theta -= 360.0f;
-    while (theta < 0.0f)
-        theta += 360.0f;
-    
-    cubelets[0].posW[0] = sin(theta) * 3.0f;
-    cubelets[0].posW[1] = cos(theta) * 3.0f;
-}
-
-/*
  Performs initialization specific to the glfw window
  */
 void initWindow (void) {
@@ -204,7 +159,7 @@ void render (void) {
     glViewport(0,0,640,480);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawCubeletArray(cubelets,5,&camera);
+    RenderCube(&cube,&camera);
 }
 
 /*
@@ -221,7 +176,7 @@ void update (void) {
 
     timer(deltaTime);
     UpdateCamera(&camera, deltaTime);
-    //updateCubelets(deltaTime);
+    UpdateCube(&cube,deltaTime);
 }
 
 /*
@@ -273,8 +228,8 @@ int main (int argc, char **argv) {
         return EXIT_FAILURE;
     }
     InitCubeletVBOs();
-    initCubelets();
     InitTextures();
+    InitCube(&cube);
     
     /* TEST CODE */ /*
     printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));
