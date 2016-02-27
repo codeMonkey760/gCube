@@ -21,6 +21,8 @@ static GLuint vbos[7] = {-1};
 static GLuint textures[5] = {-1};
 static char textureNames[5][64] = {0};
 
+static float diffuseColors[7][3] = {0};
+
 void InitCubeletVBOs (void) {
     cubeletBlobSize = _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start;
     if (
@@ -45,6 +47,8 @@ void InitCubeletVBOs (void) {
     for (i = 0 ; i < 7; ++i) {
         _InitVBOFromBlob(vbos[i], &curPos);
     }
+    
+    _InitMaterialsFromBlob(&curPos);
 }
 
 void DestroyCubeletVBOs (void) {
@@ -113,6 +117,23 @@ bool _CheckBlobHeader (char **curPos) {
     (*curPos) += 4;
     
     return true;
+}
+
+void _InitMaterialsFromBlob (char **curPos) {
+    int i;
+    int indexArray[7] = {2,1,5,6,4,0,3};
+    for (i = 0; i < 7; ++i) {
+        while ( *(*curPos) != 0) (*curPos)++;
+        (*curPos)++;
+        while ( *(*curPos) != 0) (*curPos)++;
+        (*curPos)++;
+        
+        diffuseColors[indexArray[i]][0] = ((float*) (*curPos))[0];
+        diffuseColors[indexArray[i]][1] = ((float*) (*curPos))[1];
+        diffuseColors[indexArray[i]][2] = ((float*) (*curPos))[2];
+        
+        (*curPos) += 12;
+    }
 }
 
 void InitTextures (void) {
@@ -236,21 +257,11 @@ int GetTextureByName(char *name) {
     }
 }
 
-void GetStickerColor(sticker sticker_id, float dst[3]) {
-    if (dst == NULL) return;
-    dst[0] = 0.0f;
-    dst[1] = 0.0f;
-    dst[2] = 0.0f;
+void GetDiffuseColor(sticker sticker_id, float dst[3]) {
+    int i;
+    if (sticker_id < 0 || sticker_id > 6 || dst == NULL) return;
     
-    if (sticker_id == STICKER_POS_X || sticker_id == STICKER_NEG_X) {
-        dst[0] = 1.0f;
-    } else if (sticker_id == STICKER_POS_Y || sticker_id == STICKER_NEG_Y) {
-        dst[1] = 1.0f;
-    } else if (sticker_id == STICKER_POS_Z || sticker_id == STICKER_NEG_Z) {
-        dst[2] = 1.0f;
-    } else {
-        dst[0] = 1.0f;
-        dst[1] = 1.0f;
-        dst[2] = 1.0f;
+    for (i = 0; i < 3; ++i) {
+        dst[i] = diffuseColors[sticker_id][i];
     }
 }

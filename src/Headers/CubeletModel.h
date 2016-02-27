@@ -28,6 +28,7 @@ void DestroyCubeletVBOs (void);
 int GetCubeletVBO (int index);
 void _InitVBOFromBlob (int vbo, char **curPos);
 bool _CheckBlobHeader (char **curPos);
+void _InitMaterialsFromBlob (char **curPos);
 
 void InitTextures (void);
 void DestroyTextures (void);
@@ -36,6 +37,6 @@ void _InitTextureFromBlob (int index, int buffer, char **curPos);
 int GetTextureByIndex(int index);
 int GetTextureByName (char *name);
 
-void GetStickerColor(sticker sticker_id, float dst[3]);
+void GetDiffuseColor(sticker sticker_id, float dst[3]);
 
 #endif

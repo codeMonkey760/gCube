@@ -72,7 +72,7 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         glUniformMatrix4fv(gWITMtx, 1, GL_TRUE, witMtx);
         glUniformMatrix4fv(gWVPMtx, 1, GL_TRUE, wvpMtx);
         glUniformMatrix3fv(gTexMtx, 1, GL_TRUE, texMtx);
-        GetStickerColor(7,dColor);
+        GetDiffuseColor(6,dColor);
         glUniform3fv(gDiffuseColor,1, dColor);
         
         glEnableVertexAttribArray(inPosL);
@@ -95,7 +95,7 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         glUniform1i(gTexture,0);
         for (j = 0; j < 6; ++j) {
             if (curCubelet->stickers[j] == true) {
-                GetStickerColor(j,dColor);
+                GetDiffuseColor(j,dColor);
                 glUniform3fv(gDiffuseColor,1, dColor);
                 glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO(j+1));
                 glVertexAttribPointer(inPosL, 3, GL_FLOAT, GL_FALSE, 32, 0);

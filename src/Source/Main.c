@@ -131,7 +131,9 @@ void initCubelets (void) {
     int i;
     InitCubeletArray(cubelets,NUM_CUBELETS);
     
-    cubelets[0].stickers[STICKER_NEG_Z] = true;
+    for (i = 0; i < 6; ++i) {
+        cubelets[0].stickers[i] = true;
+    }
     
     cubelets[1].posW[0] = -5.0f;
     cubelets[1].stickers[STICKER_NEG_X] = true;
