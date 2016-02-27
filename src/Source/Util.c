@@ -412,6 +412,47 @@ void Vec3Normalize (float v[3]) {
     v[2] /= len;
 }
 
+void Vec3Cross (float u[], float v[], float out[]) {
+    if (u == NULL || v == NULL || out == NULL) return;
+    float temp[3] = {0.0f};
+    int i;
+    
+    temp[0] = (u[1] * v[2]) - (u[2] * v[1]);
+    temp[1] = (u[2] * v[0]) - (u[0] * v[2]);
+    temp[2] = (u[0] * v[1]) - (u[1] * v[0]);
+    
+    for (i = 0; i < 3; ++i) {
+        out[i] = temp[i];
+    }
+}
+
+void Vec3Scalar (float u[3], float s, float out[3]) {
+    if (u == NULL || out == NULL) return;
+    int i;
+    
+    for (i = 0; i < 3; ++i) {
+        out[i] = u[i] * s;
+    }
+}
+
+void QuaternionVec3Rotation (float v[3], float q[4], float out[3]) {
+    if (v == NULL || q == NULL || out == NULL) return;
+    
+    float temp[3] = {0.0f};
+    float temp2[3] = {0.0f};
+    float temp3[3] = {0.0f};
+    float u[3] = {0.0f};
+    int i;
+    Vec3Scalar(q,(2.0f * Vec3Dot(q,v)),temp);
+    Vec3Scalar(v,((q[3] * q[3]) - Vec3Dot(q,q)),temp2);
+    Vec3Cross(q,v,temp3);
+    Vec3Scalar(temp3,2.0f * q[3], temp3);
+    
+    for (i = 0; i < 3; ++i) {
+        out[i] = temp[i] + temp2[i] + temp3[i];
+    }
+}
+
 // found this at:
 // http://stackoverflow.com/questions/4436764/rotating-a-quaternion-on-1-axis
 void QuaternionFromAxisAngle(float x, float y, float z, float a, float out[4]) {

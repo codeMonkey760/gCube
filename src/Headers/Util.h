@@ -21,9 +21,11 @@ float degreesToRadians (float d);
 float radiansToDegrees (float r);
 void Vec3Copy(float *dst, float *src);
 float Vec3Dot(float a[], float b[]);
-
+void Vec3Cross(float u[3], float v[3], float out[3]);
+void Vec3Scalar (float u[3], float s, float out[3]);
 void Vec3Normalize (float v[3]);
 void PixelsToPercent (float x, float y, float width, float height, float *px, float *py);
+void QuaternionVec3Rotation (float v[3], float q[4], float out[3]);
 void QuaternionFromAxisAngle (float x, float y, float z, float a, float out[4]);
 void QuaternionNormalize(float out[4]);
 void QuaternionMult(float m[4], float n[4], float out[4]);

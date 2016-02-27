@@ -40,6 +40,77 @@ void RenderCube (Cube *cube, Camera *cam) {
     DrawCubeletArray(cube->cubelets, NUM_CUBELETS, cam);
 }
 
+void InitNewSliceAnimation (
+    SliceAnimation **sa,
+    float            newPivotPoint[3],
+    float            newPivotAxis [3],
+    float            initialTheta,
+    float            newRadiansPerSecond,
+    Cubelet *cubeletsToAnimate,
+    int numCubelets
+) {
+    SliceAnimation *curSA = NULL;
+    int i = 0;
+    
+    if (
+        sa                == NULL ||
+        (*sa)             != NULL ||
+        newPivotPoint     == NULL ||
+        newPivotAxis      == NULL ||
+        cubeletsToAnimate == NULL ||
+        numCubelets        < 0    ||
+        numCubelets        > 26
+    ) return;
+    
+    curSA = calloc(1,sizeof(SliceAnimation));
+    (*sa) = curSA;
+    
+    Vec3Copy(curSA->pivotPoint, newPivotPoint);
+    Vec3Copy(curSA->pivotAxis, newPivotAxis);
+    curSA->thetaRemaining = initialTheta;
+    curSA->cubelets = calloc(numCubelets,sizeof(Cubelet*));
+    curSA->radiansPerSecond = newRadiansPerSecond;
+    curSA->numCubelets = numCubelets;
+    
+    for (i = 0; i < numCubelets; ++i) {
+        curSA->cubelets[i] = cubeletsToAnimate[i];
+    }
+}
+
+bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
+    if (sa == NULL) return;
+    
+    bool result = false;
+    float deltaTheta = sa->radiansPerSecond * dt;
+    float q[4] = {0.0f};
+    int i;
+    
+    if (deltaTheta > sa->thetaRemaining) {
+        deltaTheta = sa->thetaRemaining;
+        sa->thetaRemaining = 0.0f;
+        result = true;
+    } else {
+        sa->thetaRemaining -= deltaTheta;
+    }
+    
+    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[3], deltaTheta, q);
+    for (i = 0; i < sa->numCubelets; ++i) {
+        QuaternionVec3Rotation(sa->cubelets[i].posW,q,sa->cubelets[i].posW);
+        QuaternionMult(sa->cubelets[i].rotation,q,sa->cubelets[i].rotation);
+    }
+    
+    return result;
+}
+
+void DestroySliceAnimation (SliceAnimation *sa) {
+    if (sa == NULL) return;
+    
+    free(sa->cubelets);
+    sa->cubelets = NULL;
+    free(sa);
+    sa = NULL;
+}
+
 void _PositionCubelets (Cube *cube) {
     int i,x,y,z,curCubelet = 0;
     float offset = 2.2f;
