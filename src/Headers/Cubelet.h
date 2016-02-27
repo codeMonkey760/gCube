@@ -6,6 +6,8 @@ typedef struct {
     float rotation[4]; // rotation internally represented by a quaternion
     float scale[3];
     
+    bool stickers[6];
+    
 } Cubelet;
 
 void InitCubeletArray(Cubelet *array, int numCubelets);

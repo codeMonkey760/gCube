@@ -63,11 +63,24 @@ int GetCubeletVBO (int index) {
 
 void _InitVBOFromBlob (int vbo, char **curPos) {
     int i;
+    float *curPosF = NULL;
     if (curPos == NULL || (*curPos) == NULL || vbo == -1)  return;
 
     int length = *( (int*) (*curPos));
     (*curPos) += 4;
     length = length / 2;
+    
+    printf("Length of current block: %d bytes %d floats %d verts\n", length, length / 4, length / 32);
+    curPosF = (float*) (*curPos);
+    for (i = 0; i < length / 4; i+=8) {
+        printf(
+            "Pos: %.2f %.2f %.2f Norm: %.2f %.2f %.2f Tex: %.2f %.2f\n",
+            curPosF[i+0], curPosF[i+1], curPosF[i+2],
+            curPosF[i+3], curPosF[i+4], curPosF[i+5],
+            curPosF[i+6], curPosF[i+7]
+        );
+    }
+    printf("\n");
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
@@ -188,7 +201,6 @@ void _InitTextureFromBlob (int index, int buffer, char **curPos) {
         exit(1);
     }
     
-    
     sizeInBytes = width * height * stride;
     glBindTexture(GL_TEXTURE_2D, buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -200,7 +212,7 @@ void _InitTextureFromBlob (int index, int buffer, char **curPos) {
     // investigate this ... never seen it before ... new feature?
     //glGenerateMipmap(GL_TEXTURE_2D);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, type, width, height, 0, GL_UNSIGNED_BYTE, type, (*curPos));
+    glTexImage2D(GL_TEXTURE_2D, 0, type, width, height, 0, type, GL_UNSIGNED_BYTE, (*curPos));
     
     (*curPos) += sizeInBytes;
     
@@ -221,5 +233,24 @@ int GetTextureByName(char *name) {
         if (strcmp(name,textureNames[i]) == 0) {
             return GetTextureByIndex(i);
         }
+    }
+}
+
+void GetStickerColor(sticker sticker_id, float dst[3]) {
+    if (dst == NULL) return;
+    dst[0] = 0.0f;
+    dst[1] = 0.0f;
+    dst[2] = 0.0f;
+    
+    if (sticker_id == STICKER_POS_X || sticker_id == STICKER_NEG_X) {
+        dst[0] = 1.0f;
+    } else if (sticker_id == STICKER_POS_Y || sticker_id == STICKER_NEG_Y) {
+        dst[1] = 1.0f;
+    } else if (sticker_id == STICKER_POS_Z || sticker_id == STICKER_NEG_Z) {
+        dst[2] = 1.0f;
+    } else {
+        dst[0] = 1.0f;
+        dst[1] = 1.0f;
+        dst[2] = 1.0f;
     }
 }

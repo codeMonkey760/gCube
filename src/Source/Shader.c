@@ -18,8 +18,10 @@ int inTexC = INVALID_SHADER_ID;
 int gWMtx = INVALID_SHADER_ID;
 int gWITMtx = INVALID_SHADER_ID;
 int gWVPMtx = INVALID_SHADER_ID;
+int gTexMtx = INVALID_SHADER_ID;
 int gDiffuseColor = INVALID_SHADER_ID;
 int gCamPos = INVALID_SHADER_ID;
+int gTexture = INVALID_SHADER_ID;
 
 char *vsSrcName = "src/Resources/VS.shader";
 char *fsSrcName = "src/Resources/FS.shader";
@@ -69,8 +71,10 @@ int InitShader (void) {
     gWMtx = glGetUniformLocation(shader, "gWMtx");
     gWITMtx = glGetUniformLocation(shader, "gWITMtx");
     gWVPMtx = glGetUniformLocation(shader,"gWVPMtx");
+    gTexMtx = glGetUniformLocation(shader, "gTexMtx");
     gDiffuseColor = glGetUniformLocation(shader, "gDiffuseColor");
     gCamPos = glGetUniformLocation(shader, "gCamPos");
+    gTexture = glGetUniformLocation(shader, "gTexture");
 
     glDetachShader(shader,vs);
     glDetachShader(shader,fs);
@@ -82,8 +86,10 @@ int InitShader (void) {
         gWMtx == INVALID_SHADER_ID ||
         gWITMtx == INVALID_SHADER_ID ||
         gWVPMtx == INVALID_SHADER_ID ||
+        gTexMtx == INVALID_SHADER_ID ||
         gDiffuseColor == INVALID_SHADER_ID || 
-        gCamPos == INVALID_SHADER_ID
+        gCamPos == INVALID_SHADER_ID ||
+        gTexture == INVALID_SHADER_ID
     ) {
             fprintf(stderr, "Bad uniform or attribute location!\n");
             return GL_FALSE;

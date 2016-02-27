@@ -34,12 +34,13 @@ void InitCubeletArray(Cubelet *array, int numCubelets){
 }
 
 void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
-    int i;
+    int i, j, texture, sticker;
     Cubelet *curCubelet = NULL;
     float
         wMtx[16] = {0.0f},
         witMtx[16] = {0.0f},
         wvpMtx[16] = {0.0f},
+        texMtx[9] = {0.0f},
         vpMtx[16] = {0.0f},
         dColor[4] = {1.0f,1.0f,1.0f,1.0f}
     ;
@@ -52,38 +53,64 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
     ) return;
     
     Mat4Mult(vpMtx,cam->viewMtx,cam->projMtx);
+    texMtx[0] = 1.0f;
+    texMtx[4] = -1.0f;
+    texMtx[8] = 1.0f;
+    
+    texture = GetTextureByName("arrow.png");
+    sticker = GetTextureByName("blender.png");
     
     glUseProgram(shader);
     
     for (i = 0; i < numCubelets; ++i) {
         curCubelet = &array[i];
         BuildMatricies(curCubelet, wMtx, witMtx);
-        Mat4Mult(wvpMtx, wMtx, vpMtx);
+        Mat4Mult(wvpMtx, wMtx, vpMtx); 
         
         glUniform3fv(gCamPos, 1, cam->camPosW);
-        glUniform3fv(gDiffuseColor,1, dColor);
         glUniformMatrix4fv(gWMtx,1,GL_TRUE,wMtx);
         glUniformMatrix4fv(gWITMtx, 1, GL_TRUE, witMtx);
         glUniformMatrix4fv(gWVPMtx, 1, GL_TRUE, wvpMtx);
+        glUniformMatrix3fv(gTexMtx, 1, GL_TRUE, texMtx);
+        GetStickerColor(7,dColor);
+        glUniform3fv(gDiffuseColor,1, dColor);
         
         glEnableVertexAttribArray(inPosL);
         glEnableVertexAttribArray(inNormL);
         glEnableVertexAttribArray(inTexC);
-        glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO(0));
         
+        // render cube frame
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(gTexture,0);
+        glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO(0));
         glVertexAttribPointer(inPosL, 3, GL_FLOAT, GL_FALSE, 32, 0);
         glVertexAttribPointer(inNormL, 3, GL_FLOAT, GL_FALSE, 32, 12);
         glVertexAttribPointer(inTexC, 2, GL_FLOAT, GL_FALSE, 32, 24);
-        
-        //can't figure why nothing is drawing ...
-        //... hmm, missing a draw call maybe, lmao ;)
         glDrawArrays(GL_TRIANGLES, 0, 180);
         
+        // render any applied stickers
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, sticker);
+        glUniform1i(gTexture,0);
+        for (j = 0; j < 6; ++j) {
+            if (curCubelet->stickers[j] == true) {
+                GetStickerColor(j,dColor);
+                glUniform3fv(gDiffuseColor,1, dColor);
+                glBindBuffer(GL_ARRAY_BUFFER, GetCubeletVBO(j+1));
+                glVertexAttribPointer(inPosL, 3, GL_FLOAT, GL_FALSE, 32, 0);
+                glVertexAttribPointer(inNormL, 3, GL_FLOAT, GL_FALSE, 32, 12);
+                glVertexAttribPointer(inTexC, 2, GL_FLOAT, GL_FALSE, 32, 24);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+            }
+        }
+        
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
         glDisableVertexAttribArray(inPosL);
         glDisableVertexAttribArray(inNormL);
         glDisableVertexAttribArray(inTexC);
-        
     }
     
     glUseProgram(0);

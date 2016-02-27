@@ -128,19 +128,26 @@ void init (void) {
  Initializes the data structure containing engine objects
  */
 void initCubelets (void) {
+    int i;
     InitCubeletArray(cubelets,NUM_CUBELETS);
     
+    cubelets[0].stickers[STICKER_NEG_Z] = true;
+    
     cubelets[1].posW[0] = -5.0f;
+    cubelets[1].stickers[STICKER_NEG_X] = true;
     
     cubelets[2].posW[0] = 5.0f;
+    cubelets[2].stickers[STICKER_POS_X] = true;
     
     // had to hard code this initialization ... :(
     // InitQuadArray might not be working properly
     cubelets[3].posW[0] = 0.0f;
     cubelets[3].posW[1] = 5.0f;
+    cubelets[3].stickers[STICKER_POS_Y] = true;
     
     cubelets[4].posW[0] = 0.0f;
     cubelets[4].posW[1] = -5.0f;
+    cubelets[4].stickers[STICKER_NEG_Y] = true;
 }
 
 /*
@@ -156,8 +163,8 @@ void updateCubelets (float dt) {
     while (theta < 0.0f)
         theta += 360.0f;
     
-    cubelets[0].posW[0] = sin(theta) * 5.0f;
-    cubelets[0].posW[1] = cos(theta) * 5.0f;
+    cubelets[0].posW[0] = sin(theta) * 3.0f;
+    cubelets[0].posW[1] = cos(theta) * 3.0f;
 }
 
 /*
@@ -212,7 +219,7 @@ void update (void) {
 
     timer(deltaTime);
     UpdateCamera(&camera, deltaTime);
-    updateCubelets(deltaTime);
+    //updateCubelets(deltaTime);
 }
 
 /*
@@ -267,13 +274,13 @@ int main (int argc, char **argv) {
     initCubelets();
     InitTextures();
     
-    /* TEST CODE */
+    /* TEST CODE */ /*
     printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));
     printf("blender.png was mapped to: %d\n",GetTextureByName("blender.png"));
     printf("rot.png was mapped to: %d\n",GetTextureByName("rot.png"));
     printf("invert.png was mapped to: %d\n",GetTextureByName("invert.png"));
     printf("Frame.png was mapped to: %d\n",GetTextureByName("Frame.png"));
-    /* END TEST CODE */
+    */ /* END TEST CODE */
 
     while (glfwWindowShouldClose(window) == false) {
         update();

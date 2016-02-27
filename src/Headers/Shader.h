@@ -15,8 +15,10 @@ extern int inTexC;
 extern int gWMtx;
 extern int gWITMtx;
 extern int gWVPMtx;
+extern int gTexMtx;
 extern int gDiffuseColor;
 extern int gCamPos;
+extern int gTexture;
 
 #define INVALID_SHADER_ID -1
 
