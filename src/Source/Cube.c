@@ -14,6 +14,10 @@
 #include "CubeletModel.h"
 #include "Cube.h"
 
+#define SHUFFLE_SIZE 60
+static SliceAnimation *shuffle[SHUFFLE_SIZE];
+static int curAnimation = 0;
+
 void InitCube (Cube *cube) {
     if (cube == NULL) return;
     
@@ -27,6 +31,7 @@ void InitCube (Cube *cube) {
     
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
+    _InitShuffleSequence();
 }
 
 void UpdateCube (Cube *cube, float dt) {
@@ -169,6 +174,92 @@ void _PositionCubelets (Cube *cube) {
         if (cube->cubelets[i].posW[2] >  1.0f) {
             cube->cubelets[i].stickers[STICKER_POS_Z] = true;
         }
+    }
+}
+
+void _StartSliceAnimation(Cube *cube, Slice slice) {
+    SliceAnimation *sa = NULL;
+    float pivotAxis[3] = {0.0f};
+    Cubelet *cubelets[9] = {NULL};
+    int i = 0, count = 0;
+    if (cube == NULL || slice < SLICE_POS_X || slice > SLICE_NEG_Z) return;
+    
+    if (cube->curAnimation != NULL) return;
+    
+    if (slice == SLICE_POS_X) {
+        pivotAxis[0] = 1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[0] > 1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    } else if (slice == SLICE_NEG_X) {
+        pivotAxis[0] = -1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[0] < -1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    } else if (slice == SLICE_POS_Y) {
+        pivotAxis[1] = 1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[1] > 1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    } else if (slice == SLICE_NEG_Y) {
+        pivotAxis[1] = -1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[1] < -1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    } else if (slice == SLICE_POS_Z) {
+        pivotAxis[2] = 1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[2] > 1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    } else if (slice == SLICE_NEG_Z) {
+        pivotAxis[2] = -1.0f;
+        for (i = 0; i < 26; ++i) {
+            if (cube->cubelets[i].posW[2] < -1.0f) {
+                cubelets[count++] = &(cube->cubelets[i]);
+                if (count == 9) break;
+            }
+        }
+    }
+    
+    if (count != 9) {
+        fprintf(stderr,"Invalid slice selection!\n");
+        exit(1);
+    }
+    
+    InitNewSliceAnimation(
+        &sa,
+        pivotAxis,
+        pivotAxis, 
+        DEFAULT_SLICE_ROTATION_LENGTH,
+        DEFAULT_SLICE_SPEED,
+        cubelets,
+        9
+    );
+    
+    if (sa != NULL) {
+        cube->curAnimation = sa;
+    }
+}
+
+void _InitShuffleSequence (void) {
+    int i;
+    for (i = 0; i < SHUFFLE_SIZE; ++i) {
+        shuffle[i] = NULL;
     }
 }
 

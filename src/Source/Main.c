@@ -103,7 +103,6 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
 
 void init (void) {
     int pos[2] = {45,0};
-    int fSize = 2.0f;
 
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window,mouse_button_callback);
@@ -119,7 +118,6 @@ void init (void) {
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
 
     InitCamera(&camera);
-    //RebuildOrthographicMatrix(&camera,-fSize, fSize, -fSize, fSize, -fSize, fSize);
     RebuildPerspectiveMatrix(&camera, 100.0f, (640.0f/480.0f), 0.01f, 100.0f);
 
     fprintf(stdout,"Program start\nPress Q to quit\n");

@@ -2,6 +2,8 @@
 #define _C_RUBE_CUBE_H_
 
 #define NUM_CUBELETS 26
+#define DEFAULT_SLICE_SPEED ((M_PI) * 2.0f)
+#define DEFAULT_SLICE_ROTATION_LENGTH ((M_PI) / 2.0f)
 
 typedef struct {
     Cubelet **cubelets;
@@ -23,6 +25,15 @@ typedef struct {
     SliceAnimation *curAnimation;
 }Cube;
 
+typedef enum {
+    SLICE_POS_X,
+    SLICE_NEG_X,
+    SLICE_POS_Y,
+    SLICE_NEG_Y,
+    SLICE_POS_Z,
+    SLICE_NEG_Z
+}Slice;
+
 void InitCube (Cube *cube);
 void UpdateCube (Cube *cube, float dt);
 void RenderCube (Cube *cube, Camera *cam);
@@ -38,6 +49,9 @@ void InitNewSliceAnimation (
 );
 bool UpdateSliceAnimation (SliceAnimation *sa, float dt);
 void DestroySliceAnimation (SliceAnimation *sa);
+
+void _StartSliceAnimation (Cube *cube, Slice slice);
+void _InitShuffleSequence (void);
 
 void _PositionCubelets (Cube *cube);
 
