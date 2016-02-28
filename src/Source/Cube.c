@@ -27,11 +27,29 @@ void InitCube (Cube *cube) {
     
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
-    
 }
 
 void UpdateCube (Cube *cube, float dt) {
-    ;
+    if (cube == NULL) return;
+    
+    // ============================
+    // TEST CODE
+    // =========================
+    
+    if (cube->curAnimation == NULL) {
+        _SliceRotationTest(cube);
+    }
+    
+    // ===========================
+    // End TEST CODE
+    // =========================
+    
+    if (cube->curAnimation != NULL) {
+        if (UpdateSliceAnimation(cube->curAnimation,dt)) {
+            DestroySliceAnimation(cube->curAnimation);
+            cube->curAnimation = NULL;
+        }
+    }
 }
 
 void RenderCube (Cube *cube, Camera *cam) {
@@ -46,7 +64,7 @@ void InitNewSliceAnimation (
     float            newPivotAxis [3],
     float            initialTheta,
     float            newRadiansPerSecond,
-    Cubelet *cubeletsToAnimate,
+    Cubelet **cubeletsToAnimate,
     int numCubelets
 ) {
     SliceAnimation *curSA = NULL;
@@ -83,6 +101,7 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
     bool result = false;
     float deltaTheta = sa->radiansPerSecond * dt;
     float q[4] = {0.0f};
+    float negQ[4] = {0.0f};
     int i;
     
     if (deltaTheta > sa->thetaRemaining) {
@@ -93,10 +112,11 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
         sa->thetaRemaining -= deltaTheta;
     }
     
-    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[3], deltaTheta, q);
+    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaTheta, q);
+    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], -deltaTheta, negQ);
     for (i = 0; i < sa->numCubelets; ++i) {
-        QuaternionVec3Rotation(sa->cubelets[i].posW,q,sa->cubelets[i].posW);
-        QuaternionMult(sa->cubelets[i].rotation,q,sa->cubelets[i].rotation);
+        QuaternionVec3Rotation(sa->cubelets[i]->posW,q,sa->cubelets[i]->posW);
+        QuaternionMult(negQ,sa->cubelets[i]->rotation,sa->cubelets[i]->rotation);
     }
     
     return result;
@@ -150,4 +170,33 @@ void _PositionCubelets (Cube *cube) {
             cube->cubelets[i].stickers[STICKER_POS_Z] = true;
         }
     }
+}
+
+// =========================
+// TEST CODE
+// =========================
+
+void _SliceRotationTest (Cube *cube) {
+    if (cube == NULL) return;
+    
+    float pivotAxis[3] = {1.0f, 0.0f, 0.0f};
+    Cubelet *cubelets[9] = {NULL};
+    int i = 0, count = 0;
+    
+    for (i = 0; i < NUM_CUBELETS; ++i) {
+        if (cube->cubelets[i].posW[0] < 0.0f) {
+            cubelets[count++] = &(cube->cubelets[i]);
+            if (count == 9) break;
+        }
+    }
+    
+    InitNewSliceAnimation(
+        &(cube->curAnimation),
+        pivotAxis,
+        pivotAxis,
+        M_PI / 2.0f,
+        M_PI * 2.0f,
+        &cubelets,
+        9
+    );
 }

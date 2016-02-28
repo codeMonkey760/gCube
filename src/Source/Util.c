@@ -9,6 +9,8 @@
 
 #include "Util.h"
 
+char *APPNAME = "cRube";
+
 float degreesToRadians (float d) {
     return d / 180.0f * M_PI;
 }

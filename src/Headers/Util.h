@@ -1,6 +1,8 @@
 #ifndef _C_RUBE_UTIL_H_
 #define _C_RUBE_UTIL_H_
 
+extern char* APPNAME;
+
 void Mat4Identity(float target[]);
 void Mat4Mult (float a[], float b[], float c[]);
 void Mat4Print (float a[]);

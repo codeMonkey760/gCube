@@ -33,6 +33,7 @@ GLFWwindow *window = NULL;
 Camera camera;
 int lastMousePos[2] = {-1};
 Cube cube;
+char *APPNAME;
 
 /*
  error call back ... called by glfw when an error occurs
@@ -136,7 +137,7 @@ void initWindow (void) {
     screenW = vidmode->width;
     screenH = vidmode->height;
 
-    window = glfwCreateWindow(w,h,"GLFW Test", NULL, NULL);
+    window = glfwCreateWindow(w,h,APPNAME, NULL, NULL);
     if (window == NULL) {
         return;
     }
