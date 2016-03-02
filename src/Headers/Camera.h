@@ -25,7 +25,7 @@ void RebuildOrthographicMatrix (Camera *cam, float left, float right, float bott
 void Zoom (Camera *cam, float amount);
 void CopyProjMtx (Camera *cam, float target[16]);
 void CopyViewMtx (Camera *cam, float target[16]);
-void CopyAdjustViewMtx (Camera *cam);
+void CopyAdjustViewMtx (Camera *cam, float target[16]);
 void _RefreshViewMtx (Camera *cam);
 
 #endif

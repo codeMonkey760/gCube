@@ -177,19 +177,40 @@ void _PositionCubelets (Cube *cube) {
     }
 }
 
-void _StartSliceAnimation(Cube *cube, Slice slice) {
+void _StartSliceAnimation(Cube *cube, Slice slice, Camera *cam) {
     SliceAnimation *sa = NULL;
-    float pivotAxis[3] = {0.0f};
+    float pivotAxis[4] = {0.0f};
+    float cubeletPos[4] = {0.0f,0.0f,0.0f,1.0f};
     Cubelet *cubelets[9] = {NULL};
     int i = 0, count = 0;
+    float avm[16] = {0.0f};
+    float iavm[16] = {0.0f};
+    bool validInv = false;
+    
     if (cube == NULL || slice < SLICE_POS_X || slice > SLICE_NEG_Z) return;
+    
+    if (cam != NULL) {
+        CopyAdjustedViewMtx(cam,avm);
+        validInv = Mat4Inverse(iavm,avm);
+    } else {
+        Mat4Identity(avm);
+        Mat4Identity(iavm);
+        validInv = true;
+    }
+    
+    if (validInv == false){
+        fprintf(stderr, "Invalid matrix inverse detected!\n");
+        return;
+    }
     
     if (cube->curAnimation != NULL) return;
     
     if (slice == SLICE_POS_X) {
         pivotAxis[0] = 1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[0] > 1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[0] > 1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -197,7 +218,9 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
     } else if (slice == SLICE_NEG_X) {
         pivotAxis[0] = -1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[0] < -1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[0] < -1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -205,7 +228,9 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
     } else if (slice == SLICE_POS_Y) {
         pivotAxis[1] = 1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[1] > 1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[1] > 1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -213,7 +238,9 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
     } else if (slice == SLICE_NEG_Y) {
         pivotAxis[1] = -1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[1] < -1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[1] < -1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -221,7 +248,9 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
     } else if (slice == SLICE_POS_Z) {
         pivotAxis[2] = 1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[2] > 1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[2] > 1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -229,7 +258,9 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
     } else if (slice == SLICE_NEG_Z) {
         pivotAxis[2] = -1.0f;
         for (i = 0; i < 26; ++i) {
-            if (cube->cubelets[i].posW[2] < -1.0f) {
+            Vec3Copy(cubeletPos,cube->cubelets[i].posW);
+            Mat4Vec4Mult(avm,cubeletPos,cubeletPos);
+            if (cubeletPos[2] < -1.0f) {
                 cubelets[count++] = &(cube->cubelets[i]);
                 if (count == 9) break;
             }
@@ -240,6 +271,8 @@ void _StartSliceAnimation(Cube *cube, Slice slice) {
         fprintf(stderr,"Invalid slice selection!\n");
         exit(1);
     }
+    
+    Mat4Vec4Mult(iavm,pivotAxis,pivotAxis);
     
     InitNewSliceAnimation(
         &sa,
