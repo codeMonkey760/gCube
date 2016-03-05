@@ -85,7 +85,7 @@ bool InitGUIShader (void) {
 
 void DestroyGUIShader (void) {
     glDeleteShader(guiShader.vs);
-    glDeleteShader(guiSHader.fs);
+    glDeleteShader(guiShader.fs);
     glDeleteProgram(guiShader.shader);
     
     guiShader.vs = guiShader.fs = guiShader.shader = 0;

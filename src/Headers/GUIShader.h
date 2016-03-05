@@ -22,7 +22,7 @@ typedef struct {
 
 extern GUIShader guiShader;
 
-int InitGUIShader (void);
+bool InitGUIShader (void);
 void DestroyGUIShader (void);
 
 #endif

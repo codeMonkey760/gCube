@@ -201,6 +201,7 @@ void finalize (void) {
     fprintf(stdout,"Program end\n");
     DestroyCubeletVBOs();
     DestroyShader();
+    DestroyGUIShader();
     DestroyTextures();
     glfwTerminate();
 }
@@ -223,6 +224,10 @@ int main (int argc, char **argv) {
 
     init();
     if (InitShader() == GL_FALSE) {
+        finalize();
+        return EXIT_FAILURE;
+    }
+    if (InitGUIShader() == false) {
         finalize();
         return EXIT_FAILURE;
     }
