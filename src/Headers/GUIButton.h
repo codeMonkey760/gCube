@@ -20,6 +20,7 @@ typedef struct {
     float rot;
     
     float tMtx[16];
+    float texMtx[9];
     int texId;
     
     float ambientColor[3];

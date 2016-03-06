@@ -23,8 +23,11 @@ void InitButton (GUIButton *button) {
     button->dim[1] = 1.0f;
     button->dim[2] = 1.0f;
     
-    button->tMtx[16];
-    button->texId;
+    Mat4Identity(button->tMtx);
+    button->texMtx[0] = 1.0f;
+    button->texMtx[4] = 1.0f;
+    button->texMtx[8] = 1.0f;
+    button->texId = -1;
     
     button->mixValue = 0.7f;
 }
