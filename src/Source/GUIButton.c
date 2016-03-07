@@ -68,6 +68,12 @@ void _RecalcTMtx (GUIButton *button) {
     Mat4Mult(tMtx, button->tMtx, button->tMtx);
 }
 
+void ButtonUpdate (GUIButton *button, float dt) {
+    if (button == NULL) return;
+    
+    return;
+}
+
 bool InBounds (GUIButton *button, float x, float y) {
     if (button == NULL) return false;
     

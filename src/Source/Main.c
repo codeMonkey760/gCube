@@ -18,6 +18,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods);
 static void mouse_scroll_callback (GLFWwindow *window, double x, double y);
 static void mouse_position_callback (GLFWwindow *window, double x, double y);
+static void window_resize_callback(GLFWwindow *window, int width, int height);
 
 void init (void);
 void initCubelets (void);
@@ -34,6 +35,8 @@ Camera camera;
 int lastMousePos[2] = {-1};
 Cube cube;
 char *APPNAME;
+int WindowWidth;
+int WindowHeight;
 
 /*
  error call back ... called by glfw when an error occurs
@@ -98,6 +101,21 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
 }
 
 /*
+ window resize callback ... called by glfw when the window resizes
+ */
+static void window_resize_callback(GLFWwindow *window, int width, int height) {
+    WindowWidth = width;
+    WindowHeight = height;
+    RebuildPerspectiveMatrix(
+        &camera, 
+        100.0f,
+        ((float) WindowWidth) / ((float) WindowHeight),
+        0.01f,
+        100.0f
+    );
+}
+
+/*
  Performs general program specific initialization
  */
 
@@ -118,7 +136,13 @@ void init (void) {
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
 
     InitCamera(&camera);
-    RebuildPerspectiveMatrix(&camera, 100.0f, (640.0f/480.0f), 0.01f, 100.0f);
+    RebuildPerspectiveMatrix(
+        &camera, 
+        100.0f, 
+        ((float) WindowWidth)/ ((float) WindowHeight), 
+        0.01f, 
+        100.0f
+    );
 
     fprintf(stdout,"Program start\nPress Q to quit\n");
 }
@@ -129,18 +153,17 @@ void init (void) {
 void initWindow (void) {
     const GLFWvidmode *vidmode = NULL;
     int screenW, screenH;
-    int w = 640, h = 480;
 
     vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     screenW = vidmode->width;
     screenH = vidmode->height;
 
-    window = glfwCreateWindow(w,h,APPNAME, NULL, NULL);
+    window = glfwCreateWindow(WindowWidth,WindowHeight,APPNAME, NULL, NULL);
     if (window == NULL) {
         return;
     }
 
-    glfwSetWindowPos(window, (screenW / 2) - (w / 2), (screenH / 2) - (h / 2));
+    glfwSetWindowPos(window, (screenW / 2) - (WindowWidth / 2), (screenH / 2) - (WindowHeight / 2));
 
     glfwMakeContextCurrent(window);
 

@@ -38,6 +38,7 @@ void SetPRD (
 );
 void _RecalcTMtx (GUIButton *button);
 bool inBounds (GUIButton *button, float percentX, float percentY);
+void ButtonUpdate (GUIButton *button, float dt);
 void ButtonOnMouseUp (GUIButton *button);
 void ButtonOnMouseDown (GUIButton *button);
 void ButtononMouseEnter (GUIButton *button);

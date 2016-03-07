@@ -2,6 +2,8 @@
 #define _C_RUBE_UTIL_H_
 
 extern char* APPNAME;
+extern int WindowWidth;
+extern int WindowHeight;
 
 void Mat4Identity(float target[]);
 void Mat4Mult (float a[], float b[], float c[]);
