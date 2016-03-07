@@ -8,6 +8,9 @@
 #include <math.h>
 
 #include "Util.h"
+#include "Camera.h"
+#include "Cubelet.h"
+#include "Cube.h"
 #include "GUIButton.h"
 
 void InitButton (GUIButton *button) {
@@ -107,7 +110,7 @@ void ButtonOnMouseUp (GUIButton *button) {
     
     if (button->mouseDownInBounds == true) {
         if (button->onClick != NULL) {
-            button->onClick(button->sliceId, button->sliceForward);
+            //button->onClick(button->sliceId, button->sliceForward);
         }
     }
     

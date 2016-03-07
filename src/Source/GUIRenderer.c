@@ -8,6 +8,9 @@
 
 #include "Camera.h"
 #include "Util.h"
+#include "Camera.h"
+#include "Cubelet.h"
+#include "Cube.h"
 #include "GUIButton.h"
 #include "GUIRenderer.h"
 #include "GUIShader.h"

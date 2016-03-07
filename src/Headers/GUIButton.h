@@ -37,7 +37,7 @@ void SetPRD (
     float rotZ
 );
 void _RecalcTMtx (GUIButton *button);
-bool inBounds (GUIButton *button, float percentX, float percentY);
+bool InBounds (GUIButton *button, float percentX, float percentY);
 void ButtonUpdate (GUIButton *button, float dt);
 void ButtonOnMouseUp (GUIButton *button);
 void ButtonOnMouseDown (GUIButton *button);

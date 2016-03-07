@@ -1,9 +1,14 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "Util.h"
+#include "Camera.h"
+#include "Cubelet.h"
 #include "Cube.h"
 #include "GUIButton.h"
 #include "GUIRenderer.h"
@@ -77,7 +82,7 @@ void _BuildButtons (void) {
     gui.buttons[7] = cb;
 
     // forward slice left
-    SetPRD(0.4f, 0.9f, 0.1f, 0.1f, 0.0f);
+    SetPRD(&cb,0.4f, 0.9f, 0.1f, 0.1f, 0.0f);
     cb.texId = GetTextureByName("rot.png");
     cb.sliceId = 4;
     cb.sliceForward = true;
@@ -117,7 +122,7 @@ void GuiOnMouseUp (int x, int y) {
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
-        if (inBounds(&gui.buttons[i],MouseXPercent,MouseYPercent)) {
+        if (InBounds(&gui.buttons[i],MouseXPercent,MouseYPercent)) {
             ButtonOnMouseUp(&gui.buttons[i]);
             return;
         }
@@ -130,7 +135,7 @@ void GuiOnMouseDown (int x, int y) {
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
-        if (inBounds(&gui.buttons[i], MouseXPercent, MouseYPercent)) {
+        if (InBounds(&gui.buttons[i], MouseXPercent, MouseYPercent)) {
             ButtonOnMouseDown(&gui.buttons[i]);
             return;
         }
@@ -143,7 +148,7 @@ void GuiOnMouseMove (int x, int y) {
     int i;
     
     if (gui.highlightedButton != NULL) {
-        if (inBounds(gui.highlightedButton,MouseXPercent,MouseYPercent) != true) {
+        if (InBounds(gui.highlightedButton,MouseXPercent,MouseYPercent) != true) {
             ButtonOnMouseExit(gui.highlightedButton);
             gui.highlightedButton = NULL;
         } else {
@@ -152,7 +157,7 @@ void GuiOnMouseMove (int x, int y) {
     }
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
-        if (inBounds(&gui.buttons[i], MouseXPercent, MouseYPercent)) {
+        if (InBounds(&gui.buttons[i], MouseXPercent, MouseYPercent)) {
             gui.highlightedButton = &gui.buttons[i];
             ButtonOnMouseEnter(&gui.buttons[i]);
             return;
