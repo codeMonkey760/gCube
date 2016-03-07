@@ -14,9 +14,9 @@ out vec3 normW;
 out vec2 outtexC;
 
 void main (void) {
-    posW = mul(vec4(posL,1.0f),gWMtx).xyz;
-    normW = mul(vec4(normL,0.0f),gWITMtx).xyz;
-    outtexC = mul(vec3(intexC,1.0f),gTexMtx).xy;
+    posW = (vec4(posL,1.0f) * gWMtx).xyz;
+    normW = (vec4(normL,0.0f) * gWITMtx).xyz;
+    outtexC = (vec3(intexC,1.0f) * gTexMtx).xy;
     
-    gl_Position = mul(vec4(posL,1.0f),gWVPMtx);
+    gl_Position = (vec4(posL,1.0f) * gWVPMtx);
 }

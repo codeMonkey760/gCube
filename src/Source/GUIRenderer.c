@@ -23,7 +23,7 @@ void InitGUIRenderer (void) {
 void DrawButtons (GUIButton *buttons, int numButtons) {
     int i;
     GUIButton *cb = NULL;
-    if (buttons == NULL || numButtons < 1 || guiShader == -1) return;
+    if (buttons == NULL || numButtons < 1 || guiShader.shader == -1) return;
     
     glUseProgram(guiShader.shader);
     glBindBuffer(GL_ARRAY_BUFFER,guiRenderer.buttonVBO);
@@ -36,7 +36,7 @@ void DrawButtons (GUIButton *buttons, int numButtons) {
         if (
             cb == NULL ||
             cb->visible == false ||
-            cb.texId == -1
+            cb->texId == -1
         ) continue;
         
         glUniformMatrix4fv(guiShader.gTMtx,1,GL_TRUE,cb->tMtx);
