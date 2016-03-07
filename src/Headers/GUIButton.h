@@ -1,7 +1,7 @@
 #ifndef _C_RUBE_GUIBUTTON_H_
 #define _C_RUBE_GUIBUTTON_H_
 
-typedef void (*onClickFunc) (int,bool);
+typedef void (*onClickFunc) (Cube*,int,bool);
 typedef void (*onHighlightFunc) (void);
 
 typedef struct {
