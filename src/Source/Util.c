@@ -10,8 +10,8 @@
 #include "Util.h"
 
 char *APPNAME = "cRube";
-int WindowWidth = 640;
-int WindowHeight = 800;
+int WindowWidth = 800;
+int WindowHeight = 640;
 
 float degreesToRadians (float d) {
     return d / 180.0f * M_PI;

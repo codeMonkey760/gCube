@@ -126,6 +126,7 @@ void init (void) {
     glfwSetMouseButtonCallback(window,mouse_button_callback);
     glfwSetCursorPosCallback(window,mouse_position_callback);
     glfwSetScrollCallback(window,mouse_scroll_callback);
+    glfwSetWindowSizeCallback(window,window_resize_callback);
     glfwSwapInterval(1);
     glClearColor(0.2f,0.2f,0.8f,1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -178,7 +179,7 @@ void initWindow (void) {
  Renders frames
  */
 void render (void) {
-    glViewport(0,0,640,480);
+    glViewport(0,0,WindowWidth,WindowHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderCube(&cube,&camera);
