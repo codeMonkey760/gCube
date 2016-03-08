@@ -20,6 +20,8 @@ void InitializeGUI (void) {
     memset(&gui,0,sizeof(GUI));
     
     _BuildButtons();
+	InitGUIShader();
+	InitGUIRenderer();
 }
 
 void _BuildButtons (void) {
@@ -101,18 +103,23 @@ void _BuildButtons (void) {
     gui.buttons[10] = cb;
 }
 
-void Render (void) {
+void DestroyGUI (void) {
+	DestroyGUIRenderer();
+	DestroyGUIShader();
+}
+
+void RenderGUI (void) {
     DrawButtons(gui.buttons,GUI_NUM_BUTTONS);
 }
 
-void Update (float dt) {
+void UpdateGUI (float dt) {
     int i;
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
         ButtonUpdate (&gui.buttons[i],dt);
     }
 }
 
-void Resize (int w, int h) {
+void ResizeGUI (int w, int h) {
     return;
 }
 

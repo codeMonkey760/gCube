@@ -12,6 +12,9 @@
 #include "Cubelet.h"
 #include "Cube.h"
 
+#include "GUIButton.h"
+#include "GUI.h"
+
 // glfw call backs
 static void error_callback(int error, const char *desc);
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -60,7 +63,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 /*
  mouse button call back ... called by glfw when something happens with the mouse buttons
  */
-static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {  
+static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {
+	double x = 0.0, y = 0.0;
     if (button == 1) {
         camera.tracking = action == GLFW_PRESS;
         if (camera.tracking == false) {
@@ -68,6 +72,13 @@ static void mouse_button_callback (GLFWwindow *window, int button, int action, i
             lastMousePos[0] = -1;
         }
     }
+
+	glfwGetCursorPos(window, &x, &y);
+	if (action == GLFW_PRESS && button == 0) {
+		GuiOnMouseDown( (int) x, (int) y);
+	} else if (action == GLFW_RELEASE && button == 0) {
+		GuiOnMouseUp( (int) x, (int) y);
+	}
 }
 
 /*
@@ -98,6 +109,7 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     lastMousePos[1] = ((int) y);
     
     OnMouseMove(&camera,deltaPos);
+	GuiOnMouseMove( (int) x, (int) y);
 }
 
 /*
@@ -183,6 +195,7 @@ void render (void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderCube(&cube,&camera);
+    RenderGUI();
 }
 
 /*
@@ -200,6 +213,7 @@ void update (void) {
     timer(deltaTime);
     UpdateCamera(&camera, deltaTime);
     UpdateCube(&cube,deltaTime);
+    UpdateGUI(deltaTime);
 }
 
 /*
@@ -227,6 +241,7 @@ void finalize (void) {
     DestroyShader();
     DestroyGUIShader();
     DestroyTextures();
+	DestroyGUI();
     glfwTerminate();
 }
 
@@ -258,6 +273,7 @@ int main (int argc, char **argv) {
     InitCubeletVBOs();
     InitTextures();
     InitCube(&cube);
+	InitializeGUI();
     
     /* TEST CODE */ /*
     printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));

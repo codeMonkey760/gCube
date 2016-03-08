@@ -12,11 +12,12 @@ typedef struct {
 extern GUI gui;
 
 void InitializeGUI (void);
+void DestroyGUI (void);
 void _BuildButtons (void);
 
-void Render (void);
-void Update (float dt);
-void Resize (int w, int h);
+void RenderGUI (void);
+void UpdateGUI (float dt);
+void ResizeGUI (int w, int h);
 void GuiOnMouseUp (int x, int y);
 void GuiOnMouseDown (int x, int y);
 void GuiOnMouseMove (int x, int y);
