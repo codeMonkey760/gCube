@@ -95,7 +95,6 @@ static void mouse_scroll_callback (GLFWwindow *window, double x, double y) {
  */
 static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     int deltaPos[2] = {0};
-    if (camera.tracking == false) return;
     
     if (lastMousePos[0] == -1 || lastMousePos[1] == -1) {
         lastMousePos[0] = ((int) x);
@@ -109,7 +108,7 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
     lastMousePos[1] = ((int) y);
     
     OnMouseMove(&camera,deltaPos);
-	GuiOnMouseMove( (int) x, (int) y);
+    GuiOnMouseMove( (int) x, (int) y);
 }
 
 /*
@@ -143,7 +142,9 @@ void init (void) {
     glClearColor(0.2f,0.2f,0.8f,1.0f);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_FRONT);
-    glEnable(GL_CULL_FACE);
+    // lol cubelets need front faces culled and gui is all front faces
+    // need to fix my facing issues before face culling can be enabled!
+    //glEnable(GL_CULL_FACE);
     fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
     fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
@@ -241,7 +242,7 @@ void finalize (void) {
     DestroyShader();
     DestroyGUIShader();
     DestroyTextures();
-	DestroyGUI();
+    DestroyGUI();
     glfwTerminate();
 }
 

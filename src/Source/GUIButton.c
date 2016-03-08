@@ -60,15 +60,18 @@ void _RecalcTMtx (GUIButton *button) {
     float sMtx[16] = {0.0f};
     float rMtx[16] = {0.0f};
     float tMtx[16] = {0.0f};
-    float scale[3] = {1.0f,1.0f,1.0f};
+    float posH[3] = {0.0f};
+    
+    posH[0] = (button->posPercent[0] * 2.0f) - 1.0f;
+    posH[1] = (button->posPercent[1] * -2.0f) + 1.0f;
     
     Mat4Scaling(sMtx,button->dim);
     Mat4RotationZ(rMtx,button->rot);
-    Mat4Translation(tMtx, button->posPercent);
+    Mat4Translation(tMtx, posH);
     
     //NOTE: This is wrong
-    Mat4Mult(sMtx, rMtx, button->tMtx);
-    Mat4Mult(tMtx, button->tMtx, button->tMtx);
+    Mat4Mult(button->tMtx, sMtx, rMtx);
+    Mat4Mult(button->tMtx, button->tMtx, tMtx);
 }
 
 void ButtonUpdate (GUIButton *button, float dt) {

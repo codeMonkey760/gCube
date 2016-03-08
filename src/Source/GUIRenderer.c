@@ -58,8 +58,8 @@ void DrawButtons (GUIButton *buttons, int numButtons) {
         glEnableVertexAttribArray(guiShader.inPosL);
         glEnableVertexAttribArray(guiShader.inTexC);
         
-        glVertexAttribPointer(guiShader.inPosL,3,GL_FLOAT,GL_FALSE, 20, guiRenderer.buttonVBO+0);
-        glVertexAttribPointer(guiShader.inTexC,2,GL_FLOAT,GL_FALSE, 20, guiRenderer.buttonVBO+12);
+        glVertexAttribPointer(guiShader.inPosL,3,GL_FLOAT,GL_FALSE, 20, 0);
+        glVertexAttribPointer(guiShader.inTexC,2,GL_FLOAT,GL_FALSE, 20, 12);
         
         glDrawArrays(GL_TRIANGLES, 0, 6);
         
