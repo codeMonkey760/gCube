@@ -7,11 +7,12 @@ typedef struct {
     GUIButton buttons[GUI_NUM_BUTTONS];
     GUIButton *highlightedButton;
     Cube *cube;
+    Camera *cam;
 } GUI;
 
 extern GUI gui;
 
-void InitializeGUI (void);
+void InitializeGUI (Cube *cube, Camera *cam);
 void DestroyGUI (void);
 void _BuildButtons (void);
 
@@ -22,4 +23,5 @@ void GuiOnMouseUp (int x, int y);
 void GuiOnMouseDown (int x, int y);
 void GuiOnMouseMove (int x, int y);
 
+void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward);
 #endif

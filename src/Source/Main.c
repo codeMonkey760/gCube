@@ -262,7 +262,7 @@ int main (int argc, char **argv) {
     InitCubeletVBOs();
     InitTextures();
     InitCube(&cube);
-	InitializeGUI();
+    InitializeGUI(&cube,&camera);
     
     /* TEST CODE */ /*
     printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));

@@ -32,7 +32,7 @@ void DrawButtons (GUIButton *buttons, int numButtons) {
     glBindBuffer(GL_ARRAY_BUFFER,guiRenderer.buttonVBO);
     
     glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.9f);
+    glAlphaFunc(GL_GEQUAL, 0.5f);
     
     for (i = 0; i < numButtons; ++i) {
         cb = &(buttons[i]);

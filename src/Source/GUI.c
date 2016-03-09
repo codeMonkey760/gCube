@@ -16,12 +16,17 @@
 
 GUI gui;
 
-void InitializeGUI (void) {
+void InitializeGUI (Cube *cube, Camera *cam) {
     memset(&gui,0,sizeof(GUI));
     
+    if (cube == NULL || cam == NULL) return;
+    
+    gui.cube = cube;
+    gui.cam = cam;
+    
     _BuildButtons();
-	InitGUIShader();
-	InitGUIRenderer();
+    InitGUIShader();
+    InitGUIRenderer();
 }
 
 void _BuildButtons (void) {
@@ -33,7 +38,6 @@ void _BuildButtons (void) {
     cb.ambientColor[1] = 1.0f;
     cb.ambientColor[2] = 1.0f;
     cb.texId = GetTextureByName("arrow.png");
-    cb.onClick = NULL;
     
     //left slice up
     SetPRD(&cb,0.3f,0.1f,0.1f,0.1f,0.0f);
@@ -133,6 +137,9 @@ void GuiOnMouseUp (int x, int y) {
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
         if (InBounds(&gui.buttons[i],MouseXPercent,MouseYPercent)) {
+            if (gui.buttons[i].mouseDownInBounds) {
+                OnButtonClick(gui.cube,gui.cam,gui.buttons[i].sliceId, gui.buttons[i].sliceForward);
+            }
             ButtonOnMouseUp(&gui.buttons[i]);
             return;
         }
@@ -173,4 +180,9 @@ void GuiOnMouseMove (int x, int y) {
             return;
         }
     }
+}
+
+void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
+    _StartSliceAnimation(cube,cam,sliceId,sliceForward);
+    printf("SliceID: %d sliceForward %d\n",sliceId,sliceForward);
 }

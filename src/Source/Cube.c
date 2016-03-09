@@ -37,18 +37,6 @@ void InitCube (Cube *cube) {
 void UpdateCube (Cube *cube, float dt) {
     if (cube == NULL) return;
     
-    // ============================
-    // TEST CODE
-    // =========================
-    
-    if (cube->curAnimation == NULL) {
-        _SliceRotationTest(cube);
-    }
-    
-    // ===========================
-    // End TEST CODE
-    // =========================
-    
     if (cube->curAnimation != NULL) {
         if (UpdateSliceAnimation(cube->curAnimation,dt)) {
             DestroySliceAnimation(cube->curAnimation);
@@ -177,7 +165,7 @@ void _PositionCubelets (Cube *cube) {
     }
 }
 
-void _StartSliceAnimation(Cube *cube, Slice slice, Camera *cam) {
+void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForward) {
     SliceAnimation *sa = NULL;
     float pivotAxis[4] = {0.0f};
     float cubeletPos[4] = {0.0f,0.0f,0.0f,1.0f};

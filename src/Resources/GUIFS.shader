@@ -13,5 +13,5 @@ void main (void) {
     vec3 col = tex.rgb;
     col = (gMixValue * col) + (gAmbient * (1.0f - gMixValue));
 
-    gl_FragColor = vec4(col,a);
+    gl_FragColor = vec4(col,a * gMixValue);
 }

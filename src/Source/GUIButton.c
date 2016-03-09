@@ -110,13 +110,6 @@ void ButtonOnMouseUp (GUIButton *button) {
     
     button->depressed = false;
     button->mixValue = 0.9f;
-    
-    if (button->mouseDownInBounds == true) {
-        if (button->onClick != NULL) {
-            //button->onClick(button->sliceId, button->sliceForward);
-        }
-    }
-    
     button->mouseDownInBounds = false;
 }
 
@@ -136,9 +129,6 @@ void ButtonOnMouseEnter (GUIButton *button) {
     
     button->highlighted = true;
     button->mixValue = 0.9f;
-    if (button->onHighlight != NULL) {
-        button->onHighlight();
-    }
 }
 
 void ButtonOnMouseExit (GUIButton *button) {

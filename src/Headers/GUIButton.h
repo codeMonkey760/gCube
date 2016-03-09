@@ -1,16 +1,11 @@
 #ifndef _C_RUBE_GUIBUTTON_H_
 #define _C_RUBE_GUIBUTTON_H_
 
-typedef void (*onClickFunc) (Cube*,int,bool);
-typedef void (*onHighlightFunc) (void);
-
 typedef struct {
     bool visible;
     bool enabled;
     bool depressed;
     bool highlighted;
-    onClickFunc onClick;          // Button click callback
-    onHighlightFunc onHighlight;  // Button highlight callback
     bool mouseDownInBounds;
     int sliceId;
     bool sliceForward;
