@@ -143,7 +143,7 @@ void ButtonOnMouseEnter (GUIButton *button) {
 
 void ButtonOnMouseExit (GUIButton *button) {
     if (button == NULL) return;
-    if (button->visible = false || button->enabled == false) return;
+    if (button->visible == false || button->enabled == false) return;
     
     button->depressed = false;
     button->highlighted = false;

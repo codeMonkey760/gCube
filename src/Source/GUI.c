@@ -94,12 +94,15 @@ void _BuildButtons (void) {
     SetPRD(&cb, 0.6f, 0.9f, 0.1f, 0.1f, 0.0f);
     cb.sliceId = 4;
     cb.sliceForward = false;
+    cb.texMtx[0] = -1.0f;
     gui.buttons[9] = cb;
 
     // invert the whole cube
     SetPRD(&cb, 0.5f, 0.1f, 0.1f, 0.1f, 0.0f);
+    cb.texId = GetTextureByName("invert.png");
     cb.sliceId = 6;
     cb.sliceForward = true;
+    cb.texMtx[4] = 1.0f;
     gui.buttons[10] = cb;
 }
 
@@ -124,8 +127,8 @@ void ResizeGUI (int w, int h) {
 }
 
 void GuiOnMouseUp (int x, int y) {
-    float MouseXPercent = ((float)WindowWidth) / ((float)x);
-    float MouseYPercent = ((float)WindowHeight) / ((float)y);
+    float MouseXPercent = ((float)x) / ((float)WindowWidth);
+    float MouseYPercent = ((float)y) / ((float)WindowHeight);
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
@@ -137,8 +140,8 @@ void GuiOnMouseUp (int x, int y) {
 }
 
 void GuiOnMouseDown (int x, int y) {
-    float MouseXPercent = ((float) WindowWidth) / ((float)x);
-    float MouseYPercent = ((float) WindowHeight) / ((float)y);
+    float MouseXPercent = ((float)x) / ((float)WindowWidth);
+    float MouseYPercent = ((float)y) / ((float)WindowHeight);
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
@@ -150,8 +153,8 @@ void GuiOnMouseDown (int x, int y) {
 }
 
 void GuiOnMouseMove (int x, int y) {
-    float MouseXPercent = ((float)WindowWidth) / ((float)x);
-    float MouseYPercent = ((float)WindowHeight) / ((float)y);
+    float MouseXPercent = ((float)x) / ((float)WindowWidth);
+    float MouseYPercent = ((float)y) / ((float)WindowHeight);
     int i;
     
     if (gui.highlightedButton != NULL) {
