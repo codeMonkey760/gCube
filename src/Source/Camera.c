@@ -17,6 +17,8 @@ void InitCamera (Camera *cam) {
     cam->yawSens = -0.25f;
     cam->zoomSens = 1.0f;
     cam->orbitalRadius = 10.0f;
+    cam->lastMousePos[0] = -1;
+    cam->lastMousePos[1] = -1;
     
     _RefreshViewMtx(cam);
 }
@@ -27,18 +29,34 @@ void UpdateCamera (Camera *cam, float dt) {
 
 void OnMouseUp (Camera *cam, int pos[2], int button) {
     if (cam == NULL) return;
+    
+    cam->lastMousePos[0] = -1;
+    cam->lastMousePos[1] = -1;
 
     cam->tracking = false;
 }
 
 void OnMouseDown (Camera *cam, int pos[2], int button) {
-    if (cam == NULL) return;
+    if (cam == NULL || button != 1) return;
 
     cam->tracking = true;
+    cam->lastMousePos[0] = pos[0];
+    cam->lastMousePos[1] = pos[1];
 }
 
-void OnMouseMove (Camera *cam, int deltaMousePos[2]) {
-    if (cam == NULL || deltaMousePos == NULL) return;
+void OnMouseMove (Camera *cam, int pos[2]) {
+    int deltaMousePos[2] = {0};
+    if (
+        cam == NULL || 
+        pos == NULL ||
+        cam->tracking == false
+    ) return;
+    
+    deltaMousePos[0] = pos[0] - cam->lastMousePos[0];
+    deltaMousePos[1] = pos[1] - cam->lastMousePos[1];
+    
+    cam->lastMousePos[0] = pos[0];
+    cam->lastMousePos[1] = pos[1];
     
     cam->yaw += ((float) deltaMousePos[0]) * cam->yawSens;
     while (cam->yaw >= 360.0f) {

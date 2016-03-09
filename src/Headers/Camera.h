@@ -13,6 +13,8 @@ typedef struct {
     float orbitalRadius;
     bool tracking;
     float camPosW[3];
+    
+    int lastMousePos[2];
 } Camera;
 
 void InitCamera (Camera *cam);

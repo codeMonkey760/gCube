@@ -35,7 +35,6 @@ int main (int argc, char **argv);
 
 GLFWwindow *window = NULL;
 Camera camera;
-int lastMousePos[2] = {-1};
 Cube cube;
 char *APPNAME;
 int WindowWidth;
@@ -64,21 +63,19 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
  mouse button call back ... called by glfw when something happens with the mouse buttons
  */
 static void mouse_button_callback (GLFWwindow *window, int button, int action, int mods) {
-	double x = 0.0, y = 0.0;
-    if (button == 1) {
-        camera.tracking = action == GLFW_PRESS;
-        if (camera.tracking == false) {
-            lastMousePos[0] = -1;
-            lastMousePos[0] = -1;
-        }
+    double x = 0.0, y = 0.0;
+    int pos[2] = {0};
+    glfwGetCursorPos(window, &x, &y);
+    pos[0] = ((int) x);
+    pos[1] = ((int) y);
+    
+    if (action == GLFW_PRESS) {
+        OnMouseDown(&camera,pos,button);
+        GuiOnMouseDown( (int) x, (int) y);
+    } else if (action == GLFW_RELEASE) {
+        OnMouseUp(&camera,pos,button);
+        GuiOnMouseUp( (int) x, (int) y);
     }
-
-	glfwGetCursorPos(window, &x, &y);
-	if (action == GLFW_PRESS && button == 0) {
-		GuiOnMouseDown( (int) x, (int) y);
-	} else if (action == GLFW_RELEASE && button == 0) {
-		GuiOnMouseUp( (int) x, (int) y);
-	}
 }
 
 /*
@@ -94,20 +91,11 @@ static void mouse_scroll_callback (GLFWwindow *window, double x, double y) {
  mouse position callback ... called by glfw when the mouse moves
  */
 static void mouse_position_callback (GLFWwindow *window, double x, double y) {
-    int deltaPos[2] = {0};
+    int pos[2] = {0};
+    pos[0] = ((int) x);
+    pos[1] = ((int) y);
     
-    if (lastMousePos[0] == -1 || lastMousePos[1] == -1) {
-        lastMousePos[0] = ((int) x);
-        lastMousePos[1] = ((int) y);
-        return;
-    } else {
-        deltaPos[0] = ((int) x) - lastMousePos[0];
-        deltaPos[1] = ((int) y) - lastMousePos[1];
-    }
-    lastMousePos[0] = ((int) x);
-    lastMousePos[1] = ((int) y);
-    
-    OnMouseMove(&camera,deltaPos);
+    OnMouseMove(&camera,pos);
     GuiOnMouseMove( (int) x, (int) y);
 }
 
