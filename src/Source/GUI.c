@@ -45,15 +45,15 @@ void _BuildButtons (void) {
     cb.sliceForward = false;
     gui.buttons[0] = cb;
     
-	//top slice left
+    //top slice left
     SetPRD(&cb,0.1f, 0.3f, 0.1f, 0.1f, 270.0f);
-    cb.sliceId = 3;
+    cb.sliceId = 2;
     cb.sliceForward = true;
     gui.buttons[1] = cb;
 
     //bottom slice down
     SetPRD(&cb, 0.1f, 0.7f, 0.1f, 0.1f, 270.0f);
-    cb.sliceId = 2;
+    cb.sliceId = 3;
     cb.sliceForward = false;
     gui.buttons[2] = cb;
 
@@ -71,13 +71,13 @@ void _BuildButtons (void) {
 
     //bottom slice right
     SetPRD(&cb, 0.9f, 0.7f, 0.1f, 0.1f, 90.0f);
-    cb.sliceId = 2;
+    cb.sliceId = 3;
     cb.sliceForward = true;
     gui.buttons[5] = cb;
 
     // top slice right
     SetPRD(&cb, 0.9f, 0.3f, 0.1f, 0.1f, 90.0f);
-    cb.sliceId = 3;
+    cb.sliceId = 2;
     cb.sliceForward = false;
     gui.buttons[6] = cb;
 
@@ -183,6 +183,6 @@ void GuiOnMouseMove (int x, int y) {
 }
 
 void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
-    _StartSliceAnimation(cube,cam,sliceId,sliceForward);
+    _StartSliceAnimation(cube,NULL,sliceId,sliceForward);
     printf("SliceID: %d sliceForward %d\n",sliceId,sliceForward);
 }

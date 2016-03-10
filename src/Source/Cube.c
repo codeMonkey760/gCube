@@ -57,6 +57,7 @@ void InitNewSliceAnimation (
     float            newPivotAxis [3],
     float            initialTheta,
     float            newRadiansPerSecond,
+    bool             sliceForward,
     Cubelet **cubeletsToAnimate,
     int numCubelets
 ) {
@@ -81,6 +82,7 @@ void InitNewSliceAnimation (
     curSA->thetaRemaining = initialTheta;
     curSA->cubelets = calloc(numCubelets,sizeof(Cubelet*));
     curSA->radiansPerSecond = newRadiansPerSecond;
+    curSA->forward = sliceForward;
     curSA->numCubelets = numCubelets;
     
     for (i = 0; i < numCubelets; ++i) {
@@ -104,6 +106,8 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
     } else {
         sa->thetaRemaining -= deltaTheta;
     }
+    
+    deltaTheta *= (sa->forward == false) ? -1.0f : 1.0f;
     
     QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaTheta, q);
     QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], -deltaTheta, negQ);
@@ -265,9 +269,10 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
     InitNewSliceAnimation(
         &sa,
         pivotAxis,
-        pivotAxis, 
+        pivotAxis,
         DEFAULT_SLICE_ROTATION_LENGTH,
         DEFAULT_SLICE_SPEED,
+        sliceForward,
         cubelets,
         9
     );
@@ -308,6 +313,7 @@ void _SliceRotationTest (Cube *cube) {
         pivotAxis,
         M_PI / 2.0f,
         M_PI * 2.0f,
+        true,
         &cubelets,
         9
     );
