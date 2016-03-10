@@ -183,6 +183,6 @@ void GuiOnMouseMove (int x, int y) {
 }
 
 void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
-    _StartSliceAnimation(cube,NULL,sliceId,sliceForward);
+    _StartSliceAnimation(cube,cam,sliceId,sliceForward);
     printf("SliceID: %d sliceForward %d\n",sliceId,sliceForward);
 }

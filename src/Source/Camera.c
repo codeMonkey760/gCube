@@ -139,13 +139,26 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
     float max = 0.0f;
     int axisId = -1;
     bool neg = false;
+    float iVMtx[16] = {0.0f};
     
     if (cam == NULL || target == NULL) return;
     
+    //get the inverse of the camera's view mtx
+    if (Mat4Inverse(iVMtx,cam->viewMtx) != true) {
+        //couldn't get a good inverse of the view matrix ... ???
+        fprintf(stderr, "Invalid inverse matrix. Camera.c::CopyAdjustedViewMtx");
+        return;
+    }
+    
     // for all directional vectors
     for (i = 0; i < 3; ++i) {
+        // reset locals
+        max = 0.0f;
+        axisId = -1;
+        neg = false;
+        
         // transform from world space to view space
-        Mat4Vec4Mult(cam->viewMtx,camDirs[i],camDirs[i]);
+        Mat4Vec4Mult(iVMtx,camDirs[i],camDirs[i]);
         
         // for all xyz components in current directional vector
         for (d = 0; d < 3; ++d) {
@@ -170,7 +183,7 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
     // rebuild a view matrix using the clamped directional vectors
     Mat4Identity(target);
     for (i = 0; i < 3; ++i) {
-        for (d = 0; d < 3; ++i) {
+        for (d = 0; d < 3; ++d) {
             target[i*4+d] = camDirs[i][d];
         }
     }
