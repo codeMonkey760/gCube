@@ -335,6 +335,7 @@ bool Mat4Inverse(float invOut[16], float m[16]) {
     return true;
 }
 
+// rewrite this
 void Mat4Mult (float c[], float a[], float b[]) {
     float temp[16] = {0.0f};
 
@@ -362,18 +363,21 @@ void Mat4fPrint (FILE *fd, float a[]) {
     }
 }
 
+//non gsl version
 void Mat4Vec4Mult (float m[], float v[], float ret[]) {
     float temp[4] = {0.0f};
-
+    
     if (m == NULL || v == NULL || ret == NULL) return;
-
-    gsl_vector_float_view V = gsl_vector_float_view_array(v,4);
-    gsl_vector_float_view R = gsl_vector_float_view_array(ret,4);
-    gsl_vector_float_view T = gsl_vector_float_view_array(temp,4);
-    gsl_matrix_float_view M = gsl_matrix_float_view_array(m,4,4);
-
-    gsl_blas_sgemv(CblasNoTrans, 1.0f, &M.matrix, &V.vector, 0.0f, &T.vector);
-    gsl_vector_float_memcpy(&R.vector, &T.vector);
+    
+    temp[0] = (m[ 0] * v[0]) + (m[ 4] * v[1]) + (m[ 8] * v[2]) + (m[12] * v[3]);
+    temp[1] = (m[ 1] * v[0]) + (m[ 5] * v[1]) + (m[ 9] * v[2]) + (m[13] * v[3]);
+    temp[2] = (m[ 2] * v[0]) + (m[ 6] * v[1]) + (m[10] * v[2]) + (m[14] * v[3]);
+    temp[3] = (m[ 3] * v[0]) + (m[ 7] * v[1]) + (m[11] * v[2]) + (m[15] * v[3]);
+    
+    v[0] = temp[0];
+    v[1] = temp[1];
+    v[2] = temp[2];
+    v[3] = temp[3];
 }
 
 void Vec4fPrint(FILE *fd, float v[]) {

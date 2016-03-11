@@ -168,8 +168,8 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
                 max = camDirs[i][d];
                 axisId = d;
                 neg = false;
-            } else if (abs(camDirs[i][d]) > max) {
-                max = camDirs[i][d];
+            } else if (fabs(camDirs[i][d]) > max) {
+                max = fabs(camDirs[i][d]);
                 axisId = d;
                 neg = true;
             }
