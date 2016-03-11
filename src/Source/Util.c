@@ -4,9 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_linalg.h>
-
 #include "Util.h"
 
 char *APPNAME = "cRube";
@@ -34,9 +31,6 @@ void Mat4Translation (float a[], float v[]) {
     if (a == NULL || v == NULL) return;
 
     Mat4Identity(a);
-    //a[3] = v[0];
-    //a[7] = v[1];
-    //a[11] = v[2];
     a[12] = v[0];
     a[13] = v[1];
     a[14] = v[2];
@@ -61,8 +55,8 @@ void Mat4RotationX(float a[], float theta) {
 
     Mat4Identity(a);
     a[5] = ct;
-    a[6] = -st;
-    a[9] = st;
+    a[6] = st;
+    a[9] = -st;
     a[10] = ct;
 }
 
@@ -76,8 +70,8 @@ void Mat4RotationY(float a[], float theta) {
 
     Mat4Identity(a);
     a[0] = ct;
-    a[2] = st;
-    a[8] = -st;
+    a[2] = -st;
+    a[8] = st;
     a[10] = ct;
 }
 
@@ -91,8 +85,8 @@ void Mat4RotationZ(float a[], float theta) {
 
     Mat4Identity(a);
     a[0] = ct;
-    a[1] = -st;
-    a[4] = st;
+    a[1] = st;
+    a[4] = -st;
     a[5] = ct;
 }
 
@@ -121,15 +115,15 @@ void Mat4RotationAxis (float a[], float v[], float theta) {
 
     Mat4Identity(a);
     a[0]  = x * x * nc + c;
-    a[1]  = xy * nc + zs;
-    a[2]  = zx * nc - ys;
+    a[1]  = xy * nc - zs;
+    a[2]  = zx * nc + ys;
 
-    a[4]  = xy * nc - zs;
+    a[4]  = xy * nc + zs;
     a[5]  = y * y * nc + c;
-    a[6]  = yz * nc + xs;
+    a[6]  = yz * nc - xs;
 
-    a[8]  = zx * nc + ys;
-    a[9]  = yz * nc - xs;
+    a[8]  = zx * nc - ys;
+    a[9]  = yz * nc + xs;
     a[10] = z * z * nc + c;
 }
 
@@ -166,7 +160,6 @@ void Mat4RotationQuaternion (float m[], float q[]) {
     m[10] = 1.0f - (xx + yy);
 }
 
-// Check this out when I get a chance
 void Mat4Transpose (float dst[16], float src[16]) {
     int i,j;
     float temp[16] = {0.0f};
@@ -182,26 +175,6 @@ void Mat4Transpose (float dst[16], float src[16]) {
     
     memcpy(dst,temp,sizeof(float) * 16);
 }
-
-/*
-// this too
-void Mat4Inverse (float dst[16], float src[16]) {
-    float temp[16] = {0.0f};
-    if (dst == NULL || src == NULL) return;
-    
-    gsl_matrix_float_view D = gsl_matrix_float_view_array(dst,4,4);
-    gsl_matrix_float_view S = gsl_matrix_float_view_array(src,4,4);
-    gsl_matrix_float_view T = gsl_matrix_float_view_array(temp,4,4);
-    gsl_permutation *p = gsl_permutation_alloc(4);
-    int s;
-    
-    gluInvertMatrix
-    gsl_linalg_LU_decomp (&S.matrix, p, &s);
-    gsl_linalg_LU_invert (&S.matrix, p, &T.matrix);
-    
-    memcpy(dst,temp, sizeof(float) * 16);
-}
- */
 
 // lifted this from:
 //http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
@@ -335,19 +308,36 @@ bool Mat4Inverse(float invOut[16], float m[16]) {
     return true;
 }
 
-// rewrite this
-void Mat4Mult (float c[], float a[], float b[]) {
+// non gsl version
+void Mat4Mult (float ret[], float m[], float n[]) {
+    int i;
     float temp[16] = {0.0f};
-
-    if (a == NULL || b == NULL || c == NULL) return;
-
-    gsl_matrix_float_view A = gsl_matrix_float_view_array(a,4,4);
-    gsl_matrix_float_view B = gsl_matrix_float_view_array(b,4,4);
-    gsl_matrix_float_view C = gsl_matrix_float_view_array(c,4,4);
-    gsl_matrix_float_view T = gsl_matrix_float_view_array(temp,4,4);
-
-    gsl_blas_sgemm (CblasNoTrans, CblasNoTrans, 1.0f, &A.matrix, &B.matrix, 0.0f, &T.matrix);
-    gsl_matrix_float_memcpy(&C.matrix, &T.matrix);
+    
+    if (ret == NULL || m == NULL || n == NULL) return;
+    
+    temp[ 0] = (m[ 0] * n[ 0]) + (m[ 1] * n[ 4]) + (m[ 2] * n[ 8]) + (m[ 3] * n[12]);
+    temp[ 1] = (m[ 0] * n[ 1]) + (m[ 1] * n[ 5]) + (m[ 2] * n[ 9]) + (m[ 3] * n[13]);
+    temp[ 2] = (m[ 0] * n[ 2]) + (m[ 1] * n[ 6]) + (m[ 2] * n[10]) + (m[ 3] * n[14]);
+    temp[ 3] = (m[ 0] * n[ 3]) + (m[ 1] * n[ 7]) + (m[ 2] * n[11]) + (m[ 3] * n[15]);
+    
+    temp[ 4] = (m[ 4] * n[ 0]) + (m[ 5] * n[ 4]) + (m[ 6] * n[ 8]) + (m[ 7] * n[12]);
+    temp[ 5] = (m[ 4] * n[ 1]) + (m[ 5] * n[ 5]) + (m[ 6] * n[ 9]) + (m[ 7] * n[13]);
+    temp[ 6] = (m[ 4] * n[ 2]) + (m[ 5] * n[ 6]) + (m[ 6] * n[10]) + (m[ 7] * n[14]);
+    temp[ 7] = (m[ 4] * n[ 3]) + (m[ 5] * n[ 7]) + (m[ 6] * n[11]) + (m[ 7] * n[15]);
+    
+    temp[ 8] = (m[ 8] * n[ 0]) + (m[ 9] * n[ 4]) + (m[10] * n[ 8]) + (m[11] * n[12]);
+    temp[ 9] = (m[ 8] * n[ 1]) + (m[ 9] * n[ 5]) + (m[10] * n[ 9]) + (m[11] * n[13]);
+    temp[10] = (m[ 8] * n[ 2]) + (m[ 9] * n[ 6]) + (m[10] * n[10]) + (m[11] * n[14]);
+    temp[11] = (m[ 8] * n[ 3]) + (m[ 9] * n[ 7]) + (m[10] * n[11]) + (m[11] * n[15]);
+    
+    temp[12] = (m[12] * n[ 0]) + (m[13] * n[ 4]) + (m[14] * n[ 8]) + (m[15] * n[12]);
+    temp[13] = (m[12] * n[ 1]) + (m[13] * n[ 5]) + (m[14] * n[ 9]) + (m[15] * n[13]);
+    temp[14] = (m[12] * n[ 2]) + (m[13] * n[ 6]) + (m[14] * n[10]) + (m[15] * n[14]);
+    temp[15] = (m[12] * n[ 3]) + (m[13] * n[ 7]) + (m[14] * n[11]) + (m[15] * n[15]);
+    
+    for (i = 0; i < 16; ++i) {
+        ret[i] = temp[i];
+    }
 }
 
 void Mat4Print (float a[]) {
@@ -363,7 +353,6 @@ void Mat4fPrint (FILE *fd, float a[]) {
     }
 }
 
-//non gsl version
 void Mat4Vec4Mult (float m[], float v[], float ret[]) {
     float temp[4] = {0.0f};
     
