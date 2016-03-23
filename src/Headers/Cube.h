@@ -2,8 +2,8 @@
 #define _C_RUBE_CUBE_H_
 
 #define NUM_CUBELETS 26
-#define DEFAULT_SLICE_SPEED ((M_PI) * 4.0f)
-#define DEFAULT_SLICE_ROTATION_LENGTH ((M_PI) / 2.0f)
+#define DEFAULT_SLICE_SPEED 90.0f
+#define DEFAULT_SLICE_ROTATION_LENGTH 90.0f
 
 typedef struct {
     Cubelet **cubelets;
@@ -11,8 +11,8 @@ typedef struct {
     
     float pivotPoint[3];
     float pivotAxis[3];
-    float thetaRemaining;
-    float radiansPerSecond;
+    float degreesRemaining;
+    float degreesPerSecond;
     bool forward;
     
 } SliceAnimation;
@@ -43,8 +43,8 @@ void InitNewSliceAnimation (
     SliceAnimation **sa, 
     float newPivotPoint[3],
     float newPivotAxis[3],
-    float initialTheta,
-    float newRadiansPerSecond,
+    float initialDegrees,
+    float newDegreesPerSecond,
     bool sliceForward,
     Cubelet **cubeletsToAnimate,
     int numCubelets

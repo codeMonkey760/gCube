@@ -65,9 +65,9 @@ void _RecalcTMtx (GUIButton *button) {
     posH[0] = (button->posPercent[0] * 2.0f) - 1.0f;
     posH[1] = (button->posPercent[1] * -2.0f) + 1.0f;
     
-    Mat4Scaling(sMtx,button->dim);
+    Mat4ScalingFA(sMtx,button->dim);
     Mat4RotationZ(rMtx,button->rot);
-    Mat4Translation(tMtx, posH);
+    Mat4TranslationFA(tMtx, posH);
     
     //NOTE: This is wrong
     Mat4Mult(button->tMtx, sMtx, rMtx);

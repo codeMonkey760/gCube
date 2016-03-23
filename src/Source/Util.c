@@ -18,7 +18,7 @@ float radiansToDegrees (float r) {
     return r / M_PI * 180.0f;
 }
 
-void Mat4Identity (float a[]) {
+void Mat4Identity (float a[16]) {
     int i;
     if (a == NULL) return;
 
@@ -27,7 +27,13 @@ void Mat4Identity (float a[]) {
     }
 }
 
-void Mat4Translation (float a[], float v[]) {
+void Mat4TranslationF (float a[16], float x, float y, float z) {
+	float v[4] = {x,y,z,0.0f};
+
+	Mat4TranslationFA(a, v);
+}
+
+void Mat4TranslationFA(float a[16], float v[3]) {
     if (a == NULL || v == NULL) return;
 
     Mat4Identity(a);
@@ -36,7 +42,16 @@ void Mat4Translation (float a[], float v[]) {
     a[14] = v[2];
 }
 
-void Mat4Scaling (float a[], float v[]) {
+void Mat4ScalingF (float a[16], float x, float y, float z) {
+	if (a == NULL) return;
+
+	Mat4Identity(a);
+	a[0] = x;
+	a[5] = y;
+	a[10] = z;
+}
+
+void Mat4ScalingFA(float a[16], float v[3]) {
     if (a == NULL || v == NULL) return;
 
     Mat4Identity(a);
@@ -45,7 +60,7 @@ void Mat4Scaling (float a[], float v[]) {
     a[10] = v[2];
 }
 
-void Mat4RotationX(float a[], float theta) {
+void Mat4RotationX(float a[16], float theta) {
     if (a == NULL) return;
 
     theta = degreesToRadians(theta);
@@ -60,7 +75,7 @@ void Mat4RotationX(float a[], float theta) {
     a[10] = ct;
 }
 
-void Mat4RotationY(float a[], float theta) {
+void Mat4RotationY(float a[16], float theta) {
     if (a == NULL) return;
 
     theta = degreesToRadians(theta);
@@ -75,7 +90,7 @@ void Mat4RotationY(float a[], float theta) {
     a[10] = ct;
 }
 
-void Mat4RotationZ(float a[], float theta) {
+void Mat4RotationZ(float a[16], float theta) {
     if (a == NULL) return;
 
     theta = degreesToRadians(theta);
@@ -90,7 +105,13 @@ void Mat4RotationZ(float a[], float theta) {
     a[5] = ct;
 }
 
-void Mat4RotationAxis (float a[], float v[], float theta) {
+void Mat4RotationAxisF (float a[16], float x, float y, float z, float theta) {
+	float v[4] = {x,y,z,0.0f};
+
+	Mat4RotationAxisFA(a,v,theta);
+}
+
+void Mat4RotationAxisFA(float a[16], float v[3], float theta) {
     if (a == NULL || v == NULL) return;
 
     theta = degreesToRadians(theta);
@@ -127,7 +148,13 @@ void Mat4RotationAxis (float a[], float v[], float theta) {
     a[10] = z * z * nc + c;
 }
 
-void Mat4RotationQuaternion (float m[], float q[]) {
+void Mat4RotationQuaternionF (float m[16], float x, float y, float z, float w) {
+	float q[4] = {x,y,z,w};
+
+	Mat4RotationQuaternionFA(m,q);
+}
+
+void Mat4RotationQuaternionFA(float m[16], float q[4]) {
     if (m == NULL || q == NULL) return;
     
     float x = q[0];
@@ -149,6 +176,7 @@ void Mat4RotationQuaternion (float m[], float q[]) {
     
     Mat4Identity(m);
     
+    /*
     m[0]  = 1.0f - (yy + zz);
     m[1]  = xy - wz;
     m[2]  = xz + wy;
@@ -157,6 +185,17 @@ void Mat4RotationQuaternion (float m[], float q[]) {
     m[6]  = yz - wx;
     m[8]  = xz - wy;
     m[9]  = yz + wx;
+    m[10] = 1.0f - (xx + yy);
+    */
+    
+    m[0]  = 1.0f - (yy + zz);
+    m[4]  = xy - wz;
+    m[8]  = xz + wy;
+    m[1]  = xy + wz;
+    m[5]  = 1.0f - (xx + zz);
+    m[9]  = yz - wx;
+    m[2]  = xz - wy;
+    m[6]  = yz + wx;
     m[10] = 1.0f - (xx + yy);
 }
 
@@ -309,7 +348,7 @@ bool Mat4Inverse(float invOut[16], float m[16]) {
 }
 
 // non gsl version
-void Mat4Mult (float ret[], float m[], float n[]) {
+void Mat4Mult (float ret[16], float m[16], float n[16]) {
     int i;
     float temp[16] = {0.0f};
     
@@ -340,11 +379,11 @@ void Mat4Mult (float ret[], float m[], float n[]) {
     }
 }
 
-void Mat4Print (float a[]) {
+void Mat4Print (float a[16]) {
     Mat4fPrint (stdout, a);
 }
 
-void Mat4fPrint (FILE *fd, float a[]) {
+void Mat4fPrint (FILE *fd, float a[16]) {
     int i;
     if (fd == NULL || a == NULL) return;
 
@@ -353,7 +392,7 @@ void Mat4fPrint (FILE *fd, float a[]) {
     }
 }
 
-void Mat4Vec4Mult (float m[], float v[], float ret[]) {
+void Mat4Vec4Mult (float m[16], float v[4], float ret[4]) {
     float temp[4] = {0.0f};
     
     if (m == NULL || v == NULL || ret == NULL) return;
@@ -363,13 +402,22 @@ void Mat4Vec4Mult (float m[], float v[], float ret[]) {
     temp[2] = (m[ 2] * v[0]) + (m[ 6] * v[1]) + (m[10] * v[2]) + (m[14] * v[3]);
     temp[3] = (m[ 3] * v[0]) + (m[ 7] * v[1]) + (m[11] * v[2]) + (m[15] * v[3]);
     
-    v[0] = temp[0];
-    v[1] = temp[1];
-    v[2] = temp[2];
-    v[3] = temp[3];
+    ret[0] = temp[0];
+    ret[1] = temp[1];
+    ret[2] = temp[2];
+    ret[3] = temp[3];
 }
 
-void Vec4fPrint(FILE *fd, float v[]) {
+void Mat4Copy (float dst[16], float src[16]) {
+    int i;
+    if (dst == NULL || src == NULL) return;
+    
+    for (i = 0; i < 16; ++i) {
+        dst[i] = src[i];
+    }
+}
+
+void Vec4fPrint(FILE *fd, float v[4]) {
     int i;
     if (fd == NULL || v == NULL) return;
 
@@ -379,11 +427,11 @@ void Vec4fPrint(FILE *fd, float v[]) {
     fprintf(fd,"\n");
 }
 
-void Vec4Print(float v[]) {
+void Vec4Print(float v[4]) {
     Vec4fPrint(stdout, v);
 }
 
-void Vec3Copy (float dst[], float src[]) {
+void Vec3Copy (float dst[3], float src[3]) {
     int i;
     if (dst == NULL || src == NULL) return;
     
@@ -392,7 +440,7 @@ void Vec3Copy (float dst[], float src[]) {
     }
 }
 
-float Vec3Dot (float a[], float b[]) {
+float Vec3Dot (float a[3], float b[3]) {
     if (a == NULL || b == NULL) return 0.0f;
     
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
@@ -409,7 +457,7 @@ void Vec3Normalize (float v[3]) {
     v[2] /= len;
 }
 
-void Vec3Cross (float u[], float v[], float out[]) {
+void Vec3Cross (float u[3], float v[3], float out[3]) {
     if (u == NULL || v == NULL || out == NULL) return;
     float temp[3] = {0.0f};
     int i;
@@ -454,6 +502,8 @@ void QuaternionVec3Rotation (float v[3], float q[4], float out[3]) {
 // http://stackoverflow.com/questions/4436764/rotating-a-quaternion-on-1-axis
 void QuaternionFromAxisAngle(float x, float y, float z, float a, float out[4]) {
     if (out == NULL) return;
+    
+    a = degreesToRadians(a);
     
     float fac = sin (a / 2.0f);
     

@@ -55,8 +55,8 @@ void InitNewSliceAnimation (
     SliceAnimation **sa,
     float            newPivotPoint[3],
     float            newPivotAxis [3],
-    float            initialTheta,
-    float            newRadiansPerSecond,
+    float            initialDegrees,
+    float            newDegreesPerSecond,
     bool             sliceForward,
     Cubelet **cubeletsToAnimate,
     int numCubelets
@@ -79,9 +79,9 @@ void InitNewSliceAnimation (
     
     Vec3Copy(curSA->pivotPoint, newPivotPoint);
     Vec3Copy(curSA->pivotAxis, newPivotAxis);
-    curSA->thetaRemaining = initialTheta;
+    curSA->degreesRemaining = initialDegrees;
     curSA->cubelets = calloc(numCubelets,sizeof(Cubelet*));
-    curSA->radiansPerSecond = newRadiansPerSecond;
+    curSA->degreesPerSecond = newDegreesPerSecond;
     curSA->forward = sliceForward;
     curSA->numCubelets = numCubelets;
     
@@ -94,23 +94,24 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
     if (sa == NULL) return;
     
     bool result = false;
-    float deltaTheta = sa->radiansPerSecond * dt;
+    float deltaDegrees = sa->degreesPerSecond * dt;
     float q[4] = {0.0f};
     float negQ[4] = {0.0f};
     int i;
     
-    if (deltaTheta > sa->thetaRemaining) {
-        deltaTheta = sa->thetaRemaining;
-        sa->thetaRemaining = 0.0f;
+    if (deltaDegrees > sa->degreesRemaining) {
+        deltaDegrees = sa->degreesRemaining;
+        sa->degreesRemaining = 0.0f;
         result = true;
     } else {
-        sa->thetaRemaining -= deltaTheta;
+        sa->degreesRemaining -= deltaDegrees;
     }
     
-    deltaTheta *= (sa->forward == false) ? -1.0f : 1.0f;
+    deltaDegrees *= (sa->forward == false) ? -1.0f : 1.0f;
     
-    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaTheta, q);
-    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], -deltaTheta, negQ);
+    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaDegrees, q);
+    //QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], -deltaDegrees, negQ);
+    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaDegrees, negQ);
     for (i = 0; i < sa->numCubelets; ++i) {
         QuaternionVec3Rotation(sa->cubelets[i]->posW,q,sa->cubelets[i]->posW);
         QuaternionMult(negQ,sa->cubelets[i]->rotation,sa->cubelets[i]->rotation);

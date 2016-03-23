@@ -124,9 +124,9 @@ void BuildMatricies (Cubelet *singleCubelet, float wMtx[16], float witMtx[16]) {
     float rMtx[16] = {0.0f};
     float sMtx[16] = {0.0f};
     
-    Mat4Scaling(sMtx, singleCubelet->scale);
-    Mat4RotationQuaternion(rMtx, singleCubelet->rotation);
-    Mat4Translation(tMtx, singleCubelet->posW);
+    Mat4ScalingFA(sMtx, singleCubelet->scale);
+    Mat4RotationQuaternionFA(rMtx, singleCubelet->rotation);
+    Mat4TranslationFA(tMtx, singleCubelet->posW);
     
     Mat4Mult(wMtx, sMtx, rMtx);
     Mat4Mult(wMtx, wMtx, tMtx);
