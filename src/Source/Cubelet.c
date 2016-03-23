@@ -69,7 +69,10 @@ void DrawCubeletArray (Cubelet *array, int numCubelets, Camera *cam) {
         
         glUniform3fv(gCamPos, 1, cam->camPosW);
         glUniformMatrix4fv(gWMtx,1,GL_TRUE,wMtx);
-        glUniformMatrix4fv(gWITMtx, 1, GL_TRUE, witMtx);
+        // HERE'S THE TRANSPOSE!!!!!
+        // I WAS MISSING A Mat4Transpose call in Cubelet.c::BuildMatricies for the witMtx
+        // I just pass GL_FALSE here in order to compensate
+        glUniformMatrix4fv(gWITMtx, 1, GL_FALSE, witMtx);
         glUniformMatrix4fv(gWVPMtx, 1, GL_TRUE, wvpMtx);
         glUniformMatrix3fv(gTexMtx, 1, GL_TRUE, texMtx);
         GetDiffuseColor(6,dColor);
@@ -132,4 +135,6 @@ void BuildMatricies (Cubelet *singleCubelet, float wMtx[16], float witMtx[16]) {
     Mat4Mult(wMtx, wMtx, tMtx);
     
     Mat4Inverse(witMtx, wMtx);
+    // WIT stands for World Inverse Transpose ...
+    // so where's the transpose ???
 }

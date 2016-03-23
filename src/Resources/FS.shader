@@ -10,14 +10,11 @@ uniform vec3 gCamPos;
 uniform sampler2D gTexture;
 
 void main (void) {
-    vec3 toCam = normalize(posW - gCamPos);
+    vec3 toCam = normalize(gCamPos - posW);
     vec3 normW2 = normalize(normW);
 
-    // this diffuse calculation is a little odd...
-    // remember that we're lighting back faces not front faces
-    // so the dot products come out neg
-    float diffuse = min(dot(toCam,normW2), 0.0f);
-    diffuse = (diffuse * -0.7f) + 0.3f;
+    float diffuse = max(dot(toCam,normW2),0.0f);
+    diffuse = (diffuse * 0.7f) + 0.3f;
     
     vec3 col = texture(gTexture, outtexC).rgb * gDiffuseColor;
 

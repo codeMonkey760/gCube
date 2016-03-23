@@ -129,10 +129,10 @@ void init (void) {
     glfwSwapInterval(1);
     glClearColor(0.2f,0.2f,0.8f,1.0f);
     glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
     // lol cubelets need front faces culled and gui is all front faces
     // need to fix my facing issues before face culling can be enabled!
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     fprintf(stdout, "GL_VERSION: %s\n",glGetString(GL_VERSION));
     fprintf(stdout, "GL_VENDOR: %s\n",glGetString(GL_VENDOR));
     fprintf(stdout, "GL_RENDER: %s\n",glGetString(GL_RENDERER));
