@@ -174,13 +174,14 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
     SliceAnimation *sa = NULL;
     float pivotAxis[4] = {0.0f};
     float cubeletPos[4] = {0.0f,0.0f,0.0f,1.0f};
-    Cubelet *cubelets[9] = {NULL};
+    Cubelet *cubelets[26] = {NULL};
     int i = 0, count = 0;
     float avm[16] = {0.0f};
     float iavm[16] = {0.0f};
     bool validInv = false;
+    float rotationLength = DEFAULT_SLICE_ROTATION_LENGTH;
     
-    if (cube == NULL || slice < SLICE_POS_X || slice > SLICE_NEG_Z) return;
+    if (cube == NULL || slice < SLICE_POS_X || slice > SLICE_WHOLE_CUBE) return;
     
     if (cam != NULL) {
         CopyAdjustedViewMtx(cam,avm);
@@ -258,9 +259,18 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
                 if (count == 9) break;
             }
         }
+    } else if (slice == SLICE_WHOLE_CUBE) {
+        pivotAxis[0] = 1.0f;
+        for (i = 0; i < 26; ++i) {
+            cubelets[count++] = &(cube->cubelets[i]);
+        }
+        rotationLength = 180.0f;
     }
     
-    if (count != 9) {
+    if (
+        (slice != SLICE_WHOLE_CUBE && count != 9) ||
+        (slice == SLICE_WHOLE_CUBE && count != 26) 
+    ) {
         fprintf(stderr,"Invalid slice selection!\n");
         exit(1);
     }
@@ -271,11 +281,11 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
         &sa,
         pivotAxis,
         pivotAxis,
-        DEFAULT_SLICE_ROTATION_LENGTH,
+        rotationLength,
         DEFAULT_SLICE_SPEED,
         sliceForward,
         cubelets,
-        9
+        count
     );
     
     if (sa != NULL) {

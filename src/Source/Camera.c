@@ -208,9 +208,9 @@ void _RefreshViewMtx (Camera *cam) {
     Mat4Identity(rotXY);
     Mat4RotationX(rotX,-1.0f * cam->pitch);
     Mat4RotationY(rotY,-1.0f * cam->yaw);
-    //Mat4Mult(rotXY,rotX,rotY);
+    Mat4Mult(rotXY,rotX,rotY);
     // Try this .. see if it helps
-    Mat4Mult(rotXY, rotY,rotX);
+    //Mat4Mult(rotXY, rotY,rotX);
 
     Mat4Vec4Mult(rotXY,camPosW,camPosW);
     Mat4Vec4Mult(rotXY,rightW,rightW);

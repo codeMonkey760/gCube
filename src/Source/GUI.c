@@ -41,62 +41,62 @@ void _BuildButtons (void) {
     
     //left slice up
     SetPRD(&cb,0.3f,0.1f,0.1f,0.1f,0.0f);
-    cb.sliceId = 0;
+    cb.sliceId = SLICE_NEG_X;
     cb.sliceForward = false;
     gui.buttons[0] = cb;
     
     //top slice left
-    SetPRD(&cb,0.1f, 0.3f, 0.1f, 0.1f, 270.0f);
-    cb.sliceId = 2;
+    SetPRD(&cb,0.1f, 0.3f, 0.1f, 0.1f, 90.0f);
+    cb.sliceId = SLICE_POS_Y;
     cb.sliceForward = true;
     gui.buttons[1] = cb;
 
     //bottom slice down
-    SetPRD(&cb, 0.1f, 0.7f, 0.1f, 0.1f, 270.0f);
-    cb.sliceId = 3;
+    SetPRD(&cb, 0.1f, 0.7f, 0.1f, 0.1f, 90.0f);
+    cb.sliceId = SLICE_NEG_Y;
     cb.sliceForward = false;
     gui.buttons[2] = cb;
 
     //left slice down
     SetPRD(&cb, 0.3f, 0.9f, 0.1f, 0.1f, 180.0f);
-    cb.sliceId = 0;
+    cb.sliceId = SLICE_NEG_X;
     cb.sliceForward = true;
     gui.buttons[3] = cb;
 
     //right slice down
     SetPRD(&cb, 0.7f, 0.9f, 0.1f, 0.1f, 180.0f);
-    cb.sliceId = 1;
+    cb.sliceId = SLICE_POS_X;
     cb.sliceForward = false;
     gui.buttons[4] = cb;
 
     //bottom slice right
-    SetPRD(&cb, 0.9f, 0.7f, 0.1f, 0.1f, 90.0f);
-    cb.sliceId = 3;
+    SetPRD(&cb, 0.9f, 0.7f, 0.1f, 0.1f, 270.0f);
+    cb.sliceId = SLICE_NEG_Y;
     cb.sliceForward = true;
     gui.buttons[5] = cb;
 
     // top slice right
-    SetPRD(&cb, 0.9f, 0.3f, 0.1f, 0.1f, 90.0f);
-    cb.sliceId = 2;
+    SetPRD(&cb, 0.9f, 0.3f, 0.1f, 0.1f, 270.0f);
+    cb.sliceId = SLICE_POS_Y;
     cb.sliceForward = false;
     gui.buttons[6] = cb;
 
     //right slice up
     SetPRD(&cb, 0.7f, 0.1f, 0.1f, 0.1f, 0.0f);
-    cb.sliceId = 1;
+    cb.sliceId = SLICE_POS_X;
     cb.sliceForward = true;
     gui.buttons[7] = cb;
 
     // forward slice left
     SetPRD(&cb,0.4f, 0.9f, 0.1f, 0.1f, 0.0f);
     cb.texId = GetTextureByName("rot.png");
-    cb.sliceId = 4;
+    cb.sliceId = SLICE_NEG_Z;
     cb.sliceForward = true;
     gui.buttons[8] = cb;
 
     // forward slice right
     SetPRD(&cb, 0.6f, 0.9f, 0.1f, 0.1f, 0.0f);
-    cb.sliceId = 4;
+    cb.sliceId = SLICE_NEG_Z;
     cb.sliceForward = false;
     cb.texMtx[0] = -1.0f;
     gui.buttons[9] = cb;
