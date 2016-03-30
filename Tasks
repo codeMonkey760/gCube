@@ -1,0 +1,2 @@
+Fix Gui buttons not targeting the right slices after camera rotation
+Rewrite Build view matrix so that it's not such a mess
