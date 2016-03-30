@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
@@ -15,7 +16,7 @@
 #include "Cube.h"
 
 #define SHUFFLE_SIZE 60
-static SliceAnimation *shuffle[SHUFFLE_SIZE];
+static int shuffle[SHUFFLE_SIZE];
 static int curAnimation = 0;
 
 void InitCube (Cube *cube) {
@@ -32,6 +33,9 @@ void InitCube (Cube *cube) {
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
     _InitShuffleSequence();
+    
+    curAnimation = 0;
+    _StartSliceAnimation(cube, NULL, shuffle[0], false);
 }
 
 void UpdateCube (Cube *cube, float dt) {
@@ -41,6 +45,11 @@ void UpdateCube (Cube *cube, float dt) {
         if (UpdateSliceAnimation(cube->curAnimation,dt)) {
             DestroySliceAnimation(cube->curAnimation);
             cube->curAnimation = NULL;
+            
+            if (curAnimation < SHUFFLE_SIZE-1) {
+                curAnimation++;
+                _StartSliceAnimation(cube, NULL, shuffle[curAnimation], false);
+            }
         }
     }
 }
@@ -295,8 +304,10 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
 
 void _InitShuffleSequence (void) {
     int i;
+    srand(time(NULL));
+    
     for (i = 0; i < SHUFFLE_SIZE; ++i) {
-        shuffle[i] = NULL;
+        shuffle[i] = rand() % SLICE_WHOLE_CUBE;
     }
 }
 
