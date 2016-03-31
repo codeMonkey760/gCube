@@ -67,8 +67,8 @@ void InitNewSliceAnimation (
     float            initialDegrees,
     float            newDegreesPerSecond,
     bool             sliceForward,
-    Cubelet **cubeletsToAnimate,
-    int numCubelets
+    Cubelet        **cubeletsToAnimate,
+    int              numCubelets
 ) {
     SliceAnimation *curSA = NULL;
     int i = 0;
@@ -309,34 +309,4 @@ void _InitShuffleSequence (void) {
     for (i = 0; i < SHUFFLE_SIZE; ++i) {
         shuffle[i] = rand() % SLICE_WHOLE_CUBE;
     }
-}
-
-// =========================
-// TEST CODE
-// =========================
-
-void _SliceRotationTest (Cube *cube) {
-    if (cube == NULL) return;
-    
-    float pivotAxis[3] = {1.0f, 0.0f, 0.0f};
-    Cubelet *cubelets[9] = {NULL};
-    int i = 0, count = 0;
-    
-    for (i = 0; i < NUM_CUBELETS; ++i) {
-        if (cube->cubelets[i].posW[0] < 0.0f) {
-            cubelets[count++] = &(cube->cubelets[i]);
-            if (count == 9) break;
-        }
-    }
-    
-    InitNewSliceAnimation(
-        &(cube->curAnimation),
-        pivotAxis,
-        pivotAxis,
-        M_PI / 2.0f,
-        M_PI * 2.0f,
-        true,
-        &cubelets,
-        9
-    );
 }

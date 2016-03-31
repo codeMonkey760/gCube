@@ -239,7 +239,7 @@ void finalize (void) {
  */
 int main (int argc, char **argv) {
     glfwSetErrorCallback(error_callback);
-
+    
     if (glfwInit() == false) {
         return EXIT_FAILURE;
     }

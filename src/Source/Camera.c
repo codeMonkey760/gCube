@@ -209,9 +209,6 @@ void _RefreshViewMtx (Camera *cam) {
     Mat4RotationX(rotX,-1.0f * cam->pitch);
     Mat4RotationY(rotY,-1.0f * cam->yaw);
     Mat4Mult(rotXY,rotX,rotY);
-    // Try this .. see if it helps
-    //Mat4Mult(rotXY, rotY,rotX);
-
     Mat4Vec4Mult(rotXY,camPosW,camPosW);
     Mat4Vec4Mult(rotXY,rightW,rightW);
     Mat4Vec4Mult(rotXY,upW,upW);
@@ -234,6 +231,7 @@ void _RefreshViewMtx (Camera *cam) {
     //cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
     //cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
     
+    /*
     Vec3Copy(negCamPosW,camPosW);
     for (i = 0; i < 3; ++i) {
         negCamPosW[i] *= -1.0f;
@@ -242,6 +240,11 @@ void _RefreshViewMtx (Camera *cam) {
     cam->viewMtx[12] = Vec3Dot(negCamPosW,rightW);
     cam->viewMtx[13] = Vec3Dot(negCamPosW,upW);
     cam->viewMtx[14] = Vec3Dot(negCamPosW,lookW);
+    */
+    
+    cam->viewMtx[12] = -1.0f * Vec3Dot(camPosW,rightW);
+    cam->viewMtx[13] = -1.0f * Vec3Dot(camPosW,upW);
+    cam->viewMtx[14] = -1.0f * Vec3Dot(camPosW,lookW);
 
     Vec3Copy(cam->camPosW,camPosW);
     

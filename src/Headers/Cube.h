@@ -58,10 +58,5 @@ void _InitShuffleSequence (void);
 
 void _PositionCubelets (Cube *cube);
 
-// ========================
-// TEST CODE
-// =======================
-void _SliceRotationTest (Cube *cube);
-
 #endif
 
