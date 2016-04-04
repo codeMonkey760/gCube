@@ -190,6 +190,13 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
 }
 
 void _RefreshViewMtx (Camera *cam) {
+    float camPosW[3] = {0.0f,0.0f,-10.0f};
+    float camTargetW[3] = {0.0f,0.0f,0.0f};
+    float camUpW[3] = {0.0f,1.0f,0.0f};
+    
+    Mat4LookAtLH(cam->viewMtx,camPosW,camTargetW,camUpW);
+    
+    /*
     float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};
     float negCamPosW[4] = {0.0f,0.0f,0.0f,1.0f};
     float rightW[4]  = {1.0f,0.0f,0.0f,0.0f};
@@ -231,7 +238,6 @@ void _RefreshViewMtx (Camera *cam) {
     //cam->viewMtx[13] = -1.0f * Vec3Dot(upW,camPosW);
     //cam->viewMtx[14] = -1.0f * Vec3Dot(lookW,camPosW);
     
-    /*
     Vec3Copy(negCamPosW,camPosW);
     for (i = 0; i < 3; ++i) {
         negCamPosW[i] *= -1.0f;
@@ -240,7 +246,6 @@ void _RefreshViewMtx (Camera *cam) {
     cam->viewMtx[12] = Vec3Dot(negCamPosW,rightW);
     cam->viewMtx[13] = Vec3Dot(negCamPosW,upW);
     cam->viewMtx[14] = Vec3Dot(negCamPosW,lookW);
-    */
     
     cam->viewMtx[12] = -1.0f * Vec3Dot(camPosW,rightW);
     cam->viewMtx[13] = -1.0f * Vec3Dot(camPosW,upW);
@@ -255,4 +260,5 @@ void _RefreshViewMtx (Camera *cam) {
     //Mat4Identity(cam->viewMtx);
     //cam->viewMtx[12] = 0.0f;
     //cam->viewMtx[14] = 0.0f;
+    */
 }

@@ -431,6 +431,24 @@ void Vec4Print(float v[4]) {
     Vec4fPrint(stdout, v);
 }
 
+void Vec3Add (float out[3], float a[3], float b[3]) {
+    int i;
+    if (out == NULL || a == NULL || b == NULL) return;
+    
+    for (i = 0; i < 3; ++i) {
+        out[i] = a[i] + b[i];
+    }
+}
+
+void Vec3Subtract (float out[3], float a[3], float b[3]) {
+    int i;
+    if (out == NULL || a == NULL || b == NULL) return;
+    
+    for (i = 0; i < 3; ++i) {
+        out[i] = a[i] - b[i];
+    }
+}
+
 void Vec3Copy (float dst[3], float src[3]) {
     int i;
     if (dst == NULL || src == NULL) return;
@@ -457,7 +475,7 @@ void Vec3Normalize (float v[3]) {
     v[2] /= len;
 }
 
-void Vec3Cross (float u[3], float v[3], float out[3]) {
+void Vec3Cross (float out[3], float u[3], float v[3]) {
     if (u == NULL || v == NULL || out == NULL) return;
     float temp[3] = {0.0f};
     int i;
@@ -471,7 +489,7 @@ void Vec3Cross (float u[3], float v[3], float out[3]) {
     }
 }
 
-void Vec3Scalar (float u[3], float s, float out[3]) {
+void Vec3Scalar (float out[3], float u[3], float s) {
     if (u == NULL || out == NULL) return;
     int i;
     
@@ -550,4 +568,53 @@ void QuaternionMult(float m[4], float n[4], float out[4]) {
     for (i = 0; i < 4; ++i) {
         out[i] = temp[i];
     }
+}
+
+void Mat4LookAtLH (float out[16], float camPosW[3], float camTargetW[3], float camUpW[3]) {
+    if (
+        out == NULL ||
+        camPosW == NULL ||
+        camTargetW == NULL ||
+        camUpW == NULL
+    ) {
+        return;
+    }
+    
+    float look[3] = {0.0f};
+    float up[3] = {0.0f};
+    float right[3] = {0.0f};
+    float negCamPosW[3] = {0.0f};
+    
+    Mat4Identity(out);
+    
+    Vec3Subtract(look,camTargetW,camPosW);
+    Vec3Normalize(look);
+    
+    Vec3Cross(right, camUpW, look);
+    Vec3Normalize(right);
+    
+    Vec3Cross(up,look,right);
+    Vec3Normalize(up);
+    
+    Vec3Scalar(negCamPosW, camPosW, -1.0f);
+    
+    out[ 0] = right[0];
+    out[ 1] = up[0];
+    out[ 2] = look[0];
+    out[ 3] = 0.0f;
+    
+    out[ 4] = right[1];
+    out[ 5] = up[1];
+    out[ 6] = look[1];
+    out[ 7] = 0.0f;
+    
+    out[ 8] = right[2];
+    out[ 9] = up[2];
+    out[10] = look[2];
+    out[11] = 0.0f;
+    
+    out[12] = Vec3Dot(negCamPosW,right);
+    out[13] = Vec3Dot(negCamPosW,up);
+    out[14] = Vec3Dot(negCamPosW,look);
+    out[15] = 1.0f;
 }
