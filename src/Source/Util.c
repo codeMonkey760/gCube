@@ -504,12 +504,12 @@ void QuaternionVec3Rotation (float v[3], float q[4], float out[3]) {
     float temp[3] = {0.0f};
     float temp2[3] = {0.0f};
     float temp3[3] = {0.0f};
-    float u[3] = {0.0f};
+
     int i;
-    Vec3Scalar(q,(2.0f * Vec3Dot(q,v)),temp);
-    Vec3Scalar(v,((q[3] * q[3]) - Vec3Dot(q,q)),temp2);
-    Vec3Cross(q,v,temp3);
-    Vec3Scalar(temp3,2.0f * q[3], temp3);
+    Vec3Scalar(temp,q,(2.0f * Vec3Dot(q,v)));
+    Vec3Scalar(temp2,v,((q[3] * q[3]) - Vec3Dot(q,q)));
+    Vec3Cross(temp3,q,v);
+    Vec3Scalar(temp3,temp3,2.0f * q[3]);
     
     for (i = 0; i < 3; ++i) {
         out[i] = temp[i] + temp2[i] + temp3[i];

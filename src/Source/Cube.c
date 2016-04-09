@@ -105,7 +105,6 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
     bool result = false;
     float deltaDegrees = sa->degreesPerSecond * dt;
     float q[4] = {0.0f};
-    float negQ[4] = {0.0f};
     int i;
     
     if (deltaDegrees > sa->degreesRemaining) {
@@ -119,11 +118,9 @@ bool UpdateSliceAnimation (SliceAnimation *sa, float dt) {
     deltaDegrees *= (sa->forward == false) ? -1.0f : 1.0f;
     
     QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaDegrees, q);
-    //QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], -deltaDegrees, negQ);
-    QuaternionFromAxisAngle(sa->pivotAxis[0], sa->pivotAxis[1], sa->pivotAxis[2], deltaDegrees, negQ);
     for (i = 0; i < sa->numCubelets; ++i) {
         QuaternionVec3Rotation(sa->cubelets[i]->posW,q,sa->cubelets[i]->posW);
-        QuaternionMult(negQ,sa->cubelets[i]->rotation,sa->cubelets[i]->rotation);
+        QuaternionMult(q,sa->cubelets[i]->rotation,sa->cubelets[i]->rotation);
     }
     
     return result;

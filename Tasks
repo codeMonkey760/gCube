@@ -1,5 +1,4 @@
-Fix Gui buttons not targeting the right slices after camera rotation
-Rewrite Build view matrix so that it's not such a mess
 Pull settings out of a configuration file?
 Save cube state to a file
 Load cube state out of a file
+Win condition?

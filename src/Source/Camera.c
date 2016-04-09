@@ -13,8 +13,8 @@ void InitCamera (Camera *cam) {
     memset(cam,0,sizeof(Camera));
     Mat4Identity(cam->viewMtx);
     Mat4Identity(cam->projMtx);
-    cam->pitchSens = -0.25f;
-    cam->yawSens = -0.25f;
+    cam->pitchSens = 0.25f;
+    cam->yawSens = 0.25f;
     cam->zoomSens = 1.0f;
     cam->orbitalRadius = 10.0f;
     cam->lastMousePos[0] = -1;
@@ -139,15 +139,14 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
     float max = 0.0f;
     int axisId = -1;
     bool neg = false;
-    float iVMtx[16] = {0.0f};
     
     if (cam == NULL || target == NULL) return;
     
-    //get the inverse of the camera's view mtx
-    if (Mat4Inverse(iVMtx,cam->viewMtx) != true) {
-        //couldn't get a good inverse of the view matrix ... ???
-        fprintf(stderr, "Invalid inverse matrix. Camera.c::CopyAdjustedViewMtx");
-        return;
+    //option 2 for view matrix decomposition
+    for (i = 0; i < 3; ++i) {
+        for (d = 0; d < 3; ++d) {
+            camDirs[i][d] = cam->viewMtx[d*4+i];
+        }
     }
     
     // for all directional vectors
@@ -156,9 +155,6 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
         max = 0.0f;
         axisId = -1;
         neg = false;
-        
-        // transform from world space to view space
-        Mat4Vec4Mult(iVMtx,camDirs[i],camDirs[i]);
         
         // for all xyz components in current directional vector
         for (d = 0; d < 3; ++d) {
@@ -184,17 +180,31 @@ void CopyAdjustedViewMtx (Camera *cam, float target[16]) {
     Mat4Identity(target);
     for (i = 0; i < 3; ++i) {
         for (d = 0; d < 3; ++d) {
-            target[i*4+d] = camDirs[i][d];
+            target[d*4+i] = camDirs[i][d];
         }
     }
 }
 
 void _RefreshViewMtx (Camera *cam) {
-    float camPosW[3] = {0.0f,0.0f,-10.0f};
+    float camPosW[3] = {0.0f,0.0f,0.0f};
     float camTargetW[3] = {0.0f,0.0f,0.0f};
     float camUpW[3] = {0.0f,1.0f,0.0f};
     
+    camPosW[2] = -1.0f * cam->orbitalRadius;
+    
+    float qY[4] = {0.0f};
+    float qX[4] = {0.0f};
+    float qTot[4] = {0.0f};
+    
+    QuaternionFromAxisAngle(0.0f,1.0f,0.0f,cam->yaw,qY);
+    QuaternionFromAxisAngle(1.0f,0.0f,0.0f,cam->pitch,qX);
+    QuaternionMult(qY,qX,qTot);
+    
+    QuaternionVec3Rotation(camPosW,qTot,camPosW);
+    
     Mat4LookAtLH(cam->viewMtx,camPosW,camTargetW,camUpW);
+    
+    Vec3Copy(cam->camPosW,camPosW);
     
     /*
     float camPosW[4] = {0.0f,0.0f,0.0f,1.0f};

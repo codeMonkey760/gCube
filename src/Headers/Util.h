@@ -33,7 +33,7 @@ void Vec3Subtract (float dst[3], float a[3], float b[3]);
 void Vec3Copy(float dst[3], float src[3]);
 float Vec3Dot(float a[3], float b[3]);
 void Vec3Cross(float out[3], float u[3], float v[3]);
-//void Vec3Scalar (float out[3], float u[3], float s);
+void Vec3Scalar (float out[3], float u[3], float s);
 void Vec3Normalize (float v[3]);
 void PixelsToPercent (float x, float y, float width, float height, float *px, float *py);
 void QuaternionVec3Rotation (float v[3], float q[4], float out[3]);
