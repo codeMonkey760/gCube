@@ -52,6 +52,7 @@ void InitNewSliceAnimation (
 );
 bool UpdateSliceAnimation (SliceAnimation *sa, float dt);
 void DestroySliceAnimation (SliceAnimation *sa);
+bool CheckCubeForWin (Cube *cube);
 
 void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForward);
 void _InitShuffleSequence (void);

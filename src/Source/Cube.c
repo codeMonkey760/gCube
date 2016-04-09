@@ -49,6 +49,10 @@ void UpdateCube (Cube *cube, float dt) {
             if (curAnimation < SHUFFLE_SIZE-1) {
                 curAnimation++;
                 _StartSliceAnimation(cube, NULL, shuffle[curAnimation], false);
+            } else {
+                if (CheckCubeForWin(cube) == true) {
+                    printf("VICTORY!\n");
+                }
             }
         }
     }
@@ -133,6 +137,17 @@ void DestroySliceAnimation (SliceAnimation *sa) {
     sa->cubelets = NULL;
     free(sa);
     sa = NULL;
+}
+
+bool CheckCubeForWin (Cube *cube) {
+    int i;
+    for (i = 0; i < NUM_CUBELETS; ++i) {
+        if (CheckCubelet(&cube->cubelets[i]) == false) {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 void _PositionCubelets (Cube *cube) {

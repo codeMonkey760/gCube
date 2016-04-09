@@ -138,3 +138,42 @@ void BuildMatricies (Cubelet *singleCubelet, float wMtx[16], float witMtx[16]) {
     // WIT stands for World Inverse Transpose ...
     // so where's the transpose ???
 }
+
+bool CheckCubelet (Cubelet *cubelet) {
+    // for every sticker that the supplied cubelet has enabled, check the orientation of that cubelet
+    // ex: if sticker for pos x is enabled, orientation must have pos x component
+    // return false at the first failed check
+    
+    // idea
+    // take an arbitary point ... say 1,1,1 and rotate it by the cubelet's quaternion
+    // check the components of the rotated point according to the stickers that are enabled
+    
+    // will that work?
+    
+    float testpt[3] = {1.0f,1.0f,1.0f};
+    float testEpsilon = 0.00005f;
+    QuaternionVec3Rotation(testpt,cubelet->rotation,testpt);
+    
+    if (
+        cubelet->stickers[STICKER_NEG_X] == true || 
+        cubelet->stickers[STICKER_POS_X] == true
+    ) {
+        if (fabs(testpt[0] - 1.0f) > testEpsilon) return false;
+    }
+    
+    if (
+        cubelet->stickers[STICKER_NEG_Y] == true ||
+        cubelet->stickers[STICKER_POS_Y] == true
+    ) {
+        if (fabs(testpt[1] - 1.0f) > testEpsilon) return false;
+    }
+    
+    if (
+        cubelet->stickers[STICKER_NEG_Z] == true || 
+        cubelet->stickers[STICKER_POS_Z] == true
+    ) {
+        if (fabs(testpt[2] - 1.0f) > testEpsilon) return false;
+    }
+    
+    return true;
+}
