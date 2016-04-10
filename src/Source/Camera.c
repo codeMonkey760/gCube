@@ -109,8 +109,8 @@ void Zoom (Camera *cam, float amount) {
     amount *= cam->zoomSens;
     
     cam->orbitalRadius -= amount;
-    if (cam->orbitalRadius < 1.0f) cam->orbitalRadius = 1.0f;
-    if (cam->orbitalRadius > 10.0f) cam->orbitalRadius = 10.0f;
+    if (cam->orbitalRadius < 7.5f) cam->orbitalRadius = 7.5f;
+    if (cam->orbitalRadius > 20.0f) cam->orbitalRadius = 20.0f;
     
     _RefreshViewMtx(cam);
 }
