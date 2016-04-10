@@ -5,9 +5,6 @@ extern int shader;
 extern int vs;
 extern int fs;
 
-extern char *vsSrcName;
-extern char *fsSrcName;
-
 extern int inPosL;
 extern int inNormL;
 extern int inTexC;

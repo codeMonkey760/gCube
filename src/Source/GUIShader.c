@@ -7,6 +7,7 @@
 
 #include "Shader.h"
 #include "GUIShader.h"
+#include "Util.h"
 
 GUIShader guiShader;
 
@@ -19,8 +20,6 @@ bool InitGUIShader (void) {
     guiShader.shader = INVALID_SHADER_ID;
     guiShader.vs = INVALID_SHADER_ID;
     guiShader.fs = INVALID_SHADER_ID;
-    guiShader.vsSrcName = "src/Resources/GUIVS.shader";
-    guiShader.fsSrcName = "src/Resources/GUIFS.shader";
     guiShader.inPosL = INVALID_SHADER_ID;
     guiShader.inTexC = INVALID_SHADER_ID;
     guiShader.gTMtx = INVALID_SHADER_ID;
@@ -29,12 +28,12 @@ bool InitGUIShader (void) {
     guiShader.gAmbient = INVALID_SHADER_ID;
     guiShader.gMixValue = INVALID_SHADER_ID;
     
-    guiShader.vs = _CompileShader(GL_VERTEX_SHADER, guiShader.vsSrcName);
+    guiShader.vs = _CompileShader(GL_VERTEX_SHADER, GUIVS);
     if (guiShader.vs == 0) {
         return false;
     }
     
-    guiShader.fs = _CompileShader(GL_FRAGMENT_SHADER, guiShader.fsSrcName);
+    guiShader.fs = _CompileShader(GL_FRAGMENT_SHADER, GUIFS);
     if (guiShader.fs == 0) {
         return false;
     }

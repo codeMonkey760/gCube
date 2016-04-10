@@ -618,3 +618,87 @@ void Mat4LookAtLH (float out[16], float camPosW[3], float camTargetW[3], float c
     out[14] = Vec3Dot(negCamPosW,look);
     out[15] = 1.0f;
 }
+
+char *CubeletVS = 
+"#version 440\n\n"
+
+"in vec3 posL;\n"
+"in vec3 normL;\n"
+"in vec2 intexC;\n\n"
+
+"uniform mat4 gWMtx;\n"
+"uniform mat4 gWITMtx;\n"
+"uniform mat4 gWVPMtx;\n"
+"uniform mat3 gTexMtx;\n\n"
+
+"out vec3 posW;\n"
+"out vec3 normW;\n"
+"out vec2 outtexC;\n\n"
+
+"void main (void) {\n"
+"    posW = (vec4(posL,1.0f) * gWMtx).xyz;\n"
+"    normW = (vec4(normL,0.0f) * gWITMtx).xyz;\n"
+"    outtexC = (vec3(intexC,1.0f) * gTexMtx).xy;\n\n"
+    
+"    gl_Position = (vec4(posL,1.0f) * gWVPMtx);\n"
+"}";
+
+char *CubeletFS = 
+"#version 440\n\n"
+
+"in vec3 posW;\n"
+"in vec3 normW;\n"
+"in vec2 outtexC;\n\n"
+
+"uniform vec3 gDiffuseColor;\n"
+"uniform vec3 gCamPos;\n\n"
+
+"uniform sampler2D gTexture;\n\n"
+
+"void main (void) {\n"
+"    vec3 toCam = normalize(gCamPos - posW);\n"
+"    vec3 normW2 = normalize(normW);\n\n"
+
+"    float diffuse = max(dot(toCam,normW2),0.0f);\n"
+"    diffuse = (diffuse * 0.7f) + 0.3f;\n\n"
+    
+"    vec3 col = texture(gTexture, outtexC).rgb * gDiffuseColor;\n\n"
+
+"    gl_FragColor = vec4((col * diffuse),1.0f);\n"
+"}";
+
+char *GUIVS = 
+"#version 440\n\n"
+
+"in vec3 posL;\n"
+"in vec2 intexC;\n\n"
+
+"uniform mat4 gTMtx;\n"
+"uniform mat3 gTexMtx;\n\n"
+
+"out vec2 outTexC;\n\n"
+
+"void main (void) {\n"
+"    gl_Position = vec4(posL,1.0f) * gTMtx;\n\n"
+
+"    outTexC = (vec3(intexC,1.0f) * gTexMtx).xy;\n"
+"}";
+
+char *GUIFS = 
+"#version 440\n\n"
+
+"in vec2 outTexC;\n\n"
+
+"uniform sampler2D gTexture;\n"
+"uniform vec3 gAmbient;\n"
+"uniform float gMixValue;\n\n"
+
+"void main (void) {\n"
+"    vec4 tex = texture2D(gTexture, outTexC).rgba;\n"
+"    float a = tex.a;\n\n"
+
+"    vec3 col = tex.rgb;\n"
+"    col = (gMixValue * col) + (gAmbient * (1.0f - gMixValue));\n\n"
+
+"    gl_FragColor = vec4(col,a * gMixValue);\n"
+"}\n";

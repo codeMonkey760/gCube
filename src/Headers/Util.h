@@ -5,6 +5,11 @@ extern char* APPNAME;
 extern int WindowWidth;
 extern int WindowHeight;
 
+extern char *CubeletVS;
+extern char *CubeletFS;
+extern char *GUIVS;
+extern char *GUIFS;
+
 void Mat4Identity(float target[16]);
 void Mat4Mult (float ret[16], float m[16], float n[16]);
 void Mat4Print (float a[16]);

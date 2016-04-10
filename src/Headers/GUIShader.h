@@ -6,9 +6,6 @@ typedef struct {
     int vs;
     int fs;
     
-    char *vsSrcName;
-    char *fsSrcName;
-    
     int inPosL;
     int inTexC;
     
