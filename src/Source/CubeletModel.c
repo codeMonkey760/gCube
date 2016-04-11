@@ -271,6 +271,136 @@ void GetDiffuseColor(sticker sticker_id, float dst[3]) {
     }
 }
 
+void _ParseWFO (void) {
+    int wfoLen = strlen(cubeletWFO);
+    int i;
+    int numV = 0, numVN = 0, numTC = 0;
+    char *curPos = cubeletWFO;
+    int faceCounts[7] = {0};
+    int curFace = -1; //expecting usemtl tag before any writes to faceCounts
+    
+    // PHASE 1:
+    // count vertex lines
+    // count vertex normal lines
+    // count tex coord lines
+    // count faces for each buffer
+    // NOTE: expecting seven buffers
+    while (curPos < curPos + wfoLen) {
+        if (_CompareTags(curPos,"v")) {
+            numV++;
+        } else if (_CompareTags(curPos, "vn")) {
+            numVN++;
+        } else if (_CompareTags(curPos, "vt")) {
+            numTC++;
+        } else if (_CompareTags(curPos, "f")) {
+            faceCounts[curFace]++;
+        } else if (_CompareTags(curPos, "usemtl")) {
+            curFace++;
+        }
+        curPos = _NextLine(curPos);
+    }
+    
+    // PHASE 2:
+    // Grab memory
+    float *vArray = NULL, *vArrayPos = NULL;
+    float *vnArray = NULL, *vnArrayPos = NULL;
+    float *tcArray = NULL, *tcArrayPos = NULL;
+    float *vboArrayPos = NULL;
+    float *vboArray[7] = {NULL};
+    curFace = -1;
+    
+    vArray = vArrayPos = calloc(numV,sizeof(float) * 3);
+    vnArray = vnArrayPos = calloc(numVN, sizeof(float) * 3);
+    tcArray = tcArrayPos = calloc(numTC, sizeof(float) * 2);
+    for(i = 0; i < 7; ++i) {
+        vboArray[i] = calloc(faceCounts[i], sizeof(float) * 8);
+    }
+    
+    // Parse data into memory
+    curPos = cubeletWFO;
+    while (curPos < curPos + wfoLen) {
+        if (_CompareTags(curPos,"v")) {
+            _ParseFloatArray(curPos,&vArrayPos,3,false);
+        } else if (_CompareTags(curPos,"vn")) {
+            _ParseFloatArray(curPos,&vnArrayPos,3,false);
+        } else if (_CompareTags(curPos,"vt")) {
+            _ParseFloatArray(curPos,&tcArrayPos,2,false);
+        } else if (_CompareTags(curPos,"f")) {
+            _CopyFullVertex(curPos,&vboArrayPos,vArray,vnArray,tcArray,true);
+        } else if (_CompareTags(curPos,"usemtl")) {
+            vboArrayPos = vboArray[curFace++];
+        }
+        curPos = _NextLine(curPos);
+    }
+    
+    // PHASE 3:
+    // Generate VBO's with fresh new data
+    
+    glGenBuffers(7,vbos);
+    for (i = 0; i < 7; ++i) {
+        glBindBuffer(GL_ARRAY_BUFFER,vbos[i]);
+        // length in bytes ??? Double check
+        glBufferData(GL_ARRAY_BUFFER, faceCounts[i] * sizeof(float) * 8, vboArray[i], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+    }
+    
+    // Clean up
+    //vArray = vArrayPos = calloc(numV,sizeof(float) * 3);
+    free(vArray); vArray = vArrayPos = NULL;
+    //vnArray = vnArrayPos = calloc(numVN, sizeof(float) * 3);
+    free(vnArray); vnArray = vnArrayPos = NULL;
+    //tcArray = tcArrayPos = calloc(numTC, sizeof(float) * 2);
+    free(tcArray); tcArray = tcArrayPos = NULL;
+    //for(i = 0; i < 7; ++i) {
+        //vboArray[i] = calloc(faceCounts[i], sizeof(float) * 8);
+    //}
+    for (i = 0; i < 7; ++i) {
+        free(vboArray[i]); vboArray[i] = NULL;
+    }
+    vboArrayPos = NULL;
+    
+    // Done
+}
+
+void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapyz) {
+    ;
+}
+
+void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnArray, float *tcArray, bool swapVertex) {
+    ;
+}
+
+bool _CompareTags (char *tag1, char *tag2) {
+    if (tag1 == NULL || tag2 == NULL) return false;
+    
+    while (
+        (*tag1) != 0 &&
+        (*tag1) != ' ' &&
+        (*tag2) != 0 &&
+        (*tag2) != ' '
+    ) {
+        if ( (*tag1) != (*tag2) ) return false;
+        tag1++;
+        tag2++;
+    }
+    
+    return true;
+}
+
+char* _NextLine (char *curPos) {
+    if (curPos == NULL) return NULL;
+    
+    while (*curPos != 0 && *curPos != '\n') {
+        curPos++;
+    }
+    
+    if (*curPos == '\n') {
+        return curPos++;
+    } else {
+        return curPos;
+    }
+}
+
 char *cubeletWFO = 
 "# Blender v2.74 (sub 0) OBJ File: 'cubelet.blend'\n"
 "# www.blender.org\n"
