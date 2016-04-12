@@ -363,11 +363,123 @@ void _ParseWFO (void) {
 }
 
 void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapyz) {
-    ;
+    char target[9] = {0};
+    int copyIndex = 0;
+    int i;
+    float temp = 0.0f;
+    
+    if (
+        curPos      == NULL || 
+        arrayPos    == NULL || 
+        (*arrayPos) == NULL || 
+        numFloats    < 1    || 
+        numFloats    > 3
+    ) {
+        return;
+    }
+    
+    // advance past the tag in this line
+    curPos = _NextFloat(curPos);
+    
+    // for the num of floats to pull out of this line
+    for (i = 0; i < numFloats; ++i) {
+        
+        // copy chars up to a space onto the stack
+        while (*curPos != 0 || *curPos != '\n' || *curPos != ' ') {
+            target[copyIndex++] = *curPos;
+        }
+        
+        // handle improper format ???
+        if ((*curPos) == 0 || (*curPos == '\n')) return;
+        else curPos++;
+    
+        // convert stack copy to float and copy that into the target
+        // advance the target by four bytes;
+        *(*arrayPos) = (float) atof(target);
+        (*arrayPos) += sizeof(float);
+        
+        memset(target,0,sizeof(char) * 9);
+        copyIndex = 0;
+    }
+    
+    if (swapyz && numFloats != 1) {
+        temp = *(*arrayPos);
+        *(*arrayPos) = *((*arrayPos) - 4);
+        *((*arrayPos) -4) = temp;
+    }
 }
 
+
 void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnArray, float *tcArray, bool swapVertex) {
-    ;
+    float copyOfPoly[24] = {0.0f};
+    float *curFloat = copyOfPoly;
+    float temp = 0.0f;
+    int indices[3] = {0};
+    int currentIndex = 0;
+    char curNum[4] = 0;
+    char *curChar = NULL;
+    int i;
+    
+    if (
+        curPos      == NULL || 
+        arrayPos    == NULL || 
+        (*arrayPos) == NULL || 
+        vArray      == NULL || 
+        vnArray     == NULL || 
+        tcArray     == NULL
+    ) {
+        return;
+    }
+    
+    // remember: working on a line that looks like this:
+    // f 32/1/11 38/1/11 37/1/11\n
+    
+    // advance past the f tag
+    curPos = _NextFloat (curPos);
+    
+    for (i = 0; i < 3; ++i) {
+    
+        // convert slash separated indices into ints
+        for (currentIndex = 0; currentIndex < 3; ++currentIndex) {
+            curChar = curNum;
+            while (*curPos != '/' && *curPos != ' ') {
+                *curChar = *curPos;
+            }
+            curPos++;
+            curChar++;
+
+            // remember that indices from wfo are 1 based not zero so subtract 1
+            indices[currentIndex++] = atoi(curNum) - 1;
+            memset(curNum,0,sizeof(char) * 4);
+            curChar = curNum;
+        }
+
+        // use indices to copy data from supporting buffers
+        curFloat[0] = vArray[indices[0] * 3 + 0];
+        curFloat[1] = vArray[indices[0] * 3 + 1];
+        curFloat[2] = vArray[indices[0] * 3 + 2];
+
+        curFloat[3] = vnArray[indices[2] * 3 + 0];
+        curFloat[4] = vnArray[indices[2] * 3 + 1];
+        curFloat[5] = vnArray[indices[2] * 3 + 2];
+
+        curFloat[6] = tcArray[indices[1] * 2 + 0];
+        curFloat[7] = tcArray[indices[1] * 2 + 1];
+
+        curFloat += 8;
+    }
+}
+
+char *_NextFloat (char *curPos) {
+    if (curPos == NULL) return NULL;
+    
+    while ( *curPos != 0 || *curPos != '\n' || *curPos != ' ') {
+        ++curPos;
+    }
+    
+    if (*curPos != 0) curPos++;
+    
+    return curPos;
 }
 
 bool _CompareTags (char *tag1, char *tag2) {

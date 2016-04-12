@@ -43,5 +43,6 @@ bool _CompareTags (char *tag1, char *tag2);
 char* _NextLine (char *block);
 void _ParseFloatArray(char *curPos, float **arrayPos, int numFloats, bool swapyz);
 void _CopyFullVertex(char *curPos, float **arrayPos, float *vArray, float *vnArray, float *tcArray, bool swapVerts);
+char *_NextFloat (char *curPos);
 
 #endif
