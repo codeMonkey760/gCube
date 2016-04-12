@@ -26,9 +26,9 @@ typedef enum {
 void InitCubeletVBOs (void);
 void DestroyCubeletVBOs (void);
 int GetCubeletVBO (int index);
-void _InitVBOFromBlob (int vbo, char **curPos);
-bool _CheckBlobHeader (char **curPos);
-void _InitMaterialsFromBlob (char **curPos);
+//void _InitVBOFromBlob (int vbo, char **curPos);
+//bool _CheckBlobHeader (char **curPos);
+//void _InitMaterialsFromBlob (char **curPos);
 
 void InitTextures (void);
 void DestroyTextures (void);
@@ -38,11 +38,14 @@ int GetTextureByIndex(int index);
 int GetTextureByName (char *name);
 
 void GetDiffuseColor(sticker sticker_id, float dst[3]);
+
 void _ParseWFO (void);
 bool _CompareTags (char *tag1, char *tag2);
 char* _NextLine (char *block);
 void _ParseFloatArray(char *curPos, float **arrayPos, int numFloats, bool swapyz);
 void _CopyFullVertex(char *curPos, float **arrayPos, float *vArray, float *vnArray, float *tcArray, bool swapVerts);
 char *_NextFloat (char *curPos);
+
+void _ParseMTL (void);
 
 #endif

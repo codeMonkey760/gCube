@@ -6,12 +6,12 @@
 
 #include "CubeletModel.h"
 
-#define FIXED_CUBELET_BINARY_SIZE 7153
+//#define FIXED_CUBELET_BINARY_SIZE 7153
 #define FIXED_IMAGES_BINARY_SIZE 110714
 
-extern char _binary_CubeletRes_bin_start[];
-extern char _binary_CubeletRes_bin_end[];
-unsigned int cubeletBlobSize = 0;
+//extern char _binary_CubeletRes_bin_start[];
+//extern char _binary_CubeletRes_bin_end[];
+//unsigned int cubeletBlobSize = 0;
 
 extern char _binary_images_bin_start[];
 extern char _binary_images_bin_end[];
@@ -27,31 +27,34 @@ char *cubeletWFO;
 char *cubeletMTL;
 
 void InitCubeletVBOs (void) {
-    cubeletBlobSize = _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start;
-    if (
-        _binary_CubeletRes_bin_start == NULL ||
-        _binary_CubeletRes_bin_end   == NULL ||
-        cubeletBlobSize != FIXED_CUBELET_BINARY_SIZE
-    ) {
-        fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
-        exit(1);
-    }
+    //cubeletBlobSize = _binary_CubeletRes_bin_end - _binary_CubeletRes_bin_start;
+    //if (
+        //_binary_CubeletRes_bin_start == NULL ||
+        //_binary_CubeletRes_bin_end   == NULL ||
+        //cubeletBlobSize != FIXED_CUBELET_BINARY_SIZE
+    //) {
+        //fprintf(stderr, "A Serious linking error has occured. Ensure that cubelet.o has been linked correctly!\n");
+        //exit(1);
+    //}
     
-    char *curPos = _binary_CubeletRes_bin_start;
-    int i = 0;
+    //char *curPos = _binary_CubeletRes_bin_start;
+    //int i = 0;
     
-    if (_CheckBlobHeader(&curPos) != true) {
-        fprintf(stderr, "Cubelet blob header does not match.\n");
-        exit(1);
-    }
+    //if (_CheckBlobHeader(&curPos) != true) {
+        //fprintf(stderr, "Cubelet blob header does not match.\n");
+        //exit(1);
+    //}
     
-    glGenBuffers(7,vbos);
+    //glGenBuffers(7,vbos);
     
-    for (i = 0 ; i < 7; ++i) {
-        _InitVBOFromBlob(vbos[i], &curPos);
-    }
+    //for (i = 0 ; i < 7; ++i) {
+        //_InitVBOFromBlob(vbos[i], &curPos);
+    //}
     
-    _InitMaterialsFromBlob(&curPos);
+    
+    _ParseWFO();
+    _ParseMTL();
+    //_InitMaterialsFromBlob(&curPos);
 }
 
 void DestroyCubeletVBOs (void) {
@@ -68,6 +71,7 @@ int GetCubeletVBO (int index) {
     return vbos[index];
 }
 
+/*
 void _InitVBOFromBlob (int vbo, char **curPos) {
     int i;
     float *curPosF = NULL;
@@ -77,7 +81,6 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
     (*curPos) += 4;
     length = length / 2;
     
-    /*
     printf("Length of current block: %d bytes %d floats %d verts\n", length, length / 4, length / 32);
     curPosF = (float*) (*curPos);
     for (i = 0; i < length / 4; i+=8) {
@@ -89,7 +92,6 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
         );
     }
     printf("\n");
-    */
     
     glBindBuffer(GL_ARRAY_BUFFER,vbo);
     glBufferData(GL_ARRAY_BUFFER, length, (float*) (*curPos), GL_STATIC_DRAW);
@@ -99,6 +101,10 @@ void _InitVBOFromBlob (int vbo, char **curPos) {
     
     return;
 }
+
+*/
+
+/*
 
 bool _CheckBlobHeader (char **curPos) {
     int length = -1;
@@ -140,6 +146,7 @@ void _InitMaterialsFromBlob (char **curPos) {
         (*curPos) += 12;
     }
 }
+ * */
 
 void InitTextures (void) {
     int i;
@@ -285,7 +292,7 @@ void _ParseWFO (void) {
     // count tex coord lines
     // count faces for each buffer
     // NOTE: expecting seven buffers
-    while (curPos < curPos + wfoLen) {
+    while (curPos < cubeletWFO + wfoLen) {
         if (_CompareTags(curPos,"v")) {
             numV++;
         } else if (_CompareTags(curPos, "vn")) {
@@ -318,7 +325,7 @@ void _ParseWFO (void) {
     
     // Parse data into memory
     curPos = cubeletWFO;
-    while (curPos < curPos + wfoLen) {
+    while (curPos < cubeletWFO + wfoLen) {
         if (_CompareTags(curPos,"v")) {
             _ParseFloatArray(curPos,&vArrayPos,3,false);
         } else if (_CompareTags(curPos,"vn")) {
@@ -363,7 +370,7 @@ void _ParseWFO (void) {
 }
 
 void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapyz) {
-    char target[9] = {0};
+    char target[10] = {0};
     int copyIndex = 0;
     int i;
     float temp = 0.0f;
@@ -385,20 +392,17 @@ void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapy
     for (i = 0; i < numFloats; ++i) {
         
         // copy chars up to a space onto the stack
-        while (*curPos != 0 || *curPos != '\n' || *curPos != ' ') {
-            target[copyIndex++] = *curPos;
+        while (*curPos != 0 && *curPos != '\n' && *curPos != ' ') {
+            target[copyIndex++] = *(curPos++);
         }
-        
-        // handle improper format ???
-        if ((*curPos) == 0 || (*curPos == '\n')) return;
-        else curPos++;
+        curPos++;
     
         // convert stack copy to float and copy that into the target
         // advance the target by four bytes;
         *(*arrayPos) = (float) atof(target);
         (*arrayPos) += sizeof(float);
         
-        memset(target,0,sizeof(char) * 9);
+        memset(target,0,sizeof(char) * 10);
         copyIndex = 0;
     }
     
@@ -416,7 +420,7 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
     float temp = 0.0f;
     int indices[3] = {0};
     int currentIndex = 0;
-    char curNum[4] = 0;
+    char curNum[4] = {0};
     char *curChar = NULL;
     int i;
     
@@ -443,7 +447,7 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
         for (currentIndex = 0; currentIndex < 3; ++currentIndex) {
             curChar = curNum;
             while (*curPos != '/' && *curPos != ' ') {
-                *curChar = *curPos;
+                *(curChar++) = *(curPos++);
             }
             curPos++;
             curChar++;
@@ -473,13 +477,31 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
 char *_NextFloat (char *curPos) {
     if (curPos == NULL) return NULL;
     
-    while ( *curPos != 0 || *curPos != '\n' || *curPos != ' ') {
+    while ( *curPos != 0 && *curPos != '\n' && *curPos != ' ') {
         ++curPos;
     }
     
     if (*curPos != 0) curPos++;
     
     return curPos;
+}
+
+void _ParseMTL (void) {
+    char *curPos = cubeletMTL;
+    int len = strlen(curPos);
+    int curMtl = -1;
+    
+    int indexArray[7] = {2,1,5,6,4,0,3};
+    
+    while (curPos < (curPos + len)) {
+        if (_CompareTags("newmtl",curPos) == true) {
+            curMtl++;
+        } else if(_CompareTags("Kd",curPos) == true) {
+            _ParseFloatArray(curPos, &(diffuseColors[indexArray[curMtl]]), 3, false);
+        }
+        curPos = _NextLine(curPos);
+    }
+    
 }
 
 bool _CompareTags (char *tag1, char *tag2) {
@@ -496,7 +518,14 @@ bool _CompareTags (char *tag1, char *tag2) {
         tag2++;
     }
     
-    return true;
+    if ( 
+        ((*tag1) == 0 || (*tag1) == ' ') &&
+        ((*tag2) == 0 || (*tag2) == ' ')
+    ) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 char* _NextLine (char *curPos) {
@@ -507,7 +536,7 @@ char* _NextLine (char *curPos) {
     }
     
     if (*curPos == '\n') {
-        return curPos++;
+        return curPos + 1;
     } else {
         return curPos;
     }
