@@ -335,7 +335,7 @@ void _ParseWFO (void) {
         } else if (_CompareTags(curPos,"f")) {
             _CopyFullVertex(curPos,&vboArrayPos,vArray,vnArray,tcArray,true);
         } else if (_CompareTags(curPos,"usemtl")) {
-            vboArrayPos = vboArray[curFace++];
+            vboArrayPos = vboArray[++curFace];
         }
         curPos = _NextLine(curPos);
     }
@@ -403,8 +403,8 @@ void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapy
     
     if (swapyz && numFloats != 1) {
         temp = *(*arrayPos);
-        *(*arrayPos) = *((*arrayPos) - 4);
-        *((*arrayPos) -4) = temp;
+        *(*arrayPos) = *((*arrayPos) - 1);
+        *((*arrayPos) -1) = temp;
     }
 }
 
@@ -441,7 +441,7 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
         // convert slash separated indices into ints
         for (currentIndex = 0; currentIndex < 3; ++currentIndex) {
             curChar = curNum;
-            while (*curPos != '/' && *curPos != ' ') {
+            while (*curPos != '/' && *curPos != ' ' && *curPos != '\n') {
                 *(curChar++) = *(curPos++);
             }
             curPos++;
