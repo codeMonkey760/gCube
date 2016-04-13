@@ -351,16 +351,9 @@ void _ParseWFO (void) {
         glBindBuffer(GL_ARRAY_BUFFER,0);
     }
     
-    // Clean up
-    //vArray = vArrayPos = calloc(numV,sizeof(float) * 3);
     free(vArray); vArray = vArrayPos = NULL;
-    //vnArray = vnArrayPos = calloc(numVN, sizeof(float) * 3);
     free(vnArray); vnArray = vnArrayPos = NULL;
-    //tcArray = tcArrayPos = calloc(numTC, sizeof(float) * 2);
     free(tcArray); tcArray = tcArrayPos = NULL;
-    //for(i = 0; i < 7; ++i) {
-        //vboArray[i] = calloc(faceCounts[i], sizeof(float) * 8);
-    //}
     for (i = 0; i < 7; ++i) {
         free(vboArray[i]); vboArray[i] = NULL;
     }
@@ -400,7 +393,9 @@ void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapy
         // convert stack copy to float and copy that into the target
         // advance the target by four bytes;
         *(*arrayPos) = (float) atof(target);
-        (*arrayPos) += sizeof(float);
+        //(*arrayPos) += sizeof(float);
+        // += sizeof(float) is adding 16 bytes instead of 4 ???
+        (*arrayPos) += 1;
         
         memset(target,0,sizeof(char) * 10);
         copyIndex = 0;
@@ -453,25 +448,40 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
             curChar++;
 
             // remember that indices from wfo are 1 based not zero so subtract 1
-            indices[currentIndex++] = atoi(curNum) - 1;
+            indices[currentIndex] = atoi(curNum) - 1;
             memset(curNum,0,sizeof(char) * 4);
             curChar = curNum;
         }
 
         // use indices to copy data from supporting buffers
-        curFloat[0] = vArray[indices[0] * 3 + 0];
-        curFloat[1] = vArray[indices[0] * 3 + 1];
-        curFloat[2] = vArray[indices[0] * 3 + 2];
+        curFloat[0] = vArray[(indices[0] * 3) + 0];
+        curFloat[1] = vArray[(indices[0] * 3) + 1];
+        curFloat[2] = vArray[(indices[0] * 3) + 2];
 
-        curFloat[3] = vnArray[indices[2] * 3 + 0];
-        curFloat[4] = vnArray[indices[2] * 3 + 1];
-        curFloat[5] = vnArray[indices[2] * 3 + 2];
+        curFloat[3] = vnArray[(indices[2] * 3) + 0];
+        curFloat[4] = vnArray[(indices[2] * 3) + 1];
+        curFloat[5] = vnArray[(indices[2] * 3) + 2];
 
-        curFloat[6] = tcArray[indices[1] * 2 + 0];
-        curFloat[7] = tcArray[indices[1] * 2 + 1];
+        curFloat[6] = tcArray[(indices[1] * 2) + 0];
+        curFloat[7] = tcArray[(indices[1] * 2) + 1];
 
         curFloat += 8;
     }
+    
+    // if swapping the vertices to fix winding order
+    if (swapVertex == true) {
+        for (i = 0; i < 8; ++i) {
+            temp = copyOfPoly[i];
+            copyOfPoly[i] = copyOfPoly[i+16];
+            copyOfPoly[i+16] = temp;
+        }
+    }
+    
+    // copy the results over to the supplied vbo and increment it's pointer
+    for (i = 0; i < 24; ++i) {
+        (*arrayPos)[i] = copyOfPoly[i];
+    }
+    (*arrayPos) += 24;
 }
 
 char *_NextFloat (char *curPos) {
