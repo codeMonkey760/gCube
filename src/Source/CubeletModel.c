@@ -51,7 +51,6 @@ void InitCubeletVBOs (void) {
         //_InitVBOFromBlob(vbos[i], &curPos);
     //}
     
-    
     _ParseWFO();
     _ParseMTL();
     //_InitMaterialsFromBlob(&curPos);
@@ -320,9 +319,10 @@ void _ParseWFO (void) {
     vnArray = vnArrayPos = calloc(numVN, sizeof(float) * 3);
     tcArray = tcArrayPos = calloc(numTC, sizeof(float) * 2);
     for(i = 0; i < 7; ++i) {
-        vboArray[i] = calloc(faceCounts[i], sizeof(float) * 8);
+        vboArray[i] = calloc(faceCounts[i], sizeof(float) * 8 * 3);
     }
     
+    //after this block gl calls fail with segfault
     // Parse data into memory
     curPos = cubeletWFO;
     while (curPos < cubeletWFO + wfoLen) {
@@ -343,6 +343,7 @@ void _ParseWFO (void) {
     // PHASE 3:
     // Generate VBO's with fresh new data
     
+    // fails with seg fault
     glGenBuffers(7,vbos);
     for (i = 0; i < 7; ++i) {
         glBindBuffer(GL_ARRAY_BUFFER,vbos[i]);
@@ -503,7 +504,7 @@ void _ParseMTL (void) {
     
     int indexArray[7] = {2,1,5,6,4,0,3};
     
-    while (curPos < (curPos + len)) {
+    while (curPos < (cubeletMTL + len)) {
         if (_CompareTags("newmtl",curPos) == true) {
             curMtl++;
         } else if(_CompareTags("Kd",curPos) == true) {
