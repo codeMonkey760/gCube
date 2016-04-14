@@ -26,9 +26,6 @@ typedef enum {
 void InitCubeletVBOs (void);
 void DestroyCubeletVBOs (void);
 int GetCubeletVBO (int index);
-//void _InitVBOFromBlob (int vbo, char **curPos);
-//bool _CheckBlobHeader (char **curPos);
-//void _InitMaterialsFromBlob (char **curPos);
 
 void InitTextures (void);
 void DestroyTextures (void);
