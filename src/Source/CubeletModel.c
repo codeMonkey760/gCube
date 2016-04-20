@@ -397,17 +397,27 @@ void _ParseMTL (void) {
     char *curPos = cubeletMTL;
     int len = strlen(curPos);
     int curMtl = -1;
+    float stackColors[21] = {0.0f};
+    float *curFloat = stackColors;
+    int i;
     
     int indexArray[7] = {2,1,5,6,4,0,3};
+    int curIndex = 0;
     
     while (curPos < (cubeletMTL + len)) {
         if (_CompareTags("newmtl",curPos) == true) {
             curMtl++;
         } else if(_CompareTags("Kd",curPos) == true) {
-            // THIS LINE IS FAILING TO PRODUCE VALID RESULTS!!!
-            _ParseFloatArray(curPos, &(diffuseColors[indexArray[curMtl]]), 3, false);
+            _ParseFloatArray(curPos, &curFloat, 3, false);
         }
         curPos = _NextLine(curPos);
+    }
+    
+    for (i = 0; i < 7; ++i) {
+        curIndex = indexArray[i];
+        diffuseColors[curIndex][0] = stackColors[i*3+0];
+        diffuseColors[curIndex][1] = stackColors[i*3+1];
+        diffuseColors[curIndex][2] = stackColors[i*3+2];
     }
 }
 

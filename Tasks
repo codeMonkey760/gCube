@@ -4,4 +4,3 @@ Load cube state out of a file
 Jazz up win condition somehow
     Something a little more satisfying than a printf statement ;)
 Keyboard commands
-Move wave front object into source code and write a parser for it
