@@ -256,6 +256,7 @@ void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapy
     int copyIndex = 0;
     int i;
     float temp = 0.0f;
+    float buffer[3] = {0.0f};
     
     if (
         curPos      == NULL || 
@@ -279,22 +280,28 @@ void _ParseFloatArray (char *curPos, float **arrayPos, int numFloats, bool swapy
         }
         curPos++;
     
-        // convert stack copy to float and copy that into the target
-        // advance the target by four bytes;
-        *(*arrayPos) = (float) atof(target);
-        //(*arrayPos) += sizeof(float);
-        // += sizeof(float) is adding 16 bytes instead of 4 ???
-        (*arrayPos) += 1;
+        // convert from ascii and copy to buffer
+        buffer[i] = (float) atof(target);
         
+        // reset some locals
         memset(target,0,sizeof(char) * 10);
         copyIndex = 0;
     }
     
-    if (swapyz && numFloats != 1) {
-        temp = *(*arrayPos);
-        *(*arrayPos) = *((*arrayPos) - 1);
-        *((*arrayPos) -1) = temp;
+    // if swap yz is true then swap the last two elements in the buffer
+    if (swapyz == true) {
+        temp = buffer[0];
+        buffer[0] = buffer[numFloats-1];
+        buffer[numFloats-1] = temp;
     }
+    
+    //copy the buffer into the target
+    for (i = 0; i < numFloats; ++i) {
+        (*arrayPos)[i] = buffer[i];
+    }
+    
+    //advance the supplied pointer
+    (*arrayPos) += numFloats;
 }
 
 void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnArray, float *tcArray, bool swapVertex) {
@@ -324,9 +331,11 @@ void _CopyFullVertex (char *curPos, float **arrayPos, float *vArray, float *vnAr
     // advance past the f tag
     curPos = _NextFloat (curPos);
     
+    // for every vertex in this polygon
     for (i = 0; i < 3; ++i) {
     
         // convert slash separated indices into ints
+        // for every index in the current vertex
         for (currentIndex = 0; currentIndex < 3; ++currentIndex) {
             curChar = curNum;
             while (*curPos != '/' && *curPos != ' ' && *curPos != '\n') {
@@ -395,6 +404,7 @@ void _ParseMTL (void) {
         if (_CompareTags("newmtl",curPos) == true) {
             curMtl++;
         } else if(_CompareTags("Kd",curPos) == true) {
+            // THIS LINE IS FAILING TO PRODUCE VALID RESULTS!!!
             _ParseFloatArray(curPos, &(diffuseColors[indexArray[curMtl]]), 3, false);
         }
         curPos = _NextLine(curPos);
