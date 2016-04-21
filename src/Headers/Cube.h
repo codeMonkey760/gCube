@@ -24,6 +24,10 @@ typedef struct {
     
     Cubelet cubelets[NUM_CUBELETS];
     SliceAnimation *curAnimation;
+    
+    int shuffleSize;
+    int *shuffle;
+    int curShuffle;
 }Cube;
 
 typedef enum {
@@ -39,6 +43,7 @@ typedef enum {
 void InitCube (Cube *cube);
 void UpdateCube (Cube *cube, float dt);
 void RenderCube (Cube *cube, Camera *cam);
+void DestroyCube (Cube *cube);
 
 void InitNewSliceAnimation (
     SliceAnimation **sa, 
@@ -50,12 +55,16 @@ void InitNewSliceAnimation (
     Cubelet **cubeletsToAnimate,
     int numCubelets
 );
+
 bool UpdateSliceAnimation (SliceAnimation *sa, float dt);
 void DestroySliceAnimation (SliceAnimation *sa);
 bool CheckCubeForWin (Cube *cube);
 
+void StartShuffleSequence (Cube *cube, int sizeOfShuffle);
+bool IsShuffling (Cube *cube);
+void DestroyShuffleSequence (Cube *cube);
+
 void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForward);
-void _InitShuffleSequence (void);
 
 void _PositionCubelets (Cube *cube);
 

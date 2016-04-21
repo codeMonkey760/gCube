@@ -15,10 +15,6 @@
 #include "CubeletModel.h"
 #include "Cube.h"
 
-#define SHUFFLE_SIZE 60
-static int shuffle[SHUFFLE_SIZE];
-static int curAnimation = 0;
-
 void InitCube (Cube *cube) {
     if (cube == NULL) return;
     
@@ -30,25 +26,38 @@ void InitCube (Cube *cube) {
     cube->scale[1] = 1.0f;
     cube->scale[2] = 1.0f;
     
+    cube->curShuffle = -1;
+    
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
-    _InitShuffleSequence();
     
-    curAnimation = 0;
-    _StartSliceAnimation(cube, NULL, shuffle[0], false);
+    StartShuffleSequence(cube,120);
 }
 
 void UpdateCube (Cube *cube, float dt) {
     if (cube == NULL) return;
     
+    // check to see if there's an activate animation
     if (cube->curAnimation != NULL) {
+        
+        // if there is an active animation ... run it
+        // and check to see if it's over
         if (UpdateSliceAnimation(cube->curAnimation,dt)) {
+            
+            // if it is over ... destroy it
             DestroySliceAnimation(cube->curAnimation);
             cube->curAnimation = NULL;
             
-            if (curAnimation < SHUFFLE_SIZE-1) {
-                curAnimation++;
-                _StartSliceAnimation(cube, NULL, shuffle[curAnimation], false);
+            // if we're shuffling than advance to the next animation
+            // in the shuffle
+            if (IsShuffling(cube)) {
+                cube->curShuffle++;
+                // check to see if there is a next animation in the shuffle sequence
+                if (cube->curShuffle == cube->shuffleSize) {
+                    DestroyShuffleSequence(cube);
+                } else {
+                    _StartSliceAnimation(cube, NULL, cube->shuffle[cube->curShuffle], false);
+                }
             } else {
                 if (CheckCubeForWin(cube) == true) {
                     printf("VICTORY!\n");
@@ -62,6 +71,13 @@ void RenderCube (Cube *cube, Camera *cam) {
     if (cube == NULL || cam == NULL) return;
     
     DrawCubeletArray(cube->cubelets, NUM_CUBELETS, cam);
+}
+
+void DestroyCube (Cube *cube) {
+    if (cube == NULL) return;
+    
+    DestroySliceAnimation(cube->curAnimation);
+    DestroyShuffleSequence(cube);
 }
 
 void InitNewSliceAnimation (
@@ -314,11 +330,34 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
     }
 }
 
-void _InitShuffleSequence (void) {
+void StartShuffleSequence (Cube *cube, int sizeOfShuffle) {
     int i;
-    srand(time(NULL));
+    if (sizeOfShuffle < 1 || cube == NULL) return;
     
-    for (i = 0; i < SHUFFLE_SIZE; ++i) {
-        shuffle[i] = rand() % SLICE_WHOLE_CUBE;
+    srand(time(NULL));
+    cube->shuffleSize = sizeOfShuffle;
+    cube->curShuffle = 0;
+    cube->shuffle = (int*) calloc(cube->shuffleSize, sizeof(int));
+    
+    for (i = 0; i < cube->shuffleSize; ++i) {
+        cube->shuffle[i] = rand() % SLICE_WHOLE_CUBE;
     }
+    
+    _StartSliceAnimation(cube, NULL, cube->shuffle[0], false);
+}
+
+bool IsShuffling (Cube *cube) {
+    if (cube == NULL) return false;
+    return cube->curShuffle != -1;
+}
+
+void DestroyShuffleSequence (Cube *cube) {
+    if (cube == NULL) return;
+    
+    if (cube->shuffle != NULL) {
+        free(cube->shuffle);
+        cube->shuffle = NULL;
+    }
+    cube->curShuffle = -1;
+    cube->shuffleSize = 0;
 }
