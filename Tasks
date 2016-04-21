@@ -1,7 +1,4 @@
 Pull settings out of a configuration file?
 Save cube state to a file
 Load cube state out of a file
-Jazz up win condition somehow
-    Something a little more satisfying than a printf statement ;)
 Keyboard commands
-Add a shuffle button

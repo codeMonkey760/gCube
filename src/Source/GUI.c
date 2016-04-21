@@ -108,6 +108,14 @@ void _BuildButtons (void) {
     cb.sliceForward = true;
     cb.texMtx[4] = 1.0f;
     gui.buttons[10] = cb;
+    
+    // shuffle the whole cube
+    SetPRD(&cb,0.05f,0.05f,0.1f, 0.1f, 0.0f);
+    cb.texId = GetTextureByName("Shuffle.png");
+    cb.texMtx[0] = 1.0f;
+    cb.sliceId = -1;
+    cb.visible = false;
+    gui.buttons[11] = cb;
 }
 
 void DestroyGUI (void) {
@@ -182,7 +190,18 @@ void GuiOnMouseMove (int x, int y) {
     }
 }
 
+void HideShuffleButton (void) {
+    gui.buttons[11].visible = false;
+}
+
+void ShowShuffleButton (void) {
+    gui.buttons[11].visible = true;
+}
+
 void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
-    _StartSliceAnimation(cube,cam,sliceId,sliceForward);
-    //printf("SliceID: %d sliceForward %d\n",sliceId,sliceForward);
+    if (sliceId == -1) {
+        StartShuffleSequence(cube,10);
+    } else {
+        _StartSliceAnimation(cube,cam,sliceId,sliceForward);
+    }
 }

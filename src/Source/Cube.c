@@ -31,7 +31,7 @@ void InitCube (Cube *cube) {
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
     
-    StartShuffleSequence(cube,120);
+    StartShuffleSequence(cube,1);
 }
 
 void UpdateCube (Cube *cube, float dt) {
@@ -60,7 +60,10 @@ void UpdateCube (Cube *cube, float dt) {
                 }
             } else {
                 if (CheckCubeForWin(cube) == true) {
-                    printf("VICTORY!\n");
+                    //printf("VICTORY!\n");
+                    ShowShuffleButton();
+                } else {
+                    HideShuffleButton();
                 }
             }
         }
@@ -333,6 +336,10 @@ void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForwar
 void StartShuffleSequence (Cube *cube, int sizeOfShuffle) {
     int i;
     if (sizeOfShuffle < 1 || cube == NULL) return;
+    
+    if (IsShuffling(cube)) return;
+    
+    HideShuffleButton();
     
     srand(time(NULL));
     cube->shuffleSize = sizeOfShuffle;
