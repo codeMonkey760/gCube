@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "Config.h"
 #include "Shader.h"
 #include "CubeletModel.h"
 #include "Camera.h"
@@ -243,6 +244,8 @@ int main (int argc, char **argv) {
     if (glfwInit() == false) {
         return EXIT_FAILURE;
     }
+    
+    LoadConfigFile();
 
     initWindow();
     if (window == NULL) {
