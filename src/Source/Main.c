@@ -270,6 +270,7 @@ int main (int argc, char **argv) {
     printf("rot.png was mapped to: %d\n",GetTextureByName("rot.png"));
     printf("invert.png was mapped to: %d\n",GetTextureByName("invert.png"));
     printf("Frame.png was mapped to: %d\n",GetTextureByName("Frame.png"));
+    printf("Shuffle.png was mapped to: %d\n",GetTextureByName("Shuffle.png"));
     */ /* END TEST CODE */
 
     while (glfwWindowShouldClose(window) == false) {

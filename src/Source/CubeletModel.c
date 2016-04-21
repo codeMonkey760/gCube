@@ -6,15 +6,15 @@
 
 #include "CubeletModel.h"
 
-#define FIXED_IMAGES_BINARY_SIZE 110714
+#define FIXED_IMAGES_BINARY_SIZE 127122
 
 extern char _binary_images_bin_start[];
 extern char _binary_images_bin_end[];
 unsigned int imagesBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
-static GLuint textures[5] = {-1};
-static char textureNames[5][64] = {0};
+static GLuint textures[6] = {-1};
+static char textureNames[6][64] = {0};
 
 static float diffuseColors[7][3] = {0};
 
@@ -58,16 +58,16 @@ void InitTextures (void) {
         exit(1);
     }
     
-    glGenTextures(5,textures);
-    for (i = 0; i < 5; ++i) {
+    glGenTextures(6,textures);
+    for (i = 0; i < 6; ++i) {
         _InitTextureFromBlob(i,textures[i],&curPos);
     }
 }
 
 void DestroyTextures (void) {
     int i;
-    glDeleteTextures(5, textures);
-    for (i = 0; i < 5; ++i) {
+    glDeleteTextures(6, textures);
+    for (i = 0; i < 6; ++i) {
         textures[i] = -1;
     }
 }
@@ -91,7 +91,7 @@ bool _CheckTextureHeader (char **curPos) {
     length = *( (int*) (*curPos));
     (*curPos) += 4;
     
-    return length == 5;
+    return length == 6;
 }
 
 void _InitTextureFromBlob (int index, int buffer, char **curPos) {
@@ -145,7 +145,7 @@ void _InitTextureFromBlob (int index, int buffer, char **curPos) {
 }
 
 int GetTextureByIndex(int index) {
-    if (index < 0 || index > 5) return -1;
+    if (index < 0 || index > 6) return -1;
     
     return textures[index];
 }
@@ -154,7 +154,7 @@ int GetTextureByName(char *name) {
     int index = -1;
     int i;
     
-    for (i = 0; i < 5; ++i) {
+    for (i = 0; i < 6; ++i) {
         if (strcmp(name,textureNames[i]) == 0) {
             return GetTextureByIndex(i);
         }
