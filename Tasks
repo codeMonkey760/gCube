@@ -1,2 +1,6 @@
-Save cube state to a file
-Load cube state out of a file
+FEATURES:
+    Save cube state to a file
+    Load cube state out of a file
+BUGS:
+    Gui doesn't scale correctly
+    Shuffle button doesn't appear at startup if cube is correct
