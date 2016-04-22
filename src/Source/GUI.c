@@ -13,6 +13,7 @@
 #include "GUIButton.h"
 #include "GUIRenderer.h"
 #include "GUI.h"
+#include "Config.h"
 
 GUI gui;
 
@@ -139,8 +140,8 @@ void ResizeGUI (int w, int h) {
 }
 
 void GuiOnMouseUp (int x, int y) {
-    float MouseXPercent = ((float)x) / ((float)WindowWidth);
-    float MouseYPercent = ((float)y) / ((float)WindowHeight);
+    float MouseXPercent = ((float)x) / ((float)CONFIG_width);
+    float MouseYPercent = ((float)y) / ((float)CONFIG_height);
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
@@ -155,8 +156,8 @@ void GuiOnMouseUp (int x, int y) {
 }
 
 void GuiOnMouseDown (int x, int y) {
-    float MouseXPercent = ((float)x) / ((float)WindowWidth);
-    float MouseYPercent = ((float)y) / ((float)WindowHeight);
+    float MouseXPercent = ((float)x) / ((float)CONFIG_width);
+    float MouseYPercent = ((float)y) / ((float)CONFIG_height);
     int i;
     
     for (i = 0; i < GUI_NUM_BUTTONS; ++i) {
@@ -168,8 +169,8 @@ void GuiOnMouseDown (int x, int y) {
 }
 
 void GuiOnMouseMove (int x, int y) {
-    float MouseXPercent = ((float)x) / ((float)WindowWidth);
-    float MouseYPercent = ((float)y) / ((float)WindowHeight);
+    float MouseXPercent = ((float)x) / ((float)CONFIG_width);
+    float MouseYPercent = ((float)y) / ((float)CONFIG_height);
     int i;
     
     if (gui.highlightedButton != NULL) {
@@ -200,7 +201,7 @@ void ShowShuffleButton (void) {
 
 void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
     if (sliceId == -1) {
-        StartShuffleSequence(cube,10);
+        StartShuffleSequence(cube,CONFIG_shuffleSize);
     } else {
         _StartSliceAnimation(cube,cam,sliceId,sliceForward);
     }

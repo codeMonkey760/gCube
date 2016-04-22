@@ -6,9 +6,7 @@
 
 #include "Util.h"
 
-char *APPNAME = "cRube";
-int WindowWidth = 800;
-int WindowHeight = 640;
+char *APPNAME = "gCube";
 
 float degreesToRadians (float d) {
     return d / 180.0f * M_PI;

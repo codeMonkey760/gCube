@@ -2,8 +2,6 @@
 #define _C_RUBE_UTIL_H_
 
 extern char* APPNAME;
-extern int WindowWidth;
-extern int WindowHeight;
 
 extern char *CubeletVS;
 extern char *CubeletFS;

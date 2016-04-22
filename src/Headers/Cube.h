@@ -2,7 +2,7 @@
 #define _C_RUBE_CUBE_H_
 
 #define NUM_CUBELETS 26
-#define DEFAULT_SLICE_SPEED 720.0f
+#define DEFAULT_SLICE_SPEED CONFIG_sliceRotationSpeed
 #define DEFAULT_SLICE_ROTATION_LENGTH 90.0f
 
 typedef struct {

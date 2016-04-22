@@ -12,6 +12,7 @@
 #include "Cubelet.h"
 #include "Cube.h"
 #include "GUIButton.h"
+#include "Config.h"
 
 void InitButton (GUIButton *button) {
     if (button == NULL) return;
@@ -45,10 +46,18 @@ void SetPRD (
 ) {
     if (button == NULL) return;
     
+    /*
     button->posPercent[0] = percentX;
     button->posPercent[1] = percentY;
     button->dim[0] = percentW;
     button->dim[1] = percentH;
+    */
+    
+    button->posPercent[0] = percentX;
+    button->posPercent[1] = percentY;
+    button->dim[0] = percentW * CONFIG_guiScale;
+    button->dim[1] = percentH * CONFIG_guiScale;
+
     button->rot = rotZ;
     
     _RecalcTMtx(button);

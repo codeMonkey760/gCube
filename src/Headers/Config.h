@@ -2,37 +2,34 @@
 #define _C_RUBE_CONFIG_H_
 
 // default sensitivity values for mouse control
-extern float defaultPitchSens;
-extern float defaultYawSens;
-extern float defaultZoomSens;
+extern float CONFIG_defaultPitchSens;
+extern float CONFIG_defaultYawSens;
+extern float CONFIG_defaultZoomSens;
 
 // default zoom limits
-extern int minZoom;
-extern int maxZoom;
+extern float CONFIG_minZoom;
+extern float CONFIG_maxZoom;
 
 // starting orbital radius
-extern float defaultOrbitalRadius;
+extern float CONFIG_defaultOrbitalRadius;
 
 // speed in radians per second for how fast the slices move
-extern float sliceRotationSpeed;
+extern float CONFIG_sliceRotationSpeed;
 
 // the starting width of the window
-extern int width;
+extern int CONFIG_width;
 
 // the starting height of the window
-extern int height;
+extern int CONFIG_height;
 
 // number of random rotation to make when shuffling
-extern int shuffleSize;
+extern int CONFIG_shuffleSize;
 
 // scaling factor for the gui
-extern float guiScale;
+extern float CONFIG_guiScale;
 
 // Load configuration file
 void LoadConfigFile (void);
 void _ProcessContents (char *contents,int fileSize);
-
-// If no config file was found write one
-void _WriteDefaultConfigFile (void);
 
 #endif

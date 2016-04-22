@@ -38,8 +38,6 @@ GLFWwindow *window = NULL;
 Camera camera;
 Cube cube;
 char *APPNAME;
-int WindowWidth;
-int WindowHeight;
 
 /*
  error call back ... called by glfw when an error occurs
@@ -104,12 +102,12 @@ static void mouse_position_callback (GLFWwindow *window, double x, double y) {
  window resize callback ... called by glfw when the window resizes
  */
 static void window_resize_callback(GLFWwindow *window, int width, int height) {
-    WindowWidth = width;
-    WindowHeight = height;
+    CONFIG_width = width;
+    CONFIG_height = height;
     RebuildPerspectiveMatrix(
         &camera, 
         100.0f,
-        ((float) WindowWidth) / ((float) WindowHeight),
+        ((float) CONFIG_width) / ((float) CONFIG_height),
         0.01f,
         100.0f
     );
@@ -142,7 +140,7 @@ void init (void) {
     RebuildPerspectiveMatrix(
         &camera, 
         100.0f, 
-        ((float) WindowWidth)/ ((float) WindowHeight), 
+        ((float) CONFIG_width)/ ((float) CONFIG_height), 
         0.01f, 
         100.0f
     );
@@ -161,12 +159,12 @@ void initWindow (void) {
     screenW = vidmode->width;
     screenH = vidmode->height;
 
-    window = glfwCreateWindow(WindowWidth,WindowHeight,APPNAME, NULL, NULL);
+    window = glfwCreateWindow(CONFIG_width,CONFIG_height,APPNAME, NULL, NULL);
     if (window == NULL) {
         return;
     }
 
-    glfwSetWindowPos(window, (screenW / 2) - (WindowWidth / 2), (screenH / 2) - (WindowHeight / 2));
+    glfwSetWindowPos(window, (screenW / 2) - (CONFIG_width / 2), (screenH / 2) - (CONFIG_height / 2));
 
     glfwMakeContextCurrent(window);
 
@@ -181,7 +179,7 @@ void initWindow (void) {
  Renders frames
  */
 void render (void) {
-    glViewport(0,0,WindowWidth,WindowHeight);
+    glViewport(0,0,CONFIG_width,CONFIG_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderCube(&cube,&camera);

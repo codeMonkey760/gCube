@@ -6,6 +6,7 @@
 
 #include "Util.h"
 #include "Camera.h"
+#include "Config.h"
 
 void InitCamera (Camera *cam) {
     if (cam == NULL) return;
@@ -13,10 +14,10 @@ void InitCamera (Camera *cam) {
     memset(cam,0,sizeof(Camera));
     Mat4Identity(cam->viewMtx);
     Mat4Identity(cam->projMtx);
-    cam->pitchSens = 0.25f;
-    cam->yawSens = 0.25f;
-    cam->zoomSens = 1.0f;
-    cam->orbitalRadius = 10.0f;
+    cam->pitchSens = CONFIG_defaultPitchSens;
+    cam->yawSens = CONFIG_defaultYawSens;
+    cam->zoomSens = CONFIG_defaultZoomSens;
+    cam->orbitalRadius = CONFIG_defaultOrbitalRadius;
     cam->lastMousePos[0] = -1;
     cam->lastMousePos[1] = -1;
     
@@ -109,8 +110,8 @@ void Zoom (Camera *cam, float amount) {
     amount *= cam->zoomSens;
     
     cam->orbitalRadius -= amount;
-    if (cam->orbitalRadius < 7.5f) cam->orbitalRadius = 7.5f;
-    if (cam->orbitalRadius > 20.0f) cam->orbitalRadius = 20.0f;
+    if (cam->orbitalRadius < CONFIG_minZoom) cam->orbitalRadius = CONFIG_minZoom;
+    if (cam->orbitalRadius > CONFIG_maxZoom) cam->orbitalRadius = CONFIG_maxZoom;
     
     _RefreshViewMtx(cam);
 }

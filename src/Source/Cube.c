@@ -14,6 +14,7 @@
 #include "Shader.h"
 #include "CubeletModel.h"
 #include "Cube.h"
+#include "Config.h"
 
 void InitCube (Cube *cube) {
     if (cube == NULL) return;
@@ -30,8 +31,6 @@ void InitCube (Cube *cube) {
     
     InitCubeletArray(cube->cubelets,NUM_CUBELETS);
     _PositionCubelets(cube);
-    
-    StartShuffleSequence(cube,1);
 }
 
 void UpdateCube (Cube *cube, float dt) {
