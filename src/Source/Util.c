@@ -629,7 +629,7 @@ FILE* OpenFile (char *name, char *mode) {
     basePath = getenv("HOME");
     if (basePath != NULL) {
         strcpy(path,basePath);
-        strcat(path,"/");
+        strcat(path,"/.gCube/");
         strcat(path,name);
         file = fopen(path,mode);
         if (file != NULL) return file;
@@ -639,7 +639,7 @@ FILE* OpenFile (char *name, char *mode) {
     basePath = getenv("HOMEPATH");
     if (basePath != NULL) {
         strcpy(path,basePath);
-        strcat(path,"\\");
+        strcat(path,"\\.gCube\\");
         strcat(path,name);
         file = fopen(path,mode);
         if (file != NULL) return file;

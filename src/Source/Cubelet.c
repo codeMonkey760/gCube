@@ -23,6 +23,8 @@ void InitCubeletArray(Cubelet *array, int numCubelets){
     for (i = 0; i < numCubelets; ++i) {
         curCubelet = &array[i];
         
+        curCubelet->id = i;
+        
         // init to 100% scale
         curCubelet->scale[0] = 1.0f;
         curCubelet->scale[1] = 1.0f;
@@ -176,4 +178,24 @@ bool CheckCubelet (Cubelet *cubelet) {
     }
     
     return true;
+}
+
+void SaveCubelet (Cubelet *cubelet, FILE *file) {
+    if (cubelet == NULL || file == NULL) return;
+    
+    fwrite(&cubelet->id,1,sizeof(int),file);
+    fwrite(cubelet->posW,3,sizeof(float),file);
+    fwrite(cubelet->rotation,4,sizeof(float),file);
+    fwrite(cubelet->scale,3,sizeof(float),file);
+    fwrite(cubelet->stickers,6,sizeof(bool),file);
+}
+
+void LoadCubelet (Cubelet *cubelet, FILE *file) {
+    if (cubelet == NULL || file == NULL) return;
+    
+    fread(&cubelet->id,1,sizeof(int),file);
+    fread(cubelet->posW,3,sizeof(float),file);
+    fread(cubelet->rotation,4,sizeof(float),file);
+    fread(cubelet->scale,3,sizeof(float),file);
+    fread(cubelet->stickers,6,sizeof(bool),file);
 }

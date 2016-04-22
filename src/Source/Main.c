@@ -284,6 +284,8 @@ int main (int argc, char **argv) {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    
+    SaveCube(&cube);
 
     finalize();
     return EXIT_SUCCESS;

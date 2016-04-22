@@ -9,7 +9,6 @@ typedef struct {
     Cubelet **cubelets;
     int numCubelets;
     
-    float pivotPoint[3];
     float pivotAxis[3];
     float degreesRemaining;
     float degreesPerSecond;
@@ -49,7 +48,6 @@ void DestroyCube (Cube *cube);
 
 void InitNewSliceAnimation (
     SliceAnimation **sa, 
-    float newPivotPoint[3],
     float newPivotAxis[3],
     float initialDegrees,
     float newDegreesPerSecond,
@@ -67,6 +65,8 @@ bool IsShuffling (Cube *cube);
 void DestroyShuffleSequence (Cube *cube);
 
 void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForward);
+void SaveAnimation(SliceAnimation *sa, FILE *file);
+void LoadAnimation(SliceAnimation *sa, FILE *file);
 
 void _PositionCubelets (Cube *cube);
 
