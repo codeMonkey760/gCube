@@ -29,6 +29,15 @@ void LoadConfigFile (void) {
     strcat(path,"/.gCube/gCube.cfg");
     
     fp = fopen(path, "r");
+    if (fp == NULL) {
+        memset(path,0,sizeof(char) * 4096);
+        strcpy(path,"gCube.cfg");
+        
+        fp = fopen(path, "r");
+        if (fp == NULL) {
+            return;
+        }
+    }
     fseek(fp,0L, SEEK_END);
     fs = ftell(fp);
     fseek(fp,0L, SEEK_SET);

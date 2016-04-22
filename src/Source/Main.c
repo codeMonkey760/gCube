@@ -237,6 +237,10 @@ void finalize (void) {
  Main
  */
 int main (int argc, char **argv) {
+    if (argc > 0) {
+        puts(argv[0]);
+    }
+    
     glfwSetErrorCallback(error_callback);
     
     if (glfwInit() == false) {
