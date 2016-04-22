@@ -617,6 +617,41 @@ void Mat4LookAtLH (float out[16], float camPosW[3], float camTargetW[3], float c
     out[15] = 1.0f;
 }
 
+/*
+ Platform independent file opening routine
+*/
+FILE* OpenFile (char *name, char *mode) {
+    char path[4096] = {0};
+    char *basePath = NULL;
+    FILE *file = NULL;
+    
+    memset(path,0,sizeof(char) * 4096);
+    basePath = getenv("HOME");
+    if (basePath != NULL) {
+        strcpy(path,basePath);
+        strcat(path,"/");
+        strcat(path,name);
+        file = fopen(path,mode);
+        if (file != NULL) return file;
+    }
+    
+    memset(path,0,sizeof(char) * 4096);
+    basePath = getenv("HOMEPATH");
+    if (basePath != NULL) {
+        strcpy(path,basePath);
+        strcat(path,"\\");
+        strcat(path,name);
+        file = fopen(path,mode);
+        if (file != NULL) return file;
+    }
+    
+    memset(path,0,sizeof(char) * 4096);
+    strcpy(path,name);
+    file = fopen(path,mode);
+    
+    return file;
+}
+
 char *CubeletVS = 
 "#version 440\n\n"
 

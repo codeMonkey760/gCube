@@ -75,6 +75,43 @@ void RenderCube (Cube *cube, Camera *cam) {
     DrawCubeletArray(cube->cubelets, NUM_CUBELETS, cam);
 }
 
+void SaveCube (Cube *cube) {
+    FILE *file = NULL;
+    int i = 0;
+    SliceAnimation *sa = NULL;
+    
+    file = OpenFile("cube.sav","wb");
+    if (file == NULL){
+        fprintf(stderr, "Cannot save cube to file\n");
+        return;
+    }
+    
+    // save shuffle information
+    if (cube->shuffle == NULL) {
+        fwrite(&(cube->shuffle),4,1,file);
+    } else {
+        fwrite(&(cube->shuffleSize),4,1,file);
+        fwrite(&(cube->curShuffle),4,1,file);
+        fwrite(cube->shuffle,4,cube->shuffleSize,file);
+    }
+    
+    // save animation information
+    if (cube->curAnimation == NULL) {
+        fwrite(&(cube->curAnimation),4,1,file);
+    } else {
+        sa = cube->curAnimation;
+        //sa->
+        // cannot save animation data....
+        // write routine for force animations to end
+    }
+    
+    
+}
+
+void LoadCube (Cube *cube) {
+    ;
+}
+
 void DestroyCube (Cube *cube) {
     if (cube == NULL) return;
     

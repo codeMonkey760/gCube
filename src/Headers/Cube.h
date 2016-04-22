@@ -43,6 +43,8 @@ typedef enum {
 void InitCube (Cube *cube);
 void UpdateCube (Cube *cube, float dt);
 void RenderCube (Cube *cube, Camera *cam);
+void SaveCube (Cube *cube);
+void LoadCube (Cube *cube);
 void DestroyCube (Cube *cube);
 
 void InitNewSliceAnimation (
