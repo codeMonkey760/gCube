@@ -153,7 +153,7 @@ bool CheckCubelet (Cubelet *cubelet) {
     // will that work?
     
     float testpt[3] = {1.0f,1.0f,1.0f};
-    float testEpsilon = 0.00005f;
+    float testEpsilon = 0.05f;
     QuaternionVec3Rotation(testpt,cubelet->rotation,testpt);
     
     if (

@@ -269,6 +269,13 @@ int main (int argc, char **argv) {
     InitCube(&cube);
     InitializeGUI(&cube,&camera);
     
+    LoadCube(&cube);
+    if (CheckCubeForWin(&cube) == true) {
+        ShowShuffleButton();
+    } else {
+        HideShuffleButton();
+    }
+    
     /* TEST CODE */ /*
     printf("arrow.png was mapped to: %d\n",GetTextureByName("arrow.png"));
     printf("blender.png was mapped to: %d\n",GetTextureByName("blender.png"));

@@ -66,7 +66,7 @@ void DestroyShuffleSequence (Cube *cube);
 
 void _StartSliceAnimation(Cube *cube, Camera *cam, Slice slice, bool sliceForward);
 void SaveAnimation(SliceAnimation *sa, FILE *file);
-void LoadAnimation(SliceAnimation *sa, FILE *file);
+void LoadAnimation(Cube *cube, SliceAnimation *sa, FILE *file);
 
 void _PositionCubelets (Cube *cube);
 

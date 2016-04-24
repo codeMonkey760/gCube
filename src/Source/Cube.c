@@ -79,23 +79,15 @@ void SaveCube (Cube *cube) {
     FILE *file = NULL;
     int i = 0;
     
-    hgjdjkfjgfjk;
-    /*
-     * Two issues:
-     * 
-     * One:
-     * Save cubelets before other data
-     * I need cubelets loaded before I can reconstruct other data
-     * 
-     * Two:
-     * The save procedure for animations and or shuffle may have been
-     * incorrectly .. check the bounds for looping over cubelet address arrays
-     */
-    
     file = OpenFile("cube.sav","wb");
     if (file == NULL){
         fprintf(stderr, "Cannot save cube to file\n");
         return;
+    }
+    
+    // save cubelets
+    for (i = 0; i < NUM_CUBELETS; ++i) {
+        SaveCubelet(&cube->cubelets[i],file);
     }
     
     // save shuffle information
@@ -110,11 +102,6 @@ void SaveCube (Cube *cube) {
     fwrite(&(cube->curAnimation),4,1,file);
     if (cube->curAnimation != NULL) {
         SaveAnimation(cube->curAnimation,file);
-    }
-    
-    // save cubelets
-    for (i = 0; i < NUM_CUBELETS; ++i) {
-        SaveCubelet(&cube->cubelets[i],file);
     }
     
     fclose(file);
@@ -134,6 +121,11 @@ void LoadCube (Cube *cube) {
         return;
     }
     
+    //Load cubelets
+    for (i = 0; i < NUM_CUBELETS; ++i) {
+        LoadCubelet(&(cube->cubelets[i]),file);
+    }
+    
     //load shuffle info
     load = false;
     fread(&load,4,1,file);
@@ -149,12 +141,7 @@ void LoadCube (Cube *cube) {
     fread(&load,4,1,file);
     if (load == true) {
         cube->curAnimation = calloc(1,sizeof(SliceAnimation));
-        LoadAnimation(cube->curAnimation,file);
-    }
-    
-    //Load cubelets
-    for (i = 0; i < NUM_CUBELETS; ++i) {
-        LoadCubelet(&(cube->cubelets[i]),file);
+        LoadAnimation(cube, cube->curAnimation,file);
     }
     
     fclose(file);
@@ -450,13 +437,12 @@ void DestroyShuffleSequence (Cube *cube) {
     cube->shuffleSize = 0;
 }
 
-// may have done this wrong
 void SaveAnimation(SliceAnimation *sa, FILE *file) {
     int i;
     if (sa == NULL || file == NULL) return;
     
     fwrite(&sa->numCubelets,1,sizeof(int),file);
-    for (i = 0; i < NUM_CUBELETS; ++i) {
+    for (i = 0; i < sa->numCubelets; ++i) {
         fwrite(&sa->cubelets[i]->id,1,sizeof(int),file);
     }
     fwrite(&sa->degreesPerSecond,1,sizeof(float),file);
@@ -471,7 +457,8 @@ void LoadAnimation(Cube *cube, SliceAnimation *sa, FILE *file) {
     if (cube == NULL || sa == NULL || file == NULL) return;
     
     fread(&sa->numCubelets,1,sizeof(int),file);
-    for (i = 0; i < NUM_CUBELETS; ++i) {
+    sa->cubelets = calloc(sa->numCubelets,sizeof(Cubelet*));
+    for (i = 0; i < sa->numCubelets; ++i) {
         fread(&id,1,sizeof(int),file);
         sa->cubelets[i] = &(cube->cubelets[id]);
     }
