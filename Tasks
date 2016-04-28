@@ -1,7 +1,5 @@
 FEATURES:
     Finish all bugs
-    Put license info into project (GNU GPL v3)
-        A copying or license file and then headers on all source files
     Clean up and then test makefiles
     Assemble source tarball
     Test building from source tarball
