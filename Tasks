@@ -1,11 +1,6 @@
 FEATURES:
-    Finish all bugs
-    Clean up and then test makefiles
     Assemble source tarball
     Test building from source tarball
     Update bit bucket account and release v1.0
     Write a readme and other documentation as necessary
     Compile binaries for all supported platforms
-
-BUGS:
-    Gui doesn't scale correctly

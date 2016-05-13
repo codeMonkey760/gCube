@@ -29,8 +29,8 @@ Please read COPYING.txt for details
 
 #define FIXED_IMAGES_BINARY_SIZE 127122
 
-extern char _binary_images_bin_start[];
-extern char _binary_images_bin_end[];
+extern char _binary_src_Resources_images_bin_start[];
+extern char _binary_src_Resources_images_bin_end[];
 unsigned int imagesBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
@@ -63,17 +63,17 @@ int GetCubeletVBO (int index) {
 
 void InitTextures (void) {
     int i;
-    imagesBlobSize = _binary_images_bin_end - _binary_images_bin_start;
+    imagesBlobSize = _binary_src_Resources_images_bin_end - _binary_src_Resources_images_bin_start;
     if (
-        _binary_images_bin_start == NULL ||
-        _binary_images_bin_end == NULL ||
+        _binary_src_Resources_images_bin_start == NULL ||
+        _binary_src_Resources_images_bin_end == NULL ||
         imagesBlobSize != FIXED_IMAGES_BINARY_SIZE
     ) {
         fprintf(stderr, "A serious linking error has occured. Please ensure images.o was properly linked.");
         exit(1);
     }
     
-    char *curPos = _binary_images_bin_start;
+    char *curPos = _binary_src_Resources_images_bin_start;
     if (_CheckTextureHeader(&curPos) != true) {
         fprintf(stderr, "Texture blob header does not match. Please ensure that images.o was linked correctly.");
         exit(1);
