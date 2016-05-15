@@ -24,6 +24,7 @@ Please read COPYING.txt for details
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "CubeletModel.h"
 

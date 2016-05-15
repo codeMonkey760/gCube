@@ -21,6 +21,7 @@ Please read COPYING.txt for details
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Config.h"
 
@@ -41,7 +42,7 @@ void LoadConfigFile (void) {
     unsigned int fs = 0;
     char *contents = NULL;
     
-    fp = OpenFile("gCube.cfg","r");
+    fp = (FILE*) OpenFile("gCube.cfg","r");
     if (fp == NULL) return;
     
     fseek(fp,0L, SEEK_END);
