@@ -1,6 +1,6 @@
 SRCS = $(wildcard src/Source/*.c)
 OBJS = $(patsubst src/Source/%.c, bin/%.o,$(SRCS))
-LIBS = -lm -lGL -lGLEW -lGLU -lglfw -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
+LIBS = -lm -lGL -lGLEW -lGLU -lglfw3 -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
 
 .PHONY: bin
 
