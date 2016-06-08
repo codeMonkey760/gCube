@@ -50,4 +50,6 @@ II: Installation
 	./gCube
 
 III: Usage and normal operation:
-	
+	At program start up, gCube searches for two files gCube.cfg and gCube.sav. gCube.cfg is a text based configuration file for saving non default program settings. Please refer to the section entitled "Configuration" for more details. gCube.sav is a binary file representing the state of the cube at the end of the last run. Deleting this file will reset the cube.
+	gCube searches three locations for these files. The directory pointed to be the env variable "HOME" and "APPHOME" and then the install directory. If the files cannot be located, gCube may attempt to create them. 
+	After starting the cube will be in state in which it was left. If no save file is present, it will default to a solved cube.gCube has twelve button surrounding the edge of the window. They are: rotate left slice up, rotate top slice left, rotate bottom slice left, rotate left slice down, rotate right slice down, rotate bottom slice right, rotate top slice right, rotate right slice up, rotate forward slice right, rotate forward slice left, invert cube and (when the cube is in a sloved state
