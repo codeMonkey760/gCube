@@ -683,7 +683,6 @@ void CheckHomeDir (void) {
 	char path[4096] = {0};
 	char *basepath = NULL;
 	struct stat sb;
-	mode_t mask
 	
 #ifdef __linux__
 	basepath = getenv("HOME");
@@ -691,7 +690,7 @@ void CheckHomeDir (void) {
 		strcpy(path,basepath);
 		strcat(path, "/.gCube");
 	} else return;
-#elif _WIN32
+#elif defined(_WIN32)
 	basepath = getenv("HOMEPATH");
 	if (base != NULL) {
 		strcpy(path,basepath);

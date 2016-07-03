@@ -1,5 +1,5 @@
 gCube
-An open source, opengl based, fully 3d, Rubik's implementation in C.
+An open source, opengl based, fully 3d, Rubik's cube implementation in C.
 Author: Sean Paget
 Email: codeMonkey760@hotmail.com
 License: GPLv3 (or later) see COPYING.txt
