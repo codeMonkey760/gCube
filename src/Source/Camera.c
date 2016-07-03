@@ -294,3 +294,4 @@ void _RefreshViewMtx (Camera *cam) {
     //cam->viewMtx[14] = 0.0f;
     */
 }
+

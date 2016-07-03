@@ -49,3 +49,4 @@ void ShowShuffleButton (void);
 
 void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward);
 #endif
+

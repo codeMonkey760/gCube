@@ -30,8 +30,13 @@ Please read COPYING.txt for details
 
 #define FIXED_IMAGES_BINARY_SIZE 127122
 
-extern char _binary_src_Resources_images_bin_start[];
-extern char _binary_src_Resources_images_bin_end[];
+#ifndef _WIN32
+	extern char _binary_src_Resources_images_bin_start[];
+	extern char _binary_src_Resources_images_bin_end[];
+#else
+	extern char binary_src_Resources_images_bin_start[];
+	extern char binary_src_Resources_images_bin_end[];
+#endif
 unsigned int imagesBlobSize = 0;
 
 static GLuint vbos[7] = {-1};
@@ -64,17 +69,26 @@ int GetCubeletVBO (int index) {
 
 void InitTextures (void) {
     int i;
-    imagesBlobSize = _binary_src_Resources_images_bin_end - _binary_src_Resources_images_bin_start;
+    char *blobStart = NULL, *blobEnd = NULL;
+#ifndef _WIN32
+	blobStart = _binary_src_Resources_images_bin_start;
+	blobEnd = _binary_src_Resources_images_bin_end;
+#else
+	blobStart = binary_src_Resources_images_bin_start;
+	blobEnd = binary_src_Resources_images_bin_end;
+#endif
+    
+    imagesBlobSize = blobEnd - blobStart;
     if (
-        _binary_src_Resources_images_bin_start == NULL ||
-        _binary_src_Resources_images_bin_end == NULL ||
+        blobStart == NULL ||
+        blobEnd == NULL ||
         imagesBlobSize != FIXED_IMAGES_BINARY_SIZE
     ) {
         fprintf(stderr, "A serious linking error has occured. Please ensure images.o was properly linked.");
         exit(1);
     }
     
-    char *curPos = _binary_src_Resources_images_bin_start;
+    char *curPos = blobStart;
     if (_CheckTextureHeader(&curPos) != true) {
         fprintf(stderr, "Texture blob header does not match. Please ensure that images.o was linked correctly.");
         exit(1);
@@ -730,3 +744,4 @@ char *cubeletMTL =
 "d 1.000000\n"
 "illum 0\n"
 "map_Kd blender.png\n";
+

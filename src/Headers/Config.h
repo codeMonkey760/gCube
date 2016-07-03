@@ -54,3 +54,4 @@ void LoadConfigFile (void);
 void _ProcessContents (char *contents,int fileSize);
 
 #endif
+

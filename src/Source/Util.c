@@ -646,6 +646,8 @@ FILE* OpenFile (char *name, char *mode) {
     char *basePath = NULL;
     FILE *file = NULL;
     
+    CheckHomeDir();
+    
     memset(path,0,sizeof(char) * 4096);
     basePath = getenv("HOME");
     if (basePath != NULL) {
@@ -671,6 +673,37 @@ FILE* OpenFile (char *name, char *mode) {
     file = fopen(path,mode);
     
     return file;
+}
+
+/*
+	Checks for the existence of .gCube dir in home dir
+	Attempts to create it if it doesn't exist
+*/
+void CheckHomeDir (void) {
+	char path[4096] = {0};
+	char *basepath = NULL;
+	struct stat sb;
+	mode_t mask
+	
+#ifdef __linux__
+	basepath = getenv("HOME");
+	if (base != NULL) {
+		strcpy(path,basepath);
+		strcat(path, "/.gCube");
+	} else return;
+#elif _WIN32
+	basepath = getenv("HOMEPATH");
+	if (base != NULL) {
+		strcpy(path,basepath);
+		strcat(path, "\\.gCube");
+	} else return;
+#endif
+
+	if (!(stat(path,&sb) == 0 && S_ISDIR(sb.st_mode))) {
+		if (mkdir(path,0777) == -1) {
+			fprintf(stderr, "Could not create a gcube dir on home path!\n");
+		}
+	}
 }
 
 char *CubeletVS = 
@@ -756,3 +789,4 @@ char *GUIFS =
 
 "    gl_FragColor = vec4(col,a * gMixValue);\n"
 "}\n";
+

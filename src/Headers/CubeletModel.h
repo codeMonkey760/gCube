@@ -67,3 +67,4 @@ char *_NextFloat (char *curPos);
 void _ParseMTL (void);
 
 #endif
+

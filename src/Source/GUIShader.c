@@ -25,6 +25,7 @@ Please read COPYING.txt for details
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #include "Shader.h"
 #include "GUIShader.h"
@@ -110,3 +111,4 @@ void DestroyGUIShader (void) {
     
     guiShader.vs = guiShader.fs = guiShader.shader = 0;
 }
+

@@ -52,3 +52,4 @@ void CopyAdjustViewMtx (Camera *cam, float target[16]);
 void _RefreshViewMtx (Camera *cam);
 
 #endif
+

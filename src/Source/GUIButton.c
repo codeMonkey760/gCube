@@ -170,3 +170,4 @@ void ButtonOnMouseExit (GUIButton *button) {
     button->mouseDownInBounds = false;
     button->mixValue = 0.7f;
 }
+

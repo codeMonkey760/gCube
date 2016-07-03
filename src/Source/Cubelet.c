@@ -220,3 +220,4 @@ void LoadCubelet (Cubelet *cubelet, FILE *file) {
     fread(cubelet->scale,3,sizeof(float),file);
     fread(cubelet->stickers,6,sizeof(bool),file);
 }
+

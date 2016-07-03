@@ -487,6 +487,5 @@ void LoadAnimation(Cube *cube, SliceAnimation *sa, FILE *file) {
     fread(&sa->degreesRemaining,1,sizeof(float),file);
     fread(&sa->forward,1,sizeof(bool),file);
     fread(sa->pivotAxis,3,sizeof(float),file);
-    
-    
 }
+

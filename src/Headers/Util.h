@@ -66,7 +66,9 @@ void QuaternionNormalize(float out[4]);
 void QuaternionMult(float m[4], float n[4], float out[4]);
 
 FILE* OpenFile(char *name, char *mode);
+void CheckHomeDir (void);
 
 void Mat4LookAtLH (float out[16], float camPosW[3], float camTargetW[3], float camUpW[3]);
 
 #endif
+

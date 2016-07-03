@@ -46,3 +46,4 @@ void DestroyShader (void);
 int _CompileShader (GLenum type, char *src);
 
 #endif
+

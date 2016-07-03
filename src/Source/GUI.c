@@ -227,3 +227,4 @@ void OnButtonClick (Cube *cube, Camera *cam, int sliceId, bool sliceForward) {
         _StartSliceAnimation(cube,cam,sliceId,sliceForward);
     }
 }
+

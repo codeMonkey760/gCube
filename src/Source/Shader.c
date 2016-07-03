@@ -127,7 +127,7 @@ void DestroyShader (void) {
 }
 
 int _CompileShader (GLenum type, char *src) {
-    int sc = NULL,
+    int sc = -1,
         compiled = GL_FALSE,
         logSize = 0
     ;
@@ -151,3 +151,4 @@ int _CompileShader (GLenum type, char *src) {
 
     return sc;
 }
+

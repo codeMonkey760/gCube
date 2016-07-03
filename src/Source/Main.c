@@ -19,6 +19,8 @@ along with gCube.  If not, see <http://www.gnu.org/licenses/>.
 Please read COPYING.txt for details
 */
 
+#define SDL_MAIN_HANDLED
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -45,6 +47,7 @@ static void mouse_scroll_callback (GLFWwindow *window, double x, double y);
 static void mouse_position_callback (GLFWwindow *window, double x, double y);
 static void window_resize_callback(GLFWwindow *window, int width, int height);
 
+int main (int argc, char **argv);
 void init (void);
 void initCubelets (void);
 void updateCubelets (float dt);
@@ -318,3 +321,4 @@ int main (int argc, char **argv) {
     finalize();
     return EXIT_SUCCESS;
 }
+
