@@ -24,6 +24,7 @@ Please read COPYING.txt for details
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <sys/stat.h>
 
 #include "Util.h"
 
@@ -646,8 +647,6 @@ FILE* OpenFile (char *name, char *mode) {
     char *basePath = NULL;
     FILE *file = NULL;
     
-    CheckHomeDir();
-    
     memset(path,0,sizeof(char) * 4096);
     basePath = getenv("HOME");
     if (basePath != NULL) {
@@ -686,13 +685,15 @@ void CheckHomeDir (void) {
 	
 #ifdef __linux__
 	basepath = getenv("HOME");
-	if (base != NULL) {
+	if (basepath != NULL) {
+		fprintf(stdout,"%s\n",basepath);
 		strcpy(path,basepath);
 		strcat(path, "/.gCube");
 	} else return;
 #elif defined(_WIN32)
 	basepath = getenv("HOMEPATH");
-	if (base != NULL) {
+	if (basepath != NULL) {
+		fprintf(stdout,"%s\n",basepath);
 		strcpy(path,basepath);
 		strcat(path, "\\.gCube");
 	} else return;
@@ -700,7 +701,7 @@ void CheckHomeDir (void) {
 
 	if (!(stat(path,&sb) == 0 && S_ISDIR(sb.st_mode))) {
 		if (mkdir(path,0777) == -1) {
-			fprintf(stderr, "Could not create a gcube dir on home path!\n");
+			fprintf(stderr, "Could not create a gcube dir on home path!\n%s\n",path);
 		}
 	}
 }

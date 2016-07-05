@@ -8,7 +8,7 @@ HEADERS = $(wildcard src/Headers/*.h)
 LINOBJS = $(patsubst src/Source/%.c, $(LINDIR)/%.o,$(SRCS))
 LINFLAGS = -lm -lGL -lGLEW -lGLU -lglfw3 -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
 WINOBJS = $(patsubst src/Source/%.c, $(WINDIR)/%.obj,$(SRCS))
-WINFLAGS=
+WINFLAGS= /usr/i586-mingw32msvc/lib/glew32.lib /usr/i586-mingw32msvc/lib/glew32.dll /usr/i586-mingw32msvc/lib/glfw3.dll
 
 .PHONY: all
 all: $(WINDIR) $(LINDIR) $(LINEXE) $(WINEXE)
@@ -19,17 +19,25 @@ $(WINDIR):
 $(LINDIR):
 	mkdir -p bin/lin
 	
-$(LINEXE): $(LINDIR) $(LINDIR)/%.o $(LINDIR)/images.o
+$(LINEXE): $(LINOBJS) $(LINDIR)/images.o
 	gcc -o $@ $^ $(LINFLAGS)
 	
-$(WINEXE): $(WINDIR) $(WINDIR)/%.obj $(WINDIR)/images.obj
-	i586-mingw32msvc-gcc $^ -o $@ -mwindows -lmingw32 $(WINFLAGS)
+$(WINEXE): $(WINOBJS) $(WINDIR)/images.obj
+	i586-mingw32msvc-gcc $^ -o $@ -mwindows -lmingw32 -lopengl32 $(WINFLAGS)
+	cp /usr/i586-mingw32msvc/lib/glew32.dll bin/win/glew32.dll
+	cp /usr/i586-mingw32msvc/lib/glfw3.dll bin/win/glfw3.dll
 	
 $(LINDIR)/images.o: src/Resources/images.bin
 	ld -r -b binary -o $@ $^
 	
-$(LINDIR)/%.o: src/Source/%.c
+bin/lin/%.o: src/Source/%.c
 	gcc -c $< -I src/Headers/ -o $@
+	
+bin/win/%.obj: src/Source/%.c
+	i586-mingw32msvc-gcc -c $< -I src/Headers/ -o $@
+	
+bin/win/images.obj: src/Resources/images.bin
+	i586-mingw32msvc-ld -r -b binary -o $@ $^
 	
 .PHONY: clean
 clean:

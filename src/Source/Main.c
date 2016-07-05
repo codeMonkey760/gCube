@@ -265,6 +265,8 @@ int main (int argc, char **argv) {
         puts(argv[0]);
     }
     
+    CheckHomeDir();
+    
     glfwSetErrorCallback(error_callback);
     
     if (glfwInit() == false) {
