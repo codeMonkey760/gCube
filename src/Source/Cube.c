@@ -143,26 +143,33 @@ void LoadCube (Cube *cube) {
     }
     
     //Load cubelets
+    printf("Loading cubelets from save file ...\n");
     for (i = 0; i < NUM_CUBELETS; ++i) {
         LoadCubelet(&(cube->cubelets[i]),file);
     }
+    printf("Loaded cubelets from save file ...\n");
     
     //load shuffle info
     load = false;
     fread(&load,4,1,file);
+    printf("Loading shuffle info?: %d\n",load);
     if (load == true) {
         fread(&(cube->shuffleSize),sizeof(int),1,file);
         fread(&(cube->curShuffle),sizeof(int),1,file);
         cube->shuffle = calloc(cube->shuffleSize,sizeof(int));
         fread(cube->shuffle,sizeof(int),cube->shuffleSize,file);
+        printf("Loaded Shuffle info\n");
     }
     
     //load animation info
     load = false;
+    printf("Might be crashing on next line:\n");
     fread(&load,4,1,file);
+    printf("Loading animation info?: %d\n");
     if (load == true) {
         cube->curAnimation = calloc(1,sizeof(SliceAnimation));
         LoadAnimation(cube, cube->curAnimation,file);
+        printf("Loaded animation info\n");
     }
     
     fclose(file);

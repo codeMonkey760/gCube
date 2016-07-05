@@ -654,7 +654,12 @@ FILE* OpenFile (char *name, char *mode) {
         strcat(path,"/.gCube/");
         strcat(path,name);
         file = fopen(path,mode);
-        if (file != NULL) return file;
+        if (file != NULL) {
+        	printf("Found file: %s\n", path);
+        	return file;
+        } else {
+        	printf("Did not find file: %s\n",path);
+        }
     }
     
     memset(path,0,sizeof(char) * 4096);
@@ -664,12 +669,23 @@ FILE* OpenFile (char *name, char *mode) {
         strcat(path,"\\.gCube\\");
         strcat(path,name);
         file = fopen(path,mode);
-        if (file != NULL) return file;
+        if (file != NULL) {
+        	printf("Found file: %s\n", path);
+        	return file;
+        } else {
+        	printf("Did not find file: %s\n",path);
+        }
     }
     
     memset(path,0,sizeof(char) * 4096);
     strcpy(path,name);
     file = fopen(path,mode);
+    
+    if (file != NULL) {
+        printf("Found file: %s\n", path);
+    } else {
+        printf("Did not find file: %s\n",path);
+    }
     
     return file;
 }
@@ -702,6 +718,8 @@ void CheckHomeDir (void) {
 	if (!(stat(path,&sb) == 0 && S_ISDIR(sb.st_mode))) {
 		if (mkdir(path,0777) == -1) {
 			fprintf(stderr, "Could not create a gcube dir on home path!\n%s\n",path);
+		} else {
+			printf("Created directory: %s\n",path);
 		}
 	}
 }
