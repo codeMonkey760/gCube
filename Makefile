@@ -1,14 +1,14 @@
-SRCS = $(wildcard src/Source/*.c)
-HEADERS = $(wildcard src/Headers/*.h)
-LINOBJS = $(patsubst src/Source/%.c, bin/%.o,$(SRCS))
-LINFLAGS = -lm -lGL -lGLEW -lGLU -lglfw3 -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
-WINOBJS = $(patsubst src/Source/%.c, bin/%.obj,$(SRCS))
-WINFLAGS=
-
 WINDIR = bin/win
 LINDIR = bin/lin
 WINEXE = $(WINDIR)/gcube.exe
 LINEXE = $(LINDIR)/gcube
+
+SRCS = $(wildcard src/Source/*.c)
+HEADERS = $(wildcard src/Headers/*.h)
+LINOBJS = $(patsubst src/Source/%.c, $(LINDIR)/%.o,$(SRCS))
+LINFLAGS = -lm -lGL -lGLEW -lGLU -lglfw3 -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
+WINOBJS = $(patsubst src/Source/%.c, $(WINDIR)/%.obj,$(SRCS))
+WINFLAGS=
 
 .PHONY: all
 all: $(WINDIR) $(LINDIR) $(LINEXE) $(WINEXE)
