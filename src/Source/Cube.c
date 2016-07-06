@@ -112,7 +112,12 @@ void SaveCube (Cube *cube) {
     }
     
     // save shuffle information
-    fwrite(&(cube->shuffle),4,1,file);
+	if (cube->shuffle == NULL) {
+		fputc(0,file);
+	} else {
+		fputc(1,file);
+	}
+    //fwrite(&(cube->shuffle),4,1,file);
     if (cube->shuffle != NULL) {
         fwrite(&(cube->shuffleSize),4,1,file);
         fwrite(&(cube->curShuffle),4,1,file);
@@ -120,7 +125,12 @@ void SaveCube (Cube *cube) {
     }
     
     // save animation information
-    fwrite(&(cube->curAnimation),4,1,file);
+	if (cube->curAnimation == NULL) {
+		fputc(0,file);
+	} else {
+		fputc(1,file);
+	}
+    //fwrite(&(cube->curAnimation),4,1,file);
     if (cube->curAnimation != NULL) {
         SaveAnimation(cube->curAnimation,file);
     }
@@ -151,7 +161,8 @@ void LoadCube (Cube *cube) {
     
     //load shuffle info
     load = false;
-    fread(&load,4,1,file);
+	load = (bool) fgetc(file);
+    //fread(&load,4,1,file);
     printf("Loading shuffle info?: %d\n",load);
     if (load == true) {
         fread(&(cube->shuffleSize),sizeof(int),1,file);
@@ -164,7 +175,8 @@ void LoadCube (Cube *cube) {
     //load animation info
     load = false;
     printf("Might be crashing on next line:\n");
-    fread(&load,4,1,file);
+    load = (bool) fgetc(file); 
+	//fread(&load,4,1,file);
     printf("Loading animation info?: %d\n");
     if (load == true) {
         cube->curAnimation = calloc(1,sizeof(SliceAnimation));
