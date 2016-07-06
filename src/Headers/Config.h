@@ -51,6 +51,7 @@ extern float CONFIG_guiScale;
 
 // Load configuration file
 void LoadConfigFile (void);
+void CreateConfigFile (void);
 void _ProcessContents (char *contents,int fileSize);
 
 #endif

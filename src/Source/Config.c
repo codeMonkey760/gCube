@@ -43,7 +43,10 @@ void LoadConfigFile (void) {
     char *contents = NULL;
     
     fp = OpenFile("gCube.cfg","r");
-    if (fp == NULL) return;
+    if (fp == NULL){
+    	CreateConfigFile();
+    	return;
+    }
     
     fseek(fp,0L, SEEK_END);
     fs = ftell(fp);
@@ -59,6 +62,31 @@ void LoadConfigFile (void) {
     free(contents);
     contents = NULL;
 }
+
+void CreateConfigFile (void) {
+	FILE *fp;
+	
+	fp = OpenFile("gCube.cfg","w");
+	if (fp == NULL) {
+		fprintf(stderr, "Could not create configuration file!\n");
+		return;
+	}
+	
+	fprintf(fp,"pitchSens = %f\n",CONFIG_defaultPitchSens);
+	fprintf(fp,"yawSens = %f\n",CONFIG_defaultYawSens);
+	fprintf(fp,"zoomSens = %f\n",CONFIG_defaultZoomSens);
+	fprintf(fp,"minZoom = %f\n",CONFIG_minZoom);
+	fprintf(fp,"maxZoom = %f\n",CONFIG_maxZoom);
+	fprintf(fp,"orbitalRadius = %f\n",CONFIG_defaultOrbitalRadius);
+	fprintf(fp,"sliceRotationSpeed = %f\n",CONFIG_sliceRotationSpeed);
+	fprintf(fp,"windowWidth = %d\n",CONFIG_width);
+	fprintf(fp,"windowHeight = %d\n",CONFIG_height);
+	fprintf(fp,"shuffleSize = %d\n",CONFIG_shuffleSize);
+	fprintf(fp,"guiScale = %f\n",CONFIG_guiScale);
+	
+	fclose(fp);
+	fp = NULL;
+}       
 
 void _ProcessContents(char *contents, int size) {
     char *iter = contents;
