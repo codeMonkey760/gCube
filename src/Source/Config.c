@@ -38,11 +38,11 @@ int   CONFIG_shuffleSize =          120;
 float CONFIG_guiScale =               1.0f;
 
 void LoadConfigFile (void) {
-    FILE* fp = NULL;
+    FILE *fp = NULL;
     unsigned int fs = 0;
     char *contents = NULL;
     
-    fp = (FILE*) OpenFile("gCube.cfg","r");
+    fp = OpenFile("gCube.cfg","r");
     if (fp == NULL) return;
     
     fseek(fp,0L, SEEK_END);

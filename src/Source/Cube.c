@@ -177,7 +177,7 @@ void LoadCube (Cube *cube) {
     printf("Might be crashing on next line:\n");
     load = (bool) fgetc(file); 
 	//fread(&load,4,1,file);
-    printf("Loading animation info?: %d\n");
+    printf("Loading animation info?: %d\n",load);
     if (load == true) {
         cube->curAnimation = calloc(1,sizeof(SliceAnimation));
         LoadAnimation(cube, cube->curAnimation,file);
