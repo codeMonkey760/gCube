@@ -22,7 +22,7 @@ $(LINDIR):
 $(LINEXE): $(LINOBJS) $(LINDIR)/images.o
 	gcc -o $@ $^ $(LINFLAGS)
 	
-$(WINEXE): $(WINOBJS) $(WINDIR)/images.obj
+$(WINEXE): $(WINOBJS) $(WINDIR)/images.obj $(WINDIR)/gcube.res
 	i586-mingw32msvc-gcc $^ -o $@ -mwindows -lmingw32 -lopengl32 $(WINFLAGS)
 	cp /usr/i586-mingw32msvc/lib/glew32.dll bin/win/glew32.dll
 	cp /usr/i586-mingw32msvc/lib/glfw3.dll bin/win/glfw3.dll
@@ -38,6 +38,9 @@ bin/win/%.obj: src/Source/%.c
 	
 bin/win/images.obj: src/Resources/images.bin
 	i586-mingw32msvc-ld -r -b binary -o $@ $^
+	
+bin/win/gcube.res: src/Resources/gcube.rc
+	i586-mingw32msvc-windres $^ -O coff -o $@
 	
 .PHONY: clean
 clean:

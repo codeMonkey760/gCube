@@ -1,0 +1,26 @@
+#define FILEDESC "gCube: A GNU 3D Rubik's cube"
+
+2 ICON gcube.ico
+1 VERSIONINFO
+FILEVERSION 0,1,0,0
+PRODUCTVERSION 0,1,0,0
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904E4"
+    	BEGIN
+			VALUE "FileDescription", FILEDESC
+			VALUE "FileVersion", "0.1"
+			VALUE "InternalName", "gCube"
+			VALUE "LegalCopyright", "Copyright (C) 2016 Sean Paget"
+			VALUE "OriginalFilename", "gcube.exe"
+			VALUE "ProductName", "gCube"
+			VALUE "ProductVersion", "0.1"
+		END
+	END
+		
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1252
+	END
+END
