@@ -6,7 +6,7 @@ LINEXE = $(LINDIR)/gcube
 SRCS = $(wildcard src/Source/*.c)
 HEADERS = $(wildcard src/Headers/*.h)
 LINOBJS = $(patsubst src/Source/%.c, $(LINDIR)/%.o,$(SRCS))
-LINFLAGS = -lm -lGL -lGLEW -lGLU -lglfw3 -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lXinerama -lpthread -ldl
+LINFLAGS = -lm -lGL -lGLEW -lGLU -lglfw
 WINOBJS = $(patsubst src/Source/%.c, $(WINDIR)/%.obj,$(SRCS))
 WINFLAGS= /usr/i586-mingw32msvc/lib/glew32.lib /usr/i586-mingw32msvc/lib/glew32.dll /usr/i586-mingw32msvc/lib/glfw3.dll
 
